@@ -85,7 +85,7 @@ const Profile = () => {
       <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{letterSpacing: "0.22em"}}>Profile</div>
       <div className="font-serif text-5xl md:text-6xl font-bold text-[#edd6ae] mb-1 tracking-wide text-center drop-shadow-md">{NICKNAME}</div>
       <div
-        className="text-[#e8c282bb] text-xs md:text-sm font-light text-center opacity-80 max-w-md mx-auto px-4"
+        className="text-[#e8c282bb] text-xs md:text-sm font-light text-center opacity-80 max-w-md mx-auto px-4 mb-8"
         style={{
           fontWeight: 300,
           fontFamily: "Inter, system-ui, sans-serif",
