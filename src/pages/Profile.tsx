@@ -1,7 +1,6 @@
-
 import React from "react";
 import { format, formatDistanceStrict, differenceInYears, differenceInMonths, differenceInWeeks } from "date-fns";
-import { mapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const BIRTHDATE = new Date(1996, 8, 23); // Example: 23 Sep 1996 (month is 0-indexed)
@@ -42,12 +41,7 @@ const Profile = () => {
       </div>
       {/* Location */}
       <div className="flex flex-row items-center gap-2 mb-7 justify-center">
-        <span>
-          <svg width="18" height="18" fill="none" stroke="#e8c282" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="inline-block">
-            <path d="M17 7.5C17 13.5 9 17 9 17C9 17 1 13.5 1 7.5C1 4.186 4.134 1.5 8 1.5C11.866 1.5 15 4.186 15 7.5Z" />
-            <circle cx="9" cy="7.5" r="2.5"/>
-          </svg>
-        </span>
+        <MapPin color="#e8c282" size={18} />
         <span className="text-lg font-medium text-[#e8c282]">{LOCATION}</span>
       </div>
       {/* Today's Date */}
