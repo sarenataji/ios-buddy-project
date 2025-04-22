@@ -13,11 +13,7 @@ const ProfileStat: React.FC<ProfileStatProps> = ({
   className = "",
 }) => {
   return (
-    <div
-      className={
-        `flex-1 min-w-0 ${className}`
-      }
-    >
+    <div className={`flex-1 min-w-0 ${className}`}>
       <div
         className={`
           w-full
@@ -32,14 +28,13 @@ const ProfileStat: React.FC<ProfileStatProps> = ({
         `}
         tabIndex={0}
       >
-        <div className="flex items-center justify-center gap-1 text-4xl md:text-5xl font-bold font-serif text-[#EDD6AE] mb-1 transition-all duration-75">
+        <div className="flex items-center justify-center gap-1 text-4xl md:text-5xl font-bold font-serif text-[#EDD6AE] mb-1 transition-all duration-75 lowercase">
           {value}
         </div>
-        <div className="uppercase text-[0.76rem] tracking-widest text-[#e8c282bb] font-medium">{label}</div>
+        <div className="uppercase text-[0.76rem] tracking-widest text-[#e8c282bb] font-medium lowercase">{label}</div>
       </div>
     </div>
   );
 };
 
 export default ProfileStat;
-
