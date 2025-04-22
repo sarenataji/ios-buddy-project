@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { format, differenceInYears, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, endOfDay, intervalToDuration } from "date-fns";
 import { MapPin } from "lucide-react";
@@ -6,14 +5,10 @@ import ProfileStat from "@/components/ProfileStat";
 
 const BIRTHDATE = new Date(1996, 8, 23, 0, 0, 0); // 23 Sep 1996 (month is 0-indexed)
 const NICKNAME = "Sarena Ortega";
-// Motivational minimal quote instead of full name
 const MOTIVATION_QUOTE = "“Don’t count the days, make the days count. Time wasted is life wasted.”";
-// For location
 const LOCATION = "Los Angeles";
 
-// Calculate live time difference (as granular as needed)
 function getBreakdown(birthdate: Date, now: Date) {
-  // Helper functions
   let years = differenceInYears(now, birthdate);
   let dAfterYears = new Date(birthdate);
   dAfterYears.setFullYear(birthdate.getFullYear() + years);
@@ -40,10 +35,8 @@ function getBreakdown(birthdate: Date, now: Date) {
 
   let seconds = differenceInSeconds(now, dAfterMinutes);
 
-  // For overall weeks (for the big "WEEKS" stat)
   let overallWeeks = differenceInWeeks(now, birthdate);
 
-  // Per breakdown for collapsibles (all sections get a full breakdown, which is fine)
   const details = {
     years,
     months,
@@ -62,7 +55,6 @@ function getBreakdown(birthdate: Date, now: Date) {
   };
 }
 
-// Helper for countdown till end of day
 function getTimeLeftTillEndOfDay(now: Date) {
   const end = endOfDay(now);
   const dur = intervalToDuration({ start: now, end });
@@ -75,9 +67,8 @@ function getTimeLeftTillEndOfDay(now: Date) {
 
 const Profile = () => {
   const [now, setNow] = useState(() => new Date());
-  const [openIndex, setOpenIndex] = useState<number | null>(null); // for collapsible stats
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  // Rolling update, every second
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
@@ -86,29 +77,24 @@ const Profile = () => {
   const breakdown = getBreakdown(BIRTHDATE, now);
   const countdown = getTimeLeftTillEndOfDay(now);
 
-  // Helper: show countdown padded as 00:00:00
   const formatCountdown = (h: number, m: number, s: number) =>
     [h, m, s].map((v) => v.toString().padStart(2, "0")).join(":");
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 pb-12 pt-8">
-      {/* Section Title */}
       <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{letterSpacing: "0.22em"}}>Profile</div>
-      {/* Name */}
       <div className="font-serif text-5xl md:text-6xl font-bold text-[#edd6ae] mb-1 tracking-wide text-center drop-shadow-md">{NICKNAME}</div>
       <div
-        className="text-[#e8c282bb] text-base md:text-lg font-serif mb-6 font-light text-center italic"
+        className="text-[#e8c282bb] text-sm md:text-base font-serif mb-6 font-light text-center"
         style={{
           fontWeight: 300,
           fontFamily: "Inter, system-ui, sans-serif",
           letterSpacing: "0.01em",
           lineHeight: 1.6,
-          fontStyle: "italic",
         }}
       >
         {MOTIVATION_QUOTE}
       </div>
-      {/* Stats: Horizontal, interactive, rolling */}
       <div className="flex flex-row gap-4 w-full max-w-xl mx-auto mb-7 items-stretch">
         <ProfileStat
           label="YEARS"
@@ -132,21 +118,16 @@ const Profile = () => {
           setOpen={() => setOpenIndex(openIndex === 2 ? null : 2)}
         />
       </div>
-      {/* Location */}
       <div className="flex flex-row items-center gap-2 mb-7 justify-center">
         <MapPin color="#e8c282" size={21} />
         <span className="text-lg font-medium text-[#e8c282]">{LOCATION}</span>
       </div>
-      {/* Today's Date Card */}
       <div className="w-full max-w-md mx-auto flex flex-col items-center mt-3">
         <div className="relative rounded-3xl border border-[#e8c28233] bg-[#1a1f2c]/80 text-[#edd6ae] text-center shadow-[0_0_25px_0_#e8c28215] px-10 py-8 mb-2">
-          {/* Main date */}
           <div className="text-3xl md:text-4xl font-serif font-bold mb-1 tracking-tight" style={{letterSpacing: "0.02em"}}>
             {format(now, "MMMM d, yyyy")}
           </div>
-          {/* Day of week */}
           <div className="uppercase text-base md:text-lg text-[#e8c282bb] tracking-widest mb-3">{format(now, "EEEE")}</div>
-          {/* Countdown timer */}
           <div className="flex flex-col items-center justify-center w-full">
             <span className="block text-xs md:text-sm text-[#e8c282aa] font-medium mb-1 tracking-wide">
               Time left today
@@ -162,4 +143,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
