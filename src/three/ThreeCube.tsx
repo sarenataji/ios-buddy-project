@@ -1,6 +1,7 @@
 
 import React, { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
 function RotatingCube() {
   const mesh = useRef<THREE.Mesh>(null!);
