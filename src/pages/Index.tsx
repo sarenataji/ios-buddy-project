@@ -25,9 +25,16 @@ const Index = () => {
           </CardContent>
         </Card>
         {/* Minimal hint at navigation or features, just to organize the page */}
-        <div className="text-muted-foreground text-center text-sm">
+        <div className="text-muted-foreground text-center text-sm mb-4">
           Designed for elegance, simplicity, and mindful organization.
         </div>
+        {/* New navigation link */}
+        <a
+          href="/profile"
+          className="mt-2 text-primary font-medium underline underline-offset-2 hover:text-primary/80 transition-colors"
+        >
+          View Profile Section &rarr;
+        </a>
       </div>
     </div>
   );
