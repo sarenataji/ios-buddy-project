@@ -1,8 +1,7 @@
 
 import React, { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, extend } from "@react-three/fiber";
 import * as THREE from "three";
-import { extend } from "@react-three/fiber";
 import { BoxGeometry, MeshStandardMaterial } from "three";
 
 // Extend JSX elements with Three.js objects
