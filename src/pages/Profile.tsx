@@ -5,7 +5,7 @@ import ProfileStat from "@/components/ProfileStat";
 
 const BIRTHDATE = new Date(1996, 8, 23, 0, 0, 0); // 23 Sep 1996 (month is 0-indexed)
 const NICKNAME = "Sarena Ortega";
-const MOTIVATION_QUOTE = "“Don’t count the days, make the days count. Time wasted is life wasted.”";
+const MOTIVATION_QUOTE = "don't count the days, make the days count. time wasted is life wasted.";
 const LOCATION = "Los Angeles";
 
 function getBreakdown(birthdate: Date, now: Date) {
@@ -85,15 +85,15 @@ const Profile = () => {
       <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{letterSpacing: "0.22em"}}>Profile</div>
       <div className="font-serif text-5xl md:text-6xl font-bold text-[#edd6ae] mb-1 tracking-wide text-center drop-shadow-md">{NICKNAME}</div>
       <div
-        className="text-[#e8c282bb] text-sm md:text-base font-serif mb-6 font-light text-center"
+        className="text-[#e8c282bb] text-xs md:text-sm font-light text-center opacity-80 max-w-md mx-auto px-4"
         style={{
           fontWeight: 300,
           fontFamily: "Inter, system-ui, sans-serif",
-          letterSpacing: "0.01em",
+          letterSpacing: "0.05em",
           lineHeight: 1.6,
         }}
       >
-        {MOTIVATION_QUOTE}
+        "{MOTIVATION_QUOTE}"
       </div>
       <div className="flex flex-row gap-4 w-full max-w-xl mx-auto mb-7 items-stretch">
         <ProfileStat
