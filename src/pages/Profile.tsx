@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { format, differenceInYears, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, endOfDay, intervalToDuration } from "date-fns";
 import { MapPin } from "lucide-react";
@@ -63,38 +64,92 @@ function getTimeLeftTillEndOfDay(now: Date) {
   };
 }
 
-// Updated: Single-line, nicely spaced breakdown
-function formatLifetime(details: {
-  years: number;
-  months: number;
-  weeks: number;
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
+// NEW: Beautiful one-row, aesthetic breakdown bar with gold text, thin font, and a glowing border
+function GlowingLifetimeBar({
+  details,
+}: {
+  details: {
+    years: number;
+    months: number;
+    weeks: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
 }) {
+  // Array for cleaner mapping & comma separation
+  const items = [
+    { value: details.years, unit: "years" },
+    { value: details.months, unit: "months" },
+    { value: details.weeks, unit: "weeks" },
+    { value: details.days, unit: "days" },
+    { value: details.hours, unit: "hours" },
+    { value: details.minutes, unit: "minutes" },
+    { value: details.seconds, unit: "seconds" },
+  ];
   return (
-    <div className="inline-flex flex-row flex-wrap items-center justify-center gap-4 w-full text-center">
-      <span>
-        <span className="font-bold">{details.years}</span>y
-      </span>
-      <span>
-        <span className="font-bold">{details.months}</span>m
-      </span>
-      <span>
-        <span className="font-bold">{details.weeks}</span>w
-      </span>
-      <span>
-        <span className="font-bold">{details.days}</span>d
-      </span>
-      <span>
-        <span className="font-bold">{details.hours}</span>h
-      </span>
-      <span>
-        <span className="font-bold">{details.minutes}</span>m
-      </span>
-      <span>
-        <span className="font-bold">{details.seconds}</span>s
+    <div
+      className="
+        w-full
+        px-8 py-6 
+        rounded-3xl
+        bg-[#1a1e18]/90
+        border border-[#e8c28250]
+        shadow-[0_0_32px_0_#e8c28210,0_2px_16px_0_#00000040]
+        flex flex-row items-center justify-center
+        transition-all
+        animate-fade-in
+        backdrop-blur-[3px]
+        mx-auto
+      "
+      style={{
+        maxWidth: 950,
+        fontFamily: "Inter, system-ui, sans-serif",
+        letterSpacing: "0.03em",
+        boxShadow: "0 0 54px 0 #e8c28223, 0 2px 20px 0 #0007",
+        borderWidth: 1.6,
+      }}
+    >
+      <span className="w-full flex flex-row flex-wrap items-center justify-center gap-x-5 gap-y-2 text-center">
+        {items.map((entry, i) => (
+          <span
+            key={entry.unit}
+            className="
+              flex flex-row items-baseline
+              text-[#dec897]
+              font-thin
+              text-[1.32rem] md:text-[1.48rem] 
+              mr-0
+              transition-colors
+              select-none
+              whitespace-nowrap
+              drop-shadow-[0_1px_3px_#7e5a3940]
+            "
+            style={{ fontWeight: entry.unit === "years" || entry.unit === "months" || entry.unit === "weeks" ? 600 : 400, fontFamily: "Inter, system-ui, sans-serif" }}
+          >
+            <span
+              className={`
+                ${["years", "months", "weeks"].includes(entry.unit) 
+                    ? "font-semibold"
+                    : "font-normal"}
+                text-[#ecd6ae]
+                px-1
+              `}
+              style={{ 
+                fontWeight: ["years", "months", "weeks"].includes(entry.unit) ? 600 : 400 
+              }}
+            >
+              {entry.value}
+            </span>
+            <span className="pl-1 text-[1.02rem] md:text-[1.16rem] text-[#edd6aecc] font-light" style={{fontWeight: 400}}>
+              {entry.unit}
+            </span>
+            {i < items.length - 1 && (
+              <span className="mx-3 text-[#ecd6ae70] select-none text-[1.32rem] font-light">,</span>
+            )}
+          </span>
+        ))}
       </span>
     </div>
   );
@@ -146,14 +201,9 @@ const Profile = () => {
             value={breakdown.weeks}
           />
         </div>
-        {/* Always-visible breakdown bar, one row */}
+        {/* Glowing, single-row breakdown bar */}
         <div className="w-full flex justify-center mb-5">
-          <div
-            className="px-8 py-4 rounded-2xl bg-[#191a19]/80 border border-[#e8c28233] text-[#ecd7a8] text-lg md:text-xl font-medium shadow-[0_0_18px_0_#e8c28211] backdrop-blur-sm text-center animate-fade-in"
-            style={{ maxWidth: 900, fontFamily: "Inter, system-ui, sans-serif", letterSpacing: "0.02em" }}
-          >
-            {formatLifetime(breakdown.details)}
-          </div>
+          <GlowingLifetimeBar details={breakdown.details} />
         </div>
       </div>
       <div className="flex flex-row items-center gap-2 mb-7 justify-center">
