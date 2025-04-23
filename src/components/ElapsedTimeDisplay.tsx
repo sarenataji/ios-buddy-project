@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil, Calendar, MapPin, Info, StickyNote, MoveUp, MoveDown } from "lucide-react";
+import { Clock, Pencil, Calendar, MapPin, StickyNote, MoveUp, MoveDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -69,11 +69,21 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
         className="relative w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
           hover:bg-[#161213] transition-all duration-300
           shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]
-          cursor-pointer"
+          cursor-pointer group"
       >
-        <div className="flex items-center gap-4 mb-6">
-          <Clock className="w-5 h-5 text-[#e8c282]" />
-          <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Clock className="w-5 h-5 text-[#e8c282]" />
+            <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
+          </div>
+          <Button
+            onClick={handleEdit}
+            variant="ghost"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#222]/50 hover:bg-[#333]/50"
+          >
+            <Pencil className="h-4 w-4 text-[#e8c282]" />
+          </Button>
         </div>
 
         <div className="grid grid-cols-5 gap-4 text-center">
@@ -85,31 +95,6 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
           <TimeUnit value={elapsed.minutes} unit="minutes" />
           <TimeUnit value={elapsed.seconds} unit="seconds" />
         </div>
-
-        {(onMoveUp || onMoveDown) && (
-          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {onMoveUp && (
-              <Button
-                onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
-                variant="ghost"
-                size="icon"
-                className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
-              >
-                <MoveUp className="h-4 w-4 text-[#e8c282]" />
-              </Button>
-            )}
-            {onMoveDown && (
-              <Button
-                onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
-                variant="ghost"
-                size="icon"
-                className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
-              >
-                <MoveDown className="h-4 w-4 text-[#e8c282]" />
-              </Button>
-            )}
-          </div>
-        )}
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
