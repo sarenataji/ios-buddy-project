@@ -32,19 +32,26 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({ title, startDat
   return (
     <button 
       onClick={onClick}
-      className="w-full text-left p-4 bg-[#1a1f2c]/85 border border-[#e8c28244] rounded-lg hover:bg-[#1a1f2c] transition-colors group"
+      className="w-full text-left p-4 bg-[#1a1f2c]/85 border border-[#e8c28244] rounded-lg hover:bg-[#1a1f2c] transition-all duration-300 group
+        relative overflow-hidden
+        shadow-[0_0_20px_0_#e8c28215]
+        hover:shadow-[0_0_30px_0_#e8c28225]
+      "
     >
-      <div className="text-[#e8c282] mb-2">{title}</div>
-      <div className="flex items-baseline space-x-2 text-[#edd6ae]">
-        <span className="text-4xl font-bold">{elapsed.days}</span>
-        <span className="text-xl">d</span>
-        <span className="text-4xl font-bold">{elapsed.hours}</span>
-        <span className="text-xl">h</span>
-        <span className="text-4xl font-bold">{elapsed.minutes}</span>
-        <span className="text-xl">m</span>
-        <span className="text-4xl font-bold">{elapsed.seconds}</span>
-        <span className="text-xl">s</span>
-        <ChevronRight className="ml-auto text-[#e8c28266] group-hover:text-[#e8c282] transition-colors" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#e8c28205] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+      <div className="relative z-10">
+        <div className="text-[#e8c282] mb-2 tracking-wide">{title}</div>
+        <div className="flex items-baseline space-x-2 text-[#edd6ae]">
+          <span className="text-4xl font-bold">{elapsed.days}</span>
+          <span className="text-xl">d</span>
+          <span className="text-4xl font-bold">{elapsed.hours}</span>
+          <span className="text-xl">h</span>
+          <span className="text-4xl font-bold">{elapsed.minutes}</span>
+          <span className="text-xl">m</span>
+          <span className="text-4xl font-bold">{elapsed.seconds}</span>
+          <span className="text-xl">s</span>
+          <ChevronRight className="ml-auto text-[#e8c28266] group-hover:text-[#e8c282] transition-colors duration-300" />
+        </div>
       </div>
     </button>
   );
