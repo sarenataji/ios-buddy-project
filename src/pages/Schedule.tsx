@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
 import { Clock } from "lucide-react";
@@ -13,6 +12,7 @@ import ScheduleHeader from "@/components/ScheduleHeader";
 import EventListSection from "@/components/EventListSection";
 import TimelineSection from "@/components/TimelineSection";
 import ActionButtons from "@/components/ActionButtons";
+import CompletedEventsList from "@/components/CompletedEventsList";
 import { 
   getCurrentEvent, 
   getNextEvent,
@@ -284,11 +284,16 @@ const Schedule = () => {
         
         <EventListSection 
           activeEvents={activeEvents}
-          completedEvents={completedEvents}
           onEventEdit={handleEditEvent}
           onEventDelete={deleteEvent}
           onEventComplete={toggleEventCompletion}
           currentEvent={currentEvent}
+        />
+        
+        <CompletedEventsList 
+          completedEvents={completedEvents}
+          onEventEdit={handleEditEvent}
+          onEventDelete={deleteEvent}
         />
         
         <ActionButtons onAddEvent={() => setIsAddEventSheetOpen(true)} />
