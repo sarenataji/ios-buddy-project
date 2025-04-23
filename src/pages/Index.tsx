@@ -2,6 +2,9 @@
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import ThreeCube from "../three/ThreeCube";
+import { Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -22,19 +25,40 @@ const Index = () => {
                 <ThreeCube />
               </Suspense>
             </div>
+            
+            {/* Feature navigation buttons */}
+            <div className="flex flex-col md:flex-row gap-4 mt-8 w-full">
+              <Button 
+                asChild
+                className="flex-1 h-12 bg-[#1a1f2c] border border-[#e8c28233] hover:bg-[#1a1f2c]/80 text-[#edd6ae]"
+              >
+                <Link to="/schedule" className="flex items-center justify-center gap-2">
+                  <Calendar size={20} />
+                  <span>Schedule</span>
+                </Link>
+              </Button>
+              
+              <Button
+                asChild
+                className="flex-1 h-12 bg-[#e8c282]/20 hover:bg-[#e8c282]/30 text-[#e8c282] border border-[#e8c28244]"
+              >
+                <Link to="/profile" className="flex items-center justify-center">
+                  <span>Profile</span>
+                </Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
-        {/* Minimal hint at navigation or features, just to organize the page */}
-        <div className="text-muted-foreground text-center text-sm mb-4">
-          Designed for elegance, simplicity, and mindful organization.
+        
+        {/* Minimal explanation of app features */}
+        <div className="text-[#e8c282aa] text-center text-sm mb-8 max-w-md">
+          <p className="mb-2">
+            Track your time with precision and meaning. Schedule your events, follow real-time countdowns, and manage your moments.
+          </p>
+          <p>
+            Designed for elegance, simplicity, and mindful organization.
+          </p>
         </div>
-        {/* New navigation link */}
-        <a
-          href="/profile"
-          className="mt-2 text-primary font-medium underline underline-offset-2 hover:text-primary/80 transition-colors"
-        >
-          View Profile Section &rarr;
-        </a>
       </div>
     </div>
   );
