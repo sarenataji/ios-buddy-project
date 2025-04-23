@@ -57,7 +57,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-4">
           <Clock className="text-[#e8c282] w-5 h-5" />
-          <span className="text-[#e8c282] tracking-wide">{title}</span>
+          <span className="text-[#e8c282] tracking-[0.15em] font-semibold uppercase text-sm">{title}</span>
         </div>
         
         <div className="inline-flex items-baseline gap-6 text-[#edd6ae]">
@@ -98,7 +98,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 
 const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
   <div className="flex flex-col items-center">
-    <span className="text-3xl font-bold font-mono tracking-tight">
+    <span className="text-3xl font-serif font-bold tracking-tight">
       {value.toString().padStart(2, '0')}
     </span>
     <span className="text-xs uppercase tracking-wider text-[#e8c28288] mt-1">
