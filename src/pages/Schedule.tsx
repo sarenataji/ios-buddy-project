@@ -123,6 +123,93 @@ const Schedule = () => {
   const dateEvents = getEventsForDate(currentDate);
   const hasEvents = dateEvents.length > 0;
   
+  const getEventEndTime = (event: Event) => {
+    const durationParts = event.description.split(' - ');
+    const eventEnd = new Date(event.time);
+    
+    if (durationParts.length === 2) {
+      const endTimeParts = durationParts[1].split(':');
+      if (endTimeParts.length === 2) {
+        eventEnd.setHours(parseInt(endTimeParts[0]), parseInt(endTimeParts[1]));
+        return eventEnd;
+      }
+    }
+    
+    eventEnd.setHours(eventEnd.getHours() + 1);
+    return eventEnd;
+  };
+  
+  const formatTimeLeft = (target: Date, current: Date) => {
+    const diff = target.getTime() - current.getTime();
+    if (diff <= 0) return "0m left";
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    let result = "";
+    
+    if (hours > 0) {
+      result += `${hours}h `;
+    }
+    
+    if (minutes > 0 || (hours === 0 && minutes === 0)) {
+      result += `${minutes}m `;
+    }
+    
+    if (hours === 0 || (hours === 0 && minutes < 10)) {
+      result += `${seconds}s`;
+    }
+    
+    return result + " left";
+  };
+  
+  const calculateEventProgress = (event: Event) => {
+    const now = new Date();
+    const eventStart = new Date(event.time);
+    const eventEnd = getEventEndTime(event);
+    
+    if (now < eventStart) {
+      return {
+        progress: 0,
+        timeLeft: formatTimeLeft(eventStart, now),
+      };
+    }
+    
+    if (now > eventEnd) {
+      return {
+        progress: 100,
+        timeLeft: "Completed",
+      };
+    }
+    
+    const totalDuration = eventEnd.getTime() - eventStart.getTime();
+    const elapsed = now.getTime() - eventStart.getTime();
+    const progress = Math.min(100, (elapsed / totalDuration) * 100);
+    
+    return {
+      progress,
+      timeLeft: formatTimeLeft(eventEnd, now),
+    };
+  };
+  
+  const getCurrentEvent = () => {
+    const now = new Date();
+    return dateEvents.find(event => {
+      const eventStart = new Date(event.time);
+      const eventEnd = getEventEndTime(event);
+      return now >= eventStart && now <= eventEnd && !event.completed;
+    });
+  };
+  
+  const getNextEvent = () => {
+    const now = new Date();
+    const upcoming = dateEvents
+      .filter(event => new Date(event.time) > now && !event.completed)
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    return upcoming.length > 0 ? upcoming[0] : null;
+  };
+  
   useEffect(() => {
     if (hasCompletedAllEvents && hasEvents && isToday(currentDate)) {
       setShowCongratsAnimation(true);
@@ -159,39 +246,6 @@ const Schedule = () => {
   const completedEvents = dateEvents.filter(event => event.completed);
   const activeEvents = dateEvents.filter(event => !event.completed);
   
-  const getEventEndTime = (event: Event) => {
-    const durationParts = event.description.split(' - ');
-    const eventEnd = new Date(event.time);
-    
-    if (durationParts.length === 2) {
-      const endTimeParts = durationParts[1].split(':');
-      if (endTimeParts.length === 2) {
-        eventEnd.setHours(parseInt(endTimeParts[0]), parseInt(endTimeParts[1]));
-        return eventEnd;
-      }
-    }
-    
-    eventEnd.setHours(eventEnd.getHours() + 1);
-    return eventEnd;
-  };
-  
-  const getCurrentEvent = () => {
-    const now = new Date();
-    return dateEvents.find(event => {
-      const eventStart = new Date(event.time);
-      const eventEnd = getEventEndTime(event);
-      return now >= eventStart && now <= eventEnd && !event.completed;
-    });
-  };
-  
-  const getNextEvent = () => {
-    const now = new Date();
-    const upcoming = dateEvents
-      .filter(event => new Date(event.time) > now && !event.completed)
-      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
-    return upcoming.length > 0 ? upcoming[0] : null;
-  };
-  
   const currentEvent = getCurrentEvent();
   const nextEvent = !currentEvent ? getNextEvent() : null;
   
@@ -202,60 +256,6 @@ const Schedule = () => {
     color: event.color,
     icon: event.icon
   }));
-  
-  const calculateEventProgress = (event: Event) => {
-    const now = new Date();
-    const eventStart = new Date(event.time);
-    const eventEnd = getEventEndTime(event);
-    
-    if (now < eventStart) {
-      return {
-        progress: 0,
-        timeLeft: formatTimeLeft(eventStart, now),
-      };
-    }
-    
-    if (now > eventEnd) {
-      return {
-        progress: 100,
-        timeLeft: "Completed",
-      };
-    }
-    
-    const totalDuration = eventEnd.getTime() - eventStart.getTime();
-    const elapsed = now.getTime() - eventStart.getTime();
-    const progress = Math.min(100, (elapsed / totalDuration) * 100);
-    
-    return {
-      progress,
-      timeLeft: formatTimeLeft(eventEnd, now),
-    };
-  };
-  
-  const formatTimeLeft = (target: Date, current: Date) => {
-    const diff = target.getTime() - current.getTime();
-    if (diff <= 0) return "0m left";
-    
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    
-    let result = "";
-    
-    if (hours > 0) {
-      result += `${hours}h `;
-    }
-    
-    if (minutes > 0 || (hours === 0 && minutes === 0)) {
-      result += `${minutes}m `;
-    }
-    
-    if (hours === 0 || (hours === 0 && minutes < 10)) {
-      result += `${seconds}s`;
-    }
-    
-    return result + " left";
-  };
   
   const handleEditEvent = (event: Event) => {
     const eventToEdit = {
