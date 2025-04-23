@@ -30,15 +30,24 @@ const EventListSection = ({
 }: EventListSectionProps) => {
   const [showCompletedEvents, setShowCompletedEvents] = useState(false);
 
+  // Sort events by time
+  const sortedActiveEvents = [...activeEvents].sort((a, b) => 
+    new Date(a.time).getTime() - new Date(b.time).getTime()
+  );
+
+  const sortedCompletedEvents = [...completedEvents].sort((a, b) => 
+    new Date(b.time).getTime() - new Date(a.time).getTime() // Reverse chronological for completed
+  );
+
   return (
     <div className="space-y-4">
-      {activeEvents.length === 0 && (
+      {sortedActiveEvents.length === 0 && (
         <div className="text-center text-[#e8c282aa] py-6">
           No active events for this day
         </div>
       )}
       
-      {activeEvents.map((event) => (
+      {sortedActiveEvents.map((event) => (
         <ScheduleItem 
           key={event.id}
           time={format(new Date(event.time), "h:mm a")}
@@ -80,7 +89,7 @@ const EventListSection = ({
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <div className="max-h-[40vh] overflow-y-auto space-y-2">
-                    {completedEvents.map((event) => (
+                    {sortedCompletedEvents.map((event) => (
                       <div key={event.id} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
                         <ScheduleItem 
                           time={format(new Date(event.time), "h:mm a")}
