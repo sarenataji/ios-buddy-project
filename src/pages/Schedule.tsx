@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
 import { Plus, ArrowLeft, ArrowRight } from "lucide-react";
@@ -64,9 +63,8 @@ const Schedule = () => {
   const dateEvents = getEventsForDate(currentDate);
   const hasEvents = dateEvents.length > 0;
   
-  // Add sample events if there are none
   useEffect(() => {
-    if (!sampleEventsAdded && events.length < 15) { // Only add sample events if user has few events
+    if (!sampleEventsAdded && events.length < 15) {
       SAMPLE_EVENTS.forEach(sampleEvent => {
         const eventDate = addDays(new Date(), sampleEvent.dayOffset);
         const [startHours, startMinutes] = sampleEvent.startTime.split(":").map(Number);
@@ -110,7 +108,7 @@ const Schedule = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000); // Update every second for accurate countdown
+    }, 1000);
     
     return () => clearInterval(interval);
   }, []);
@@ -322,7 +320,7 @@ const Schedule = () => {
           />
         </div>
         
-        <div className="mt-6">
+        <div className="mt-6 space-y-4">
           {activeEvents.length === 0 && (
             <div className="text-center text-[#e8c282aa] py-6">
               No active events for this day
@@ -355,38 +353,40 @@ const Schedule = () => {
         </div>
         
         {completedEvents.length > 0 && (
-          <div className="mt-8 mb-20">
-            <Collapsible 
-              open={showCompletedEvents} 
-              onOpenChange={setShowCompletedEvents}
-              className="border-t border-[#e8c28222] pt-2"
-            >
-              <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-[#e8c282] hover:text-[#edd6ae] text-sm">
-                <span>Completed Events ({completedEvents.length})</span>
-                <span>{showCompletedEvents ? "Show Less" : "Show More"}</span>
-              </CollapsibleTrigger>
-              
-              <CollapsibleContent className="mt-2 space-y-2">
-                {completedEvents.map((event) => (
-                  <div key={event.id} className="transform scale-95 opacity-75">
-                    <ScheduleItem 
-                      time={format(new Date(event.time), "h:mm a")}
-                      title={event.title}
-                      description={event.description}
-                      person={event.person}
-                      color={event.color}
-                      icon={event.icon}
-                      progress={100}
-                      timeLeft="Completed"
-                      location={event.location}
-                      completed={true}
-                      onEdit={() => handleEditEvent(event)}
-                      onDelete={() => deleteEvent(event.id)}
-                    />
-                  </div>
-                ))}
-              </CollapsibleContent>
-            </Collapsible>
+          <div className="fixed bottom-20 left-0 right-0 px-4 md:px-8 z-10">
+            <div className="max-w-lg mx-auto">
+              <Collapsible 
+                open={showCompletedEvents} 
+                onOpenChange={setShowCompletedEvents}
+                className="bg-[#1a1f2c]/95 border border-[#e8c28222] rounded-lg shadow-lg backdrop-blur-sm"
+              >
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-[#e8c282] hover:text-[#edd6ae]">
+                  <span>Completed Events ({completedEvents.length})</span>
+                  <span>{showCompletedEvents ? "Show Less" : "Show More"}</span>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent className="px-4 pb-4 space-y-2 max-h-[40vh] overflow-y-auto">
+                  {completedEvents.map((event) => (
+                    <div key={event.id} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
+                      <ScheduleItem 
+                        time={format(new Date(event.time), "h:mm a")}
+                        title={event.title}
+                        description={event.description}
+                        person={event.person}
+                        color={event.color}
+                        icon={event.icon}
+                        progress={100}
+                        timeLeft="Completed"
+                        location={event.location}
+                        completed={true}
+                        onEdit={() => handleEditEvent(event)}
+                        onDelete={() => deleteEvent(event.id)}
+                      />
+                    </div>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           </div>
         )}
         
