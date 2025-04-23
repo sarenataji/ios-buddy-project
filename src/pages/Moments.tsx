@@ -9,13 +9,21 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { MomentsSection } from "@/components/MomentsSection";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const Moments = () => {
   const { addMoment } = useMoment();
   const [isAddingMoment, setIsAddingMoment] = useState(false);
   const [newMomentTitle, setNewMomentTitle] = useState("");
+  const [newMomentDate, setNewMomentDate] = useState<Date | undefined>(new Date());
   const { toast } = useToast();
 
   const handleAddMoment = () => {
@@ -28,12 +36,22 @@ const Moments = () => {
       return;
     }
 
+    if (!newMomentDate) {
+      toast({
+        title: "Date required",
+        description: "Please select a date for your moment",
+        variant: "destructive",
+      });
+      return;
+    }
+
     addMoment({
       title: newMomentTitle,
-      startDate: new Date(),
+      startDate: newMomentDate,
     });
 
     setNewMomentTitle("");
+    setNewMomentDate(new Date());
     setIsAddingMoment(false);
     
     toast({
@@ -97,6 +115,29 @@ const Moments = () => {
                   placeholder="Enter moment title"
                   className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">Start Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start bg-[#161213] border-[#e8c28244] text-[#edd6ae] hover:bg-[#e8c28215]">
+                      {newMomentDate ? (
+                        format(newMomentDate, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-[#1a1f2c] border border-[#e8c28233]">
+                    <Calendar
+                      mode="single"
+                      selected={newMomentDate}
+                      onSelect={setNewMomentDate}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <Button
                 onClick={handleAddMoment}
