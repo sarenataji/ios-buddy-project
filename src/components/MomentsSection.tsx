@@ -2,7 +2,7 @@
 import React from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
-import { Calendar, Edit } from "lucide-react";
+import { Calendar } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,10 +21,13 @@ export const MomentsSection = () => {
   const [editDate, setEditDate] = useState("");
   const { toast } = useToast();
 
-  const handleEdit = (moment: any) => {
-    setEditingMoment(moment.id);
-    setEditTitle(moment.title);
-    setEditDate(new Date(moment.startDate).toISOString().split('T')[0]);
+  const handleEdit = (id: number) => {
+    const moment = moments.find(m => m.id === id);
+    if (moment) {
+      setEditingMoment(id);
+      setEditTitle(moment.title);
+      setEditDate(new Date(moment.startDate).toISOString().split('T')[0]);
+    }
   };
 
   const handleSave = () => {
@@ -65,19 +68,13 @@ export const MomentsSection = () => {
   return (
     <div className="space-y-6">
       {moments.map((moment) => (
-        <div key={moment.id} className="group relative">
+        <div key={moment.id}>
           <ElapsedTimeDisplay
+            id={moment.id}
             title={moment.title}
             startDate={moment.startDate}
+            onEdit={handleEdit}
           />
-          <button
-            onClick={() => handleEdit(moment)}
-            className="absolute top-6 right-6 p-2 opacity-0 group-hover:opacity-100 
-              transition-opacity duration-300 rounded-full 
-              bg-[#e8c28215] hover:bg-[#e8c28222]"
-          >
-            <Edit className="w-4 h-4 text-[#e8c282]" />
-          </button>
         </div>
       ))}
 
