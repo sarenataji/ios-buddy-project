@@ -1,13 +1,18 @@
 
 import React from "react";
 import { Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface TimelineEvent {
+  time: Date;
+  label: string;
+  completed?: boolean;
+  color?: string;
+}
 
 interface TimelineProgressProps {
   currentTime: Date;
-  events: {
-    time: Date;
-    label: string;
-  }[];
+  events: TimelineEvent[];
 }
 
 const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
@@ -30,6 +35,17 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
     )
   );
   
+  // Calculate event positions on timeline
+  const calculateEventPosition = (time: Date) => {
+    return Math.max(
+      0,
+      Math.min(
+        100,
+        ((time.getTime() - startOfDay.getTime()) / totalDayDuration) * 100
+      )
+    );
+  };
+  
   // Format hour display
   const formatHour = (date: Date) => {
     let hours = date.getHours();
@@ -51,7 +67,7 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
     <div className="relative w-full my-4 px-4">
       {/* Current time indicator */}
       <div 
-        className="absolute top-0 h-full flex flex-col items-center"
+        className="absolute top-0 h-full flex flex-col items-center z-20"
         style={{ left: `${currentPosition}%` }}
       >
         <div className="bg-[#e8c282] text-[#1a1f2c] px-3 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md">
@@ -60,6 +76,27 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
         </div>
         <div className="h-full w-0.5 bg-[#e8c282] opacity-70"></div>
       </div>
+      
+      {/* Event markers on timeline */}
+      {sortedEvents.map((event, index) => {
+        const position = calculateEventPosition(event.time);
+        return (
+          <div
+            key={index}
+            className="absolute z-10"
+            style={{ left: `${position}%`, top: "8px" }}
+            title={`${event.label} - ${event.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+          >
+            <div 
+              className={cn(
+                "w-3 h-3 rounded-full border-2 border-[#1a1f2c] transform -translate-x-1/2",
+                event.completed ? "opacity-60" : ""
+              )}
+              style={{ backgroundColor: event.color || "#e8c282" }}
+            />
+          </div>
+        );
+      })}
       
       {/* Timeline hours */}
       <div className="flex justify-between mb-2 pt-8">
