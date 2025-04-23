@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
-import { Plus, ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { 
