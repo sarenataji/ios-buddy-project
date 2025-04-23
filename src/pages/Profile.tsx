@@ -76,6 +76,7 @@ function GlowingLifetimeBar({
     seconds: number;
   };
 }) {
+  // Adjusted for reference: years/months/weeks/days/hours/minutes only
   const items = [
     { value: details.years, unit: "y" },
     { value: details.months, unit: "m" },
@@ -83,108 +84,111 @@ function GlowingLifetimeBar({
     { value: details.days, unit: "d" },
     { value: details.hours, unit: "h" },
     { value: details.minutes, unit: "m" },
-    { value: details.seconds, unit: "s" },
   ];
   return (
-    <div
-      className="
-        w-full
-        flex flex-row items-center justify-center
-        px-3 py-2
-        rounded-[1.3rem]
-        bg-[#18151d]/76
-        border border-[#f2d6ad90]
-        shadow-[0_0_20px_2px_#e8c28244,0_2px_8px_0_#99774a22]
-        animate-glow3d
-        transition-all
-        backdrop-blur-[3px]
-        mx-auto
-        relative
-        overflow-visible
-      "
-      style={{
-        maxWidth: 540,
-        minHeight: "36px",
-        fontFamily: "Inter,sans-serif",
-        fontSize: "1.01rem",
-        letterSpacing: "0.07em",
-        borderWidth: 1.1,
-        boxShadow: `
-          0 0 12px 2px #EDD6AED0,
-          0 0 22px 4px #e8c28231,
-          0 0 30px 4px #b1915455,
-          0 0 0px 1px #edd6ae50 inset
-        `,
-        animation: "glowPulse 1.4s ease-in-out infinite alternate"
-      }}
-    >
-      <style>{`
-      @keyframes glowPulse {
-        0% {
-          box-shadow:
-            0 0 8px 2px #EDD6AE90,
-            0 0 15px 4px #e8c28211,
-            0 0 30px 4px #b1915411,
-            0 0 0px 1px #edd6ae50 inset;
+    <div className="w-full flex justify-center">
+      <div
+        className="
+          flex flex-row flex-wrap justify-center items-center
+          px-3 py-1.5
+          rounded-2xl
+          border border-[#d9c49636]
+          bg-[#161213]/80
+          shadow-[0_0_24px_0_#ead49f66,0_2px_8px_0_#dbc7a944]
+          mx-auto
+          relative
+          overflow-visible
+          animate-lifetime-glow
+          min-h-8
+          gap-x-2 gap-y-2
+        "
+        style={{
+          width: "100%",
+          maxWidth: 468,
+          minHeight: "34px",
+          fontFamily: "'Inter',sans-serif",
+          fontSize: "0.92rem",
+          letterSpacing: "0.07em",
+          borderWidth: 1.2,
+          boxShadow: `
+            0 0 8px 1px #EDD6AE80,
+            0 0 12px 2px #f2e5ca52,
+            0 0 36px 8px #edd6ae66,
+            0 0 0px 1px #edd6ae22 inset
+          `,
+          animation: "lifetimeGlow 2.1s cubic-bezier(.57,.8,.46,1.12) infinite alternate",
+        }}
+      >
+        <style>{`
+        @keyframes lifetimeGlow {
+          0% {
+            box-shadow:
+              0 0 8px 1px #EDD6AE52,
+              0 0 18px 3px #e8c28218,
+              0 0 20px 4px #b1915414,
+              0 0 0px 1px #edd6ae30 inset;
+          }
+          100% {
+            box-shadow:
+              0 0 18px 3px #e5cfada0,
+              0 0 36px 8px #e8c28233,
+              0 0 44px 12px #b1915477,
+              0 0 0px 1px #edd6ae66 inset;
+          }
         }
-        100% {
-          box-shadow:
-            0 0 20px 5px #e5cfadAA,
-            0 0 35px 8px #e8c28233,
-            0 0 44px 10px #b1915477,
-            0 0 0px 1px #edd6ae80 inset;
-        }
-      }
-      `}</style>
-      <span className="flex flex-row items-center justify-center gap-x-4 w-full">
-        {items.map((entry, i) => (
-          <span
-            key={entry.unit + i}
-            className={`
-              flex flex-row items-baseline
-              text-[#dec897]
-              font-extralight
-              text-[1.03rem] md:text-[1.10rem]
-              select-none
-              whitespace-nowrap
-              drop-shadow-[0_1px_1px_#7e5a3937]
-              px-[3px]
-              leading-tight
-              ${i === 0 ? "pl-1" : ""}
-              ${i === items.length - 1 ? "pr-1" : ""}
-            `}
-            style={{
-              fontWeight: i <= 2 ? 500 : 300,
-              fontFamily: "Inter, system-ui, sans-serif"
-            }}
-          >
+        `}</style>
+        <span className="flex flex-row flex-wrap items-center justify-center w-full gap-x-1 gap-y-1">
+          {items.map((entry, i) => (
             <span
+              key={entry.unit + i}
               className={`
-                ${i <= 2 ? "font-semibold text-[#ecd6ae]" : "font-light text-[#edceaebb]"}
-                px-[0.5px]
-                mr-px
+                flex flex-row items-baseline
+                font-light
+                text-[#eedaad]
+                text-[0.99rem] md:text-[1.08rem]
+                whitespace-nowrap
+                select-none
+                px-[2px]
+                leading-tight
+                ${i === 0 ? "pl-1" : ""}
+                ${i === items.length - 1 ? "pr-1" : ""}
               `}
-              style={{ fontWeight: i <= 2 ? 500 : 300 }}
+              style={{
+                fontWeight: i <= 2 ? 400 : 300,
+                fontFamily: "'Inter', system-ui, sans-serif",
+                letterSpacing: "0.04em",
+                lineHeight: "1.20",
+              }}
             >
-              {entry.value}
+              <span
+                className={`
+                  text-[1.06em]
+                  ${i <= 2 ? "font-medium text-[#ecd6ae]" : "font-light text-[#edceaebb]"}
+                  px-[0.5px]
+                  mr-px
+                `}
+                style={{ fontWeight: i <= 2 ? 400 : 300 }}
+              >
+                {entry.value}
+              </span>
+              <span
+                className={`
+                  text-[0.97em]
+                  font-thin
+                  text-[#ecd6aeaa]
+                  pl-0.5
+                `}
+                style={{ fontWeight: 300 }}
+              >
+                {entry.unit}
+              </span>
+              {i < items.length - 1 && (
+                <span className="mx-1 text-[#ecd6ae44] text-[1.18em] font-extralight" style={{fontWeight:200}}>·</span>
+              )}
             </span>
-            <span
-              className={`
-                text-[0.98rem] md:text-[1.03rem]
-                font-thin
-                text-[#ecd6aeac]
-                pl-0.5
-              `}
-              style={{ fontWeight: 300 }}
-            >
-              {entry.unit}
-            </span>
-            {i < items.length - 1 && (
-              <span className="mx-1 text-[#ecd6ae55] text-[1.2rem] font-light">·</span>
-            )}
-          </span>
-        ))}
-      </span>
+          ))}
+        </span>
+      </div>
     </div>
   );
 }
