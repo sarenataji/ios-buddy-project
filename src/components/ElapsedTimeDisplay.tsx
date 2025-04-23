@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
+import { Clock, Pencil, Calendar, MapPin, Info, StickyNote, MoveUp, MoveDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +7,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { format, isThisYear, differenceInYears } from "date-fns";
+import { Button } from "@/components/ui/button";
 
 interface ElapsedTimeDisplayProps {
   title: string;
   startDate: Date;
   onClick?: () => void;
   onEdit?: (id: number) => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
   id?: number;
   location?: string;
   description?: string;
@@ -25,9 +27,10 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   startDate, 
   onClick,
   onEdit,
+  onMoveUp,
+  onMoveDown,
   id,
   location,
-  description,
   note
 }) => {
   const [elapsed, setElapsed] = useState({ years: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -63,113 +66,97 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
     <>
       <div 
         onClick={() => setShowDetails(true)}
-        className="w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
-          hover:bg-[#161213] transition-all duration-300 group relative overflow-hidden
+        className="relative w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
+          hover:bg-[#161213] transition-all duration-300 group
           shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]
           cursor-pointer backdrop-blur-sm"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#e8c28205] to-transparent 
-          translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="text-[#e8c282] w-5 h-5" />
-            <span className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold">{title}</span>
-          </div>
-          
-          <div className="inline-flex items-baseline gap-3 text-[#edd6ae]">
-            {elapsed.years > 0 && (
-              <TimeUnit value={elapsed.years} unit="years" />
-            )}
-            <TimeUnit value={elapsed.days} unit="days" />
-            <TimeUnit value={elapsed.hours} unit="hours" />
-            <TimeUnit value={elapsed.minutes} unit="minutes" />
-            <TimeUnit value={elapsed.seconds} unit="seconds" />
-          </div>
+        <div className="flex justify-between items-start mb-4">
+          <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
+          {(onMoveUp || onMoveDown) && (
+            <div className="flex gap-2">
+              {onMoveUp && (
+                <Button
+                  onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
+                >
+                  <MoveUp className="h-4 w-4 text-[#e8c282]" />
+                </Button>
+              )}
+              {onMoveDown && (
+                <Button
+                  onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
+                >
+                  <MoveDown className="h-4 w-4 text-[#e8c282]" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
-        
-        {onEdit && id !== undefined && (
-          <button
-            onClick={handleEdit}
-            className="absolute top-6 right-6 p-2 opacity-70 group-hover:opacity-100 
-              transition-opacity duration-300 rounded-full 
-              bg-[#e8c28215] hover:bg-[#e8c28222]"
-            aria-label="Edit moment"
-          >
-            <Pencil className="w-4 h-4 text-[#e8c282]" />
-          </button>
-        )}
+
+        <div className="grid grid-cols-5 gap-4 mt-6 text-center">
+          {elapsed.years > 0 && (
+            <TimeUnit value={elapsed.years} unit="years" />
+          )}
+          <TimeUnit value={elapsed.days} unit="days" />
+          <TimeUnit value={elapsed.hours} unit="hours" />
+          <TimeUnit value={elapsed.minutes} unit="minutes" />
+          <TimeUnit value={elapsed.seconds} unit="seconds" />
+        </div>
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-xl p-6
-          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-y-auto max-h-[90vh] w-[95vw] max-w-lg">
-          <DialogHeader className="relative z-10">
-            <DialogTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-serif">
-              <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
-              Moment Details
-            </DialogTitle>
+        <DialogContent className="bg-[#161213] border-0 p-8 rounded-lg max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm mb-4">title</DialogTitle>
           </DialogHeader>
           
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-6">
-            {elapsed.years > 0 && (
-              <TimeUnit value={elapsed.years} unit="years" />
-            )}
-            <TimeUnit value={elapsed.days} unit="days" />
-            <TimeUnit value={elapsed.hours} unit="hours" />
-            <TimeUnit value={elapsed.minutes} unit="minutes" />
-            <TimeUnit value={elapsed.seconds} unit="seconds" />
-          </div>
+          <div className="space-y-8">
+            <div className="text-[#edd6ae] text-2xl font-serif">{title}</div>
 
-          <div className="relative z-10 mt-6 space-y-6">
-            <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
-              <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Title</div>
-              <div className="text-xl font-serif tracking-wide text-[#edd6ae]">{title}</div>
-            </div>
-            
-            <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
-              <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Start Date & Time</div>
+            <div className="space-y-2">
+              <div className="text-[#e8c282] lowercase tracking-wider text-sm">start date & time</div>
               <div className="flex items-center gap-2 text-[#edd6ae]">
-                <Calendar className="w-4 h-4 opacity-70" />
-                <span>
-                  {format(startDate, "MMMM d, yyyy 'at' p")}
-                </span>
+                <Calendar className="w-5 h-5 opacity-70" />
+                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
               </div>
             </div>
 
             {location && (
-              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
-                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Location</div>
+              <div className="space-y-2">
+                <div className="text-[#e8c282] lowercase tracking-wider text-sm">location</div>
                 <div className="flex items-center gap-2 text-[#edd6ae]">
-                  <MapPin className="w-4 h-4 opacity-70" />
+                  <MapPin className="w-5 h-5 opacity-70" />
                   <span>{location}</span>
                 </div>
               </div>
             )}
 
             {note && (
-              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
-                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Memories</div>
+              <div className="space-y-2">
+                <div className="text-[#e8c282] lowercase tracking-wider text-sm">memories</div>
                 <div className="flex items-start gap-2 text-[#edd6ae]">
-                  <StickyNote className="w-4 h-4 opacity-70 mt-1" />
-                  <span className="whitespace-pre-wrap">{note}</span>
+                  <StickyNote className="w-5 h-5 opacity-70 mt-1" />
+                  <span>{note}</span>
                 </div>
               </div>
             )}
-            
-            <div className="mt-4 text-center">
+
+            <div className="flex justify-center pt-4">
               {onEdit && id !== undefined && (
-                <button
-                  onClick={(e) => {
-                    setShowDetails(false);
-                    handleEdit(e);
-                  }}
-                  className="px-4 py-2 bg-[#e8c28222] hover:bg-[#e8c28233] rounded-md text-[#e8c282] 
-                    transition-colors duration-300 inline-flex items-center gap-2"
+                <Button
+                  onClick={handleEdit}
+                  variant="outline"
+                  className="bg-[#161213] border border-[#e8c28244] text-[#e8c282] hover:bg-[#e8c28215]"
                 >
-                  <Pencil className="w-4 h-4" />
+                  <Pencil className="w-4 h-4 mr-2" />
                   Edit this moment
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -180,11 +167,11 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 };
 
 const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
-  <div className="flex flex-col items-center">
-    <div className="text-xl sm:text-2xl font-serif font-bold text-[#edd6ae]">
+  <div className="text-center">
+    <div className="text-2xl font-serif font-bold text-[#edd6ae]">
       {value.toString().padStart(2, '0')}
     </div>
-    <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#e8c28288]">
+    <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
       {unit}
     </div>
   </div>
