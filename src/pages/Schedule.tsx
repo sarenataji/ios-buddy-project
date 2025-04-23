@@ -1,27 +1,20 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
-import { Plus, ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "@/components/ui/accordion";
-import ScheduleItem from "@/components/ScheduleItem";
-import TimelineProgress from "@/components/TimelineProgress";
-import CountdownTimer from "@/components/CountdownTimer";
-import CongratsAnimation from "@/components/CongratsAnimation";
+import { Clock } from "lucide-react";
 import { useSchedule } from "@/contexts/ScheduleContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import EventForm from "@/components/EventForm";
+import CongratsAnimation from "@/components/CongratsAnimation";
+import CountdownTimer from "@/components/CountdownTimer";
+import ScheduleHeader from "@/components/ScheduleHeader";
+import EventListSection from "@/components/EventListSection";
+import TimelineSection from "@/components/TimelineSection";
+import ActionButtons from "@/components/ActionButtons";
 import { 
   getCurrentEvent, 
-  getNextEvent, 
+  getNextEvent,
   calculateEventProgress,
   getEventEndTime,
   type Event 
@@ -252,7 +245,7 @@ const Schedule = () => {
     }
   };
   
-  const navigateDay = (direction: 'prev' | 'next') => {
+  const handleNavigateDay = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
     if (direction === 'prev') {
       newDate.setDate(newDate.getDate() - 1);
@@ -274,142 +267,31 @@ const Schedule = () => {
   return (
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8">
       <div className="max-w-lg mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigateDay('prev')}
-            className="text-[#e8c282] hover:text-[#edd6ae] hover:bg-[#e8c28222]"
-          >
-            <ArrowLeft size={20} />
-          </Button>
-          
-          <h1 className="text-xl text-[#edd6ae] font-serif">
-            {format(currentDate, "EEEE, d MMMM")}
-          </h1>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigateDay('next')}
-            className="text-[#e8c282] hover:text-[#edd6ae] hover:bg-[#e8c28222]"
-          >
-            <ArrowRight size={20} />
-          </Button>
-        </div>
-        
-        <div className="text-center mb-4 text-[#e8c282aa] text-sm">
-          antalya, turkey
-        </div>
-        
-        <div className="mb-8 p-4 bg-[#1a1f2c]/80 rounded-lg border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]">
-          {currentEvent ? (
-            <>
-              <div className="text-[#e8c282] text-sm mb-2">
-                <span className="font-medium">Current Event:</span> {currentEvent.title}
-              </div>
-              <CountdownTimer targetDate={getEventEndTime(currentEvent)} />
-            </>
-          ) : nextEvent ? (
-            <>
-              <div className="text-[#e8c282] text-sm mb-2">
-                <span className="font-medium">Next Event:</span> {nextEvent.title}
-              </div>
-              <CountdownTimer targetDate={new Date(nextEvent.time)} />
-            </>
-          ) : (
-            <div className="text-[#e8c282] text-center py-2">No upcoming events {isToday(currentDate) ? "today" : "on this day"}</div>
-          )}
-        </div>
+        <ScheduleHeader 
+          currentDate={currentDate}
+          onNavigateDay={handleNavigateDay}
+        />
         
         <div ref={timelineRef} className="transition-all duration-300">
-          <TimelineProgress 
-            currentTime={currentTime} 
-            events={timelineEvents}
-            onEventClick={handleEventSelect}
+          <TimelineSection
+            currentTime={currentTime}
+            currentEvent={currentEvent}
+            nextEvent={nextEvent}
+            timelineEvents={timelineEvents}
+            onEventSelect={handleEventSelect}
           />
         </div>
         
-        <div className="mt-6 space-y-4">
-          {activeEvents.length === 0 && (
-            <div className="text-center text-[#e8c282aa] py-6">
-              No active events for this day
-            </div>
-          )}
-          
-          {activeEvents.map((event) => {
-            const { progress, timeLeft } = calculateEventProgress(event, currentTime);
-            const isCurrentEventItem = currentEvent && currentEvent.id === event.id;
-            
-            return (
-              <ScheduleItem 
-                key={event.id}
-                time={format(new Date(event.time), "h:mm a")}
-                title={event.title}
-                description={event.description}
-                person={event.person}
-                color={event.color}
-                icon={event.icon}
-                progress={progress}
-                timeLeft={timeLeft}
-                location={event.location}
-                isCurrent={isCurrentEventItem}
-                onEdit={() => handleEditEvent(event)}
-                onDelete={() => deleteEvent(event.id)}
-                onComplete={() => toggleEventCompletion(event.id)}
-              />
-            );
-          })}
-        </div>
+        <EventListSection 
+          activeEvents={activeEvents}
+          completedEvents={completedEvents}
+          onEventEdit={handleEditEvent}
+          onEventDelete={deleteEvent}
+          onEventComplete={toggleEventCompletion}
+          currentEvent={currentEvent}
+        />
         
-        {completedEvents.length > 0 && (
-          <div className="fixed bottom-20 left-0 right-0 px-4 md:px-8 z-10">
-            <div className="max-w-lg mx-auto">
-              <Accordion 
-                type="single" 
-                collapsible
-                className="bg-[#1a1f2c]/95 border border-[#e8c28222] rounded-lg shadow-lg backdrop-blur-sm"
-              >
-                <AccordionItem value="completed-events" className="border-none">
-                  <AccordionTrigger className="px-4 py-3 text-[#e8c282] hover:text-[#edd6ae] hover:no-underline">
-                    <div className="flex items-center justify-between w-full">
-                      <span>Completed Events ({completedEvents.length})</span>
-                      <span className="flex items-center">
-                        {showCompletedEvents ? (
-                          <>Show Less <ChevronUp className="ml-1 h-4 w-4" /></>
-                        ) : (
-                          <>Show More <ChevronDown className="ml-1 h-4 w-4" /></>
-                        )}
-                      </span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4">
-                    <div className="max-h-[40vh] overflow-y-auto space-y-2">
-                      {completedEvents.map((event) => (
-                        <div key={event.id} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
-                          <ScheduleItem 
-                            time={format(new Date(event.time), "h:mm a")}
-                            title={event.title}
-                            description={event.description}
-                            person={event.person}
-                            color={event.color}
-                            icon={event.icon}
-                            progress={100}
-                            timeLeft="Completed"
-                            location={event.location}
-                            completed={true}
-                            onEdit={() => handleEditEvent(event)}
-                            onDelete={() => deleteEvent(event.id)}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-          </div>
-        )}
+        <ActionButtons onAddEvent={() => setIsAddEventSheetOpen(true)} />
         
         {showCongratsAnimation && hasCompletedAllEvents && (
           <CongratsAnimation />
@@ -466,16 +348,6 @@ const Schedule = () => {
             )}
           </DialogContent>
         </Dialog>
-        
-        <div className="fixed bottom-6 right-6 z-10">
-          <Button
-            size="icon"
-            onClick={() => setIsAddEventSheetOpen(true)}
-            className="h-14 w-14 rounded-full bg-[#e8c282] hover:bg-[#edd6ae] text-[#1a1f2c] shadow-lg"
-          >
-            <Plus size={24} />
-          </Button>
-        </div>
       </div>
     </div>
   );
