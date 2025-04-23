@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface Moment {
@@ -7,6 +6,7 @@ interface Moment {
   startDate: Date;
   location?: string;
   description?: string;
+  note?: string;
   isPredefined?: boolean;
 }
 

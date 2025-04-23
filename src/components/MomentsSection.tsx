@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
@@ -24,6 +23,7 @@ export const MomentsSection = () => {
   const [editDate, setEditDate] = useState("");
   const [editTime, setEditTime] = useState("");
   const [editLocation, setEditLocation] = useState("");
+  const [editNote, setEditNote] = useState("");
   const { toast } = useToast();
 
   const handleEdit = (id: number) => {
@@ -31,15 +31,10 @@ export const MomentsSection = () => {
     if (moment) {
       setEditingMoment(id);
       setEditTitle(moment.title);
-      
-      // Format the date to match the input type="date" format (YYYY-MM-DD)
       setEditDate(format(new Date(moment.startDate), "yyyy-MM-dd"));
-      
-      // Format the time to match the input type="time" format (HH:MM)
       setEditTime(format(new Date(moment.startDate), "HH:mm"));
-      
-      // Set location if it exists
       setEditLocation(moment.location || "");
+      setEditNote(moment.note || "");
     }
   };
 
@@ -64,7 +59,6 @@ export const MomentsSection = () => {
 
     const momentToUpdate = moments.find(m => m.id === editingMoment);
     if (momentToUpdate) {
-      // Create a new date object from the date and time inputs
       const [year, month, day] = editDate.split('-').map(Number);
       const [hours, minutes] = editTime ? editTime.split(':').map(Number) : [0, 0];
       
@@ -75,6 +69,7 @@ export const MomentsSection = () => {
         title: editTitle,
         startDate: updatedDate,
         location: editLocation.trim() || undefined,
+        note: editNote.trim() || undefined,
       });
       
       toast({
@@ -111,6 +106,7 @@ export const MomentsSection = () => {
             startDate={moment.startDate}
             location={moment.location}
             description={moment.description}
+            note={moment.note}
             onEdit={handleEdit}
           />
         </div>
@@ -119,7 +115,7 @@ export const MomentsSection = () => {
       <Dialog open={editingMoment !== null} onOpenChange={(open) => {
         if (!open) handleCancel();
       }}>
-        <DialogContent className="bg-[#1a1f2c] border border-[#e8c28233] text-[#edd6ae]">
+        <DialogContent className="bg-[#2a1f1a] border border-[#e8c28233] text-[#edd6ae]">
           <DialogHeader>
             <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">Edit Moment</DialogTitle>
             <DialogDescription className="text-center text-[#e8c28288]">
@@ -169,9 +165,19 @@ export const MomentsSection = () => {
                 />
               </div>
             </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">
+                Note <span className="text-[#e8c28277]">(optional)</span>
+              </label>
+              <textarea
+                value={editNote}
+                onChange={(e) => setEditNote(e.target.value)}
+                className="w-full bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae] rounded-md p-3 min-h-[100px]"
+                placeholder="Add a note about this moment..."
+              />
+            </div>
             
             <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
-              {/* Delete button for non-predefined moments */}
               {editingMoment !== null && moments.find(m => m.id === editingMoment)?.isPredefined !== true && (
                 <Button
                   onClick={handleDeleteMoment}

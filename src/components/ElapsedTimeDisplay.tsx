@@ -1,13 +1,13 @@
+
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil, Calendar, MapPin, Info } from "lucide-react";
+import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { format, isThisYear } from "date-fns";
+import { format, isThisYear, differenceInYears } from "date-fns";
 
 interface ElapsedTimeDisplayProps {
   title: string;
@@ -17,6 +17,7 @@ interface ElapsedTimeDisplayProps {
   id?: number;
   location?: string;
   description?: string;
+  note?: string;
 }
 
 const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({ 
@@ -26,22 +27,24 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   onEdit,
   id,
   location,
-  description
+  description,
+  note
 }) => {
-  const [elapsed, setElapsed] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [elapsed, setElapsed] = useState({ years: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const calculateElapsed = () => {
       const now = new Date();
       const diff = now.getTime() - startDate.getTime();
+      const years = differenceInYears(now, startDate);
       
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
-      setElapsed({ days, hours, minutes, seconds });
+      setElapsed({ years, days, hours, minutes, seconds });
     };
 
     calculateElapsed();
@@ -60,8 +63,8 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
     <>
       <div 
         onClick={() => setShowDetails(true)}
-        className="w-full text-left p-6 bg-[#1a1f2c]/85 border border-[#e8c28244] rounded-lg 
-          hover:bg-[#1a1f2c] transition-all duration-300 group relative overflow-hidden
+        className="w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
+          hover:bg-[#161213] transition-all duration-300 group relative overflow-hidden
           shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]
           cursor-pointer backdrop-blur-sm"
       >
@@ -97,27 +100,27 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-lg
-          bg-[#edd6ae] border border-[#e8c28255] text-[#1a1f2c] rounded-xl
+          bg-[#2a1f1a] border border-[#e8c28255] text-[#edd6ae] rounded-xl
           shadow-[0_8px_32px_rgba(232,194,130,0.2)]
           overflow-hidden backdrop-blur-md">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#edd6ae] to-[#e8c282] opacity-50 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2a1f1a] to-[#161213] opacity-95 pointer-events-none" />
           
           <DialogHeader className="relative z-10">
-            <DialogTitle className="text-[#1a1f2c] text-center text-2xl tracking-wide font-serif">
+            <DialogTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-serif">
               <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
               Moment Details
             </DialogTitle>
           </DialogHeader>
           
           <div className="relative z-10 mt-6 space-y-6">
-            <div className="space-y-2 bg-white/20 p-4 rounded-lg backdrop-blur-sm border border-white/30">
-              <div className="text-sm font-medium text-[#1a1f2c]/70 tracking-wider lowercase">Title</div>
-              <div className="text-xl font-serif tracking-wide text-[#1a1f2c]">{title}</div>
+            <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+              <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Title</div>
+              <div className="text-xl font-serif tracking-wide text-[#edd6ae]">{title}</div>
             </div>
             
-            <div className="space-y-2 bg-white/20 p-4 rounded-lg backdrop-blur-sm border border-white/30">
-              <div className="text-sm font-medium text-[#1a1f2c]/70 tracking-wider lowercase">Start Date & Time</div>
-              <div className="flex items-center gap-2 text-[#1a1f2c]">
+            <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+              <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Start Date & Time</div>
+              <div className="flex items-center gap-2 text-[#edd6ae]">
                 <Calendar className="w-4 h-4 opacity-70" />
                 <span>
                   {format(startDate, isThisYear(startDate) ? "MMMM d 'at' p" : "MMMM d, yyyy 'at' p")}
@@ -126,27 +129,38 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
             </div>
 
             {location && (
-              <div className="space-y-2 bg-white/20 p-4 rounded-lg backdrop-blur-sm border border-white/30">
-                <div className="text-sm font-medium text-[#1a1f2c]/70 tracking-wider lowercase">Location</div>
-                <div className="flex items-center gap-2 text-[#1a1f2c]">
+              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Location</div>
+                <div className="flex items-center gap-2 text-[#edd6ae]">
                   <MapPin className="w-4 h-4 opacity-70" />
                   <span>{location}</span>
                 </div>
               </div>
             )}
 
+            {note && (
+              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Note</div>
+                <div className="flex items-start gap-2 text-[#edd6ae]">
+                  <StickyNote className="w-4 h-4 opacity-70 mt-1" />
+                  <span className="whitespace-pre-wrap">{note}</span>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-4 gap-3">
               {[
+                ...(elapsed.years > 0 ? [{ value: elapsed.years, label: "Years" }] : []),
                 { value: elapsed.days, label: "Days" },
                 { value: elapsed.hours, label: "Hours" },
                 { value: elapsed.minutes, label: "Minutes" },
                 { value: elapsed.seconds, label: "Seconds" }
-              ].map((item, index) => (
-                <div key={index} className="space-y-1 bg-white/20 p-3 rounded-lg text-center backdrop-blur-sm border border-white/30">
-                  <div className="text-2xl font-serif font-bold text-[#1a1f2c]">
+              ].slice(0, 4).map((item, index) => (
+                <div key={index} className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                  <div className="text-2xl font-serif font-bold text-[#edd6ae]">
                     {item.value.toString().padStart(2, '0')}
                   </div>
-                  <div className="text-xs uppercase tracking-wider text-[#1a1f2c]/60">
+                  <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
                     {item.label}
                   </div>
                 </div>
