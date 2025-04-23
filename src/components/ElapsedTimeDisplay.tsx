@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
@@ -90,7 +91,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
         {onEdit && id !== undefined && (
           <button
             onClick={handleEdit}
-            className="absolute top-6 right-6 p-2 opacity-0 group-hover:opacity-100 
+            className="absolute top-6 right-6 p-2 opacity-70 group-hover:opacity-100 
               transition-opacity duration-300 rounded-full 
               bg-[#e8c28215] hover:bg-[#e8c28222]"
             aria-label="Edit moment"
@@ -190,6 +191,22 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
                   Seconds
                 </div>
               </div>
+            </div>
+            
+            <div className="mt-4 text-center">
+              {onEdit && id !== undefined && (
+                <button
+                  onClick={(e) => {
+                    setShowDetails(false);
+                    handleEdit(e);
+                  }}
+                  className="px-4 py-2 bg-[#e8c28222] hover:bg-[#e8c28233] rounded-md text-[#e8c282] 
+                    transition-colors duration-300 inline-flex items-center gap-2"
+                >
+                  <Pencil className="w-4 h-4" />
+                  Edit this moment
+                </button>
+              )}
             </div>
           </div>
         </DialogContent>
