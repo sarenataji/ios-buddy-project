@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { format, addDays, isToday, isPast, isFuture, isWithinInterval } from "date-fns";
 import { Plus, ArrowLeft, ArrowRight, MapPin, Check, Repeat } from "lucide-react";
@@ -66,7 +65,6 @@ const WEEKDAYS = [
   "Thursday", "Friday", "Saturday"
 ];
 
-// Track if all events are completed
 interface Event {
   id: number;
   time: Date;
@@ -121,19 +119,16 @@ const Schedule = () => {
   const { toast } = useToast();
   const timelineRef = useRef<HTMLDivElement>(null);
   
-  // Calculate if all events for the current day are completed
   const hasCompletedAllEvents = allEventsCompletedForDate(currentDate);
   const dateEvents = getEventsForDate(currentDate);
   const hasEvents = dateEvents.length > 0;
   
-  // Check for congratulations scenario
   useEffect(() => {
     if (hasCompletedAllEvents && hasEvents && isToday(currentDate)) {
       setShowCongratsAnimation(true);
     }
   }, [hasCompletedAllEvents, hasEvents, currentDate]);
   
-  // Update current time every minute
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
@@ -142,7 +137,6 @@ const Schedule = () => {
     return () => clearInterval(interval);
   }, []);
   
-  // Function to navigate to previous/next day with animation
   const navigateDay = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
     if (direction === 'prev') {
@@ -152,7 +146,6 @@ const Schedule = () => {
     }
     setCurrentDate(newDate);
     
-    // Apply animation class
     if (timelineRef.current) {
       timelineRef.current.classList.add(direction === 'prev' ? 'animate-slide-out-right' : 'animate-slide-in-right');
       setTimeout(() => {
@@ -163,44 +156,10 @@ const Schedule = () => {
     }
   };
   
-  // Filter completed and active events
   const completedEvents = dateEvents.filter(event => event.completed);
   const activeEvents = dateEvents.filter(event => !event.completed);
   
-  // Get current event (if any)
-  const getCurrentEvent = () => {
-    const now = new Date();
-    return dateEvents.find(event => {
-      const eventStart = new Date(event.time);
-      const eventEnd = getEventEndTime(event);
-      return now >= eventStart && now <= eventEnd && !event.completed;
-    });
-  };
-  
-  // Get next upcoming event
-  const getNextEvent = () => {
-    const now = new Date();
-    const upcoming = dateEvents
-      .filter(event => new Date(event.time) > now && !event.completed)
-      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
-    return upcoming.length > 0 ? upcoming[0] : null;
-  };
-  
-  const currentEvent = getCurrentEvent();
-  const nextEvent = !currentEvent ? getNextEvent() : null;
-  
-  // Format events for timeline with markers
-  const timelineEvents = dateEvents.map(event => ({
-    time: new Date(event.time),
-    label: event.title,
-    completed: event.completed,
-    color: event.color,
-    icon: event.icon
-  }));
-  
-  // Get event end time
   const getEventEndTime = (event: Event) => {
-    // Parse event duration (assuming format like "8:30 - 9:00")
     const durationParts = event.description.split(' - ');
     const eventEnd = new Date(event.time);
     
@@ -212,18 +171,43 @@ const Schedule = () => {
       }
     }
     
-    // Default: add 1 hour if we can't parse end time
     eventEnd.setHours(eventEnd.getHours() + 1);
     return eventEnd;
   };
   
-  // Calculate progress and time left for each event
+  const getCurrentEvent = () => {
+    const now = new Date();
+    return dateEvents.find(event => {
+      const eventStart = new Date(event.time);
+      const eventEnd = getEventEndTime(event);
+      return now >= eventStart && now <= eventEnd && !event.completed;
+    });
+  };
+  
+  const getNextEvent = () => {
+    const now = new Date();
+    const upcoming = dateEvents
+      .filter(event => new Date(event.time) > now && !event.completed)
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    return upcoming.length > 0 ? upcoming[0] : null;
+  };
+  
+  const currentEvent = getCurrentEvent();
+  const nextEvent = !currentEvent ? getNextEvent() : null;
+  
+  const timelineEvents = dateEvents.map(event => ({
+    time: new Date(event.time),
+    label: event.title,
+    completed: event.completed,
+    color: event.color,
+    icon: event.icon
+  }));
+  
   const calculateEventProgress = (event: Event) => {
     const now = new Date();
     const eventStart = new Date(event.time);
     const eventEnd = getEventEndTime(event);
     
-    // Event hasn't started yet
     if (now < eventStart) {
       return {
         progress: 0,
@@ -231,7 +215,6 @@ const Schedule = () => {
       };
     }
     
-    // Event has ended
     if (now > eventEnd) {
       return {
         progress: 100,
@@ -239,7 +222,6 @@ const Schedule = () => {
       };
     }
     
-    // Event is in progress
     const totalDuration = eventEnd.getTime() - eventStart.getTime();
     const elapsed = now.getTime() - eventStart.getTime();
     const progress = Math.min(100, (elapsed / totalDuration) * 100);
@@ -250,7 +232,6 @@ const Schedule = () => {
     };
   };
   
-  // Format time left as "1h 30m" or "30m" or "5m left"
   const formatTimeLeft = (target: Date, current: Date) => {
     const diff = target.getTime() - current.getTime();
     if (diff <= 0) return "0m left";
@@ -276,7 +257,6 @@ const Schedule = () => {
     return result + " left";
   };
   
-  // Handle edit event
   const handleEditEvent = (event: Event) => {
     const eventToEdit = {
       ...event,
@@ -289,12 +269,10 @@ const Schedule = () => {
     setIsEditDialogOpen(true);
   };
   
-  // Handle toggle event completion
   const handleToggleComplete = (eventId: number) => {
     toggleEventCompletion(eventId);
   };
   
-  // Handle delete event
   const handleDeleteEvent = (eventId: number) => {
     deleteEvent(eventId);
     toast({
@@ -303,7 +281,6 @@ const Schedule = () => {
     });
   };
   
-  // Handle add new event
   const handleAddEvent = () => {
     if (!newEvent.title || !newEvent.startTime || !newEvent.endTime) {
       toast({
@@ -357,7 +334,6 @@ const Schedule = () => {
     });
   };
   
-  // Handle saving edited event
   const handleSaveEditedEvent = () => {
     if (editingEvent) {
       updateEvent(editingEvent);
@@ -369,7 +345,6 @@ const Schedule = () => {
     }
   };
   
-  // Handle weekday toggle for recurring events
   const handleWeekdayToggle = (day: string, isAdd: boolean, isEditing: boolean = false) => {
     if (isEditing && editingEvent) {
       const updatedEvent = { ...editingEvent };
@@ -404,7 +379,6 @@ const Schedule = () => {
   return (
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8">
       <div className="max-w-lg mx-auto">
-        {/* Header with navigation */}
         <div className="flex items-center justify-between mb-6">
           <Button
             variant="ghost"
@@ -429,12 +403,10 @@ const Schedule = () => {
           </Button>
         </div>
         
-        {/* Location indicator */}
         <div className="text-center mb-4 text-[#e8c282aa] text-sm">
           antalya, turkey
         </div>
         
-        {/* Next/Current event countdown */}
         <div className="mb-8 p-4 bg-[#1a1f2c]/80 rounded-lg border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]">
           {currentEvent ? (
             <>
@@ -455,7 +427,6 @@ const Schedule = () => {
           )}
         </div>
         
-        {/* Timeline with current time indicator and event markers */}
         <div ref={timelineRef} className="transition-all duration-300">
           <TimelineProgress 
             currentTime={currentTime} 
@@ -463,7 +434,6 @@ const Schedule = () => {
           />
         </div>
         
-        {/* Active events */}
         <div className="mt-6">
           {activeEvents.length === 0 && (
             <div className="text-center text-[#e8c282aa] py-6">
@@ -493,7 +463,6 @@ const Schedule = () => {
           })}
         </div>
         
-        {/* Completed events (collapsible) */}
         {completedEvents.length > 0 && (
           <div className="mt-8">
             <Collapsible 
@@ -528,12 +497,10 @@ const Schedule = () => {
           </div>
         )}
         
-        {/* Congratulations animation when all events completed */}
         {showCongratsAnimation && hasCompletedAllEvents && (
           <CongratsAnimation />
         )}
         
-        {/* Add new event sheet */}
         <Sheet open={isAddEventSheetOpen} onOpenChange={setIsAddEventSheetOpen}>
           <SheetContent className="bg-[#1a1f2c] border-l border-[#e8c28233] text-[#edd6ae] max-w-md w-full">
             <SheetHeader>
@@ -723,7 +690,6 @@ const Schedule = () => {
           </SheetContent>
         </Sheet>
         
-        {/* Edit event dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="bg-[#1a1f2c] border border-[#e8c28233] text-[#edd6ae] max-w-md">
             <DialogHeader>
@@ -900,7 +866,6 @@ const Schedule = () => {
           </DialogContent>
         </Dialog>
         
-        {/* Add new event button */}
         <div className="fixed bottom-6 right-6 z-10">
           <Button
             size="icon"
