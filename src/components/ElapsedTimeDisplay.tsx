@@ -74,10 +74,13 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="text-[#e8c282] w-5 h-5" />
-            <span className="text-[#e8c282] tracking-[0.2em] font-semibold uppercase text-sm">{title}</span>
+            <span className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold">{title}</span>
           </div>
           
           <div className="inline-flex items-baseline gap-6 text-[#edd6ae]">
+            {elapsed.years > 0 && (
+              <TimeUnit value={elapsed.years} unit="years" />
+            )}
             <TimeUnit value={elapsed.days} unit="days" />
             <TimeUnit value={elapsed.hours} unit="hours" />
             <TimeUnit value={elapsed.minutes} unit="minutes" />
@@ -99,12 +102,10 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-lg
-          bg-[#2a1f1a] border border-[#e8c28255] text-[#edd6ae] rounded-xl
-          shadow-[0_8px_32px_rgba(232,194,130,0.2)]
-          overflow-hidden backdrop-blur-md">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2a1f1a] to-[#161213] opacity-95 pointer-events-none" />
-          
+        <DialogContent className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] w-[90%] max-w-lg
+          bg-[#271f1a] border border-[#e8c28255] text-[#edd6ae] rounded-xl
+          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-auto
+          backdrop-blur-md">
           <DialogHeader className="relative z-10">
             <DialogTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-serif">
               <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
@@ -123,7 +124,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
               <div className="flex items-center gap-2 text-[#edd6ae]">
                 <Calendar className="w-4 h-4 opacity-70" />
                 <span>
-                  {format(startDate, isThisYear(startDate) ? "MMMM d 'at' p" : "MMMM d, yyyy 'at' p")}
+                  {format(startDate, "MMMM d, yyyy 'at' p")}
                 </span>
               </div>
             </div>
@@ -148,23 +149,49 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
               </div>
             )}
 
-            <div className="grid grid-cols-4 gap-3">
-              {[
-                ...(elapsed.years > 0 ? [{ value: elapsed.years, label: "Years" }] : []),
-                { value: elapsed.days, label: "Days" },
-                { value: elapsed.hours, label: "Hours" },
-                { value: elapsed.minutes, label: "Minutes" },
-                { value: elapsed.seconds, label: "Seconds" }
-              ].slice(0, 4).map((item, index) => (
-                <div key={index} className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+            <div className="grid grid-cols-5 gap-2">
+              {elapsed.years > 0 && (
+                <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
                   <div className="text-2xl font-serif font-bold text-[#edd6ae]">
-                    {item.value.toString().padStart(2, '0')}
+                    {elapsed.years.toString().padStart(2, '0')}
                   </div>
                   <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
-                    {item.label}
+                    Years
                   </div>
                 </div>
-              ))}
+              )}
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.days.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Days
+                </div>
+              </div>
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.hours.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Hours
+                </div>
+              </div>
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.minutes.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Minutes
+                </div>
+              </div>
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.seconds.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Seconds
+                </div>
+              </div>
             </div>
           </div>
         </DialogContent>
