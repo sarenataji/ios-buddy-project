@@ -31,8 +31,8 @@ export const MomentsSection = () => {
     if (moment) {
       setEditingMoment(id);
       setEditTitle(moment.title);
-      setEditDate(format(new Date(moment.startDate), "yyyy-MM-dd"));
-      setEditTime(format(new Date(moment.startDate), "HH:mm"));
+      setEditDate(format(moment.startDate, "yyyy-MM-dd"));
+      setEditTime(format(moment.startDate, "HH:mm"));
       setEditLocation(moment.location || "");
       setEditNote(moment.note || "");
     }
@@ -43,15 +43,6 @@ export const MomentsSection = () => {
       toast({
         title: "Title required",
         description: "Please enter a title for your moment",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!editDate) {
-      toast({
-        title: "Date required",
-        description: "Please enter a start date",
         variant: "destructive",
       });
       return;
@@ -115,7 +106,7 @@ export const MomentsSection = () => {
       <Dialog open={editingMoment !== null} onOpenChange={(open) => {
         if (!open) handleCancel();
       }}>
-        <DialogContent className="bg-[#2a1f1a] border border-[#e8c28233] text-[#edd6ae]">
+        <DialogContent className="bg-[#161213] border border-[#e8c28233] text-[#edd6ae]">
           <DialogHeader>
             <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">Edit Moment</DialogTitle>
             <DialogDescription className="text-center text-[#e8c28288]">
@@ -167,13 +158,13 @@ export const MomentsSection = () => {
             </div>
             <div>
               <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">
-                Note <span className="text-[#e8c28277]">(optional)</span>
+                Memories <span className="text-[#e8c28277]">(optional)</span>
               </label>
               <textarea
                 value={editNote}
                 onChange={(e) => setEditNote(e.target.value)}
                 className="w-full bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae] rounded-md p-3 min-h-[100px]"
-                placeholder="Add a note about this moment..."
+                placeholder="Add a memory or note about this moment..."
               />
             </div>
             

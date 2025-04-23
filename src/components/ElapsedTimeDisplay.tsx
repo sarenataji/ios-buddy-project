@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
@@ -103,9 +102,8 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] w-[90%] max-w-lg
-          bg-[#271f1a] border border-[#e8c28255] text-[#edd6ae] rounded-xl
-          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-auto
-          backdrop-blur-md">
+          bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-xl
+          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-auto">
           <DialogHeader className="relative z-10">
             <DialogTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-serif">
               <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
@@ -141,7 +139,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 
             {note && (
               <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
-                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Note</div>
+                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Memories</div>
                 <div className="flex items-start gap-2 text-[#edd6ae]">
                   <StickyNote className="w-4 h-4 opacity-70 mt-1" />
                   <span className="whitespace-pre-wrap">{note}</span>

@@ -25,6 +25,7 @@ const Moments = () => {
   const [newMomentTitle, setNewMomentTitle] = useState("");
   const [newMomentDate, setNewMomentDate] = useState<Date | undefined>(new Date());
   const [newMomentLocation, setNewMomentLocation] = useState("");
+  const [newMomentNote, setNewMomentNote] = useState("");
   const { toast } = useToast();
 
   const handleAddMoment = () => {
@@ -50,11 +51,13 @@ const Moments = () => {
       title: newMomentTitle,
       startDate: newMomentDate,
       location: newMomentLocation.trim() || undefined,
+      note: newMomentNote.trim() || undefined,
     });
 
     setNewMomentTitle("");
     setNewMomentDate(new Date());
     setNewMomentLocation("");
+    setNewMomentNote("");
     setIsAddingMoment(false);
     
     toast({
@@ -168,6 +171,17 @@ const Moments = () => {
                   onChange={(e) => setNewMomentLocation(e.target.value)}
                   placeholder="Enter location"
                   className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">
+                  Memories <span className="text-[#e8c28277]">(optional)</span>
+                </label>
+                <textarea
+                  value={newMomentNote}
+                  onChange={(e) => setNewMomentNote(e.target.value)}
+                  placeholder="Add a special memory or note about this moment..."
+                  className="w-full min-h-[100px] bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-md p-3 text-center placeholder:text-[#e8c28277]"
                 />
               </div>
               <Button
