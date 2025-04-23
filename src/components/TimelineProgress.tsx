@@ -11,6 +11,7 @@ import {
 import { format } from "date-fns";
 
 interface TimelineEvent {
+  id?: number;
   time: Date;
   label: string;
   completed?: boolean;
@@ -23,9 +24,10 @@ interface TimelineEvent {
 interface TimelineProgressProps {
   currentTime: Date;
   events: TimelineEvent[];
+  onEventClick?: (eventId: number) => void;
 }
 
-const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
+const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgressProps) => {
   // Sort events by time
   const sortedEvents = [...events].sort((a, b) => a.time.getTime() - b.time.getTime());
   
@@ -72,6 +74,12 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
     hourDate.setHours(i, 0, 0, 0);
     timelineHours.push(hourDate);
   }
+
+  // Check if event is approaching (within 30 minutes)
+  const isEventApproaching = (eventTime: Date) => {
+    const timeDiff = eventTime.getTime() - currentTime.getTime();
+    return timeDiff > 0 && timeDiff < 30 * 60 * 1000; // 30 minutes in milliseconds
+  };
   
   return (
     <TooltipProvider>
@@ -93,6 +101,7 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
           const position = calculateEventPosition(event.time);
           const extractedTime = format(event.time, "h:mm a");
           const description = event.description || "";
+          const approaching = isEventApproaching(event.time);
           
           return (
             <Tooltip key={index}>
@@ -100,11 +109,13 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
                 <div
                   className="absolute z-10 cursor-pointer"
                   style={{ left: `${position}%`, top: "8px" }}
+                  onClick={() => event.id && onEventClick && onEventClick(event.id)}
                 >
                   <div 
                     className={cn(
-                      "w-8 h-8 flex items-center justify-center transform -translate-x-1/2 rounded-full",
-                      event.completed ? "opacity-50" : "opacity-90"
+                      "flex items-center justify-center transform -translate-x-1/2 rounded-full transition-all duration-300",
+                      event.completed ? "opacity-50" : "opacity-90",
+                      approaching ? "w-8 h-8" : "w-6 h-6"
                     )}
                     style={{ 
                       backgroundColor: event.color ? `${event.color}33` : "#e8c28233",
@@ -112,10 +123,10 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
                     }}
                   >
                     {event.icon ? (
-                      <span className="text-xs">{event.icon}</span>
+                      <span className={cn("transition-all", approaching ? "text-xs" : "text-[10px]")}>{event.icon}</span>
                     ) : (
                       <div 
-                        className="w-3 h-3 rounded-full" 
+                        className={cn("rounded-full transition-all", approaching ? "w-3 h-3" : "w-2 h-2")} 
                         style={{ backgroundColor: event.color || "#e8c282" }}
                       />
                     )}

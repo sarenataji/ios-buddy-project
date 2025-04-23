@@ -39,7 +39,7 @@ const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) => {
       setTimeLeft({ hours, minutes, seconds, progress });
     };
     
-    calculateTimeLeft();
+    calculateTimeLeft(); // Calculate immediately on mount
     const interval = setInterval(calculateTimeLeft, 1000); // Update every second
     
     return () => clearInterval(interval);

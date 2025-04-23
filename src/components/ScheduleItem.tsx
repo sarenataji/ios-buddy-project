@@ -84,8 +84,15 @@ const ScheduleItem = ({
       <Card className={cn(
         "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]",
         completed ? "bg-[#1a1f2c]/60" : "bg-[#1a1f2c]/90",
-        isCurrent ? "ring-2 ring-[#e8c282] ring-opacity-70 shadow-[0_0_10px_rgba(232,194,130,0.4)]" : ""
+        isCurrent ? "relative animate-pulse-subtle" : ""
       )}>
+        {/* 3D Glow effect for current event */}
+        {isCurrent && (
+          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/30 rounded-lg -m-0.5 blur-[2px]"></div>
+        )}
+        {isCurrent && (
+          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/20 rounded-lg -m-1 blur-[4px]"></div>
+        )}
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div 
