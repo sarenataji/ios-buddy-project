@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { format, differenceInYears, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, endOfDay, intervalToDuration } from "date-fns";
 import { MapPin } from "lucide-react";
 import ProfileStat from "@/components/ProfileStat";
+import ProfileSettings from "@/components/ProfileSettings";
 
-const BIRTHDATE = new Date(1996, 8, 23, 0, 0, 0);
-const NICKNAME = "sarena ortega";
-const MOTIVATION_QUOTE = "don't count the days, make the days count. time wasted is life wasted.";
-const LOCATION = "los angeles";
+const initialState = {
+  birthdate: new Date(1996, 8, 23, 0, 0, 0),
+  nickname: "sarena ortega",
+  quote: "don't count the days, make the days count. time wasted is life wasted.",
+  location: "antalya, turkey"
+};
 
 function getBreakdown(birthdate: Date, now: Date) {
   let years = differenceInYears(now, birthdate);
@@ -76,7 +79,6 @@ function GlowingLifetimeBar({
     seconds: number;
   };
 }) {
-  // Adjusted for reference: years/months/weeks/days/hours/minutes only
   const items = [
     { value: details.years, unit: "y" },
     { value: details.months, unit: "m" },
@@ -84,9 +86,11 @@ function GlowingLifetimeBar({
     { value: details.days, unit: "d" },
     { value: details.hours, unit: "h" },
     { value: details.minutes, unit: "m" },
+    { value: details.seconds, unit: "s" }
   ];
+  
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center mt-6">
       <div
         className="
           flex flex-row flex-wrap justify-center items-center
@@ -101,10 +105,10 @@ function GlowingLifetimeBar({
           animate-lifetime-glow
           min-h-8
           gap-x-2 gap-y-2
+          max-w-[468px]
         "
         style={{
           width: "100%",
-          maxWidth: 468,
           minHeight: "34px",
           fontFamily: "'Inter',sans-serif",
           fontSize: "0.92rem",
@@ -145,7 +149,7 @@ function GlowingLifetimeBar({
                 flex flex-row items-baseline
                 font-light
                 text-[#eedaad]
-                text-[0.99rem] md:text-[1.08rem]
+                text-[0.92rem] md:text-[0.96rem]
                 whitespace-nowrap
                 select-none
                 px-[2px]
@@ -194,22 +198,38 @@ function GlowingLifetimeBar({
 }
 
 const Profile = () => {
+  const [profileData, setProfileData] = useState(initialState);
   const [now, setNow] = useState(() => new Date());
+
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const breakdown = getBreakdown(BIRTHDATE, now);
+  const breakdown = getBreakdown(profileData.birthdate, now);
   const countdown = getTimeLeftTillEndOfDay(now);
 
   const formatCountdown = (h: number, m: number, s: number) =>
     [h, m, s].map((v) => v.toString().padStart(2, "0")).join(":");
 
+  const handleProfileUpdate = (data: Partial<typeof profileData>) => {
+    setProfileData(prev => ({
+      ...prev,
+      ...data
+    }));
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 pb-12 pt-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 pb-12 pt-8 relative">
+      <ProfileSettings
+        nickname={profileData.nickname}
+        quote={profileData.quote}
+        location={profileData.location}
+        birthdate={profileData.birthdate}
+        onUpdate={handleProfileUpdate}
+      />
       <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{ letterSpacing: "0.22em" }}>profile</div>
-      <div className="font-serif text-5xl md:text-6xl font-bold text-[#edd6ae] mb-1 tracking-wide text-center drop-shadow-md">{NICKNAME}</div>
+      <div className="font-serif text-5xl md:text-6xl font-bold text-[#edd6ae] mb-1 tracking-wide text-center drop-shadow-md">{profileData.nickname}</div>
       <div
         className="text-[#e8c282bb] text-[11px] md:text-xs font-light text-center opacity-80 max-w-md mx-auto px-2 mb-10"
         style={{
@@ -221,7 +241,7 @@ const Profile = () => {
           fontStyle: "normal"
         }}
       >
-        "{MOTIVATION_QUOTE}"
+        "{profileData.quote}"
       </div>
       <div className="flex flex-col items-center w-full max-w-xl mx-auto mb-8">
         <div className="flex flex-row gap-5 w-full mb-3 items-stretch justify-center">
@@ -244,7 +264,7 @@ const Profile = () => {
       </div>
       <div className="flex flex-row items-center gap-2 mb-7 justify-center">
         <MapPin color="#e8c282" size={21} />
-        <span className="text-lg font-medium text-[#e8c282] lowercase">{LOCATION}</span>
+        <span className="text-lg font-medium text-[#e8c282] lowercase">{profileData.location}</span>
       </div>
       <div className="w-full max-w-md mx-auto flex flex-col items-center mt-3">
         <div className="relative rounded-3xl border border-[#e8c28233] bg-[#1a1f2c]/80 text-[#edd6ae] text-center shadow-[0_0_25px_0_#e8c28215] px-10 py-8 mb-2">
