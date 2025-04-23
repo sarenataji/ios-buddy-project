@@ -51,7 +51,7 @@ const CompletedEventsList = ({
           <CollapsibleContent className="px-4 pb-4">
             <div className="max-h-[40vh] overflow-y-auto space-y-2">
               {sortedCompletedEvents.map((event) => (
-                <div key={event.id} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
+                <div key={`completed-event-${event.id}`} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
                   <ScheduleItem 
                     time={format(new Date(event.time), "h:mm a")}
                     title={event.title}

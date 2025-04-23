@@ -12,7 +12,7 @@ interface EventFormProps {
     startTime?: string;
     endTime?: string;
     person: string;
-    location: string; // We keep this required for the form but handle empty strings
+    location: string; // We handle empty strings in the code
     color: string;
     icon: string;
     repeat: {
@@ -87,7 +87,7 @@ const EventForm = ({
       <div className="space-y-2">
         <label className="text-sm text-[#e8c282]">Location (optional)</label>
         <Input 
-          value={event.location}
+          value={event.location || ""}
           onChange={(e) => onChange({...event, location: e.target.value})}
           placeholder="Enter location"
           className="bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]"
@@ -151,7 +151,9 @@ const EventForm = ({
                     className="h-8 w-12 p-0 border border-[#e8c28233]"
                     style={{backgroundColor: color}}
                     onClick={() => onChange({...event, color})}
-                  />
+                  >
+                    <span className="sr-only">Select color {color}</span>
+                  </Button>
                 ))}
               </div>
             </PopoverContent>
@@ -164,6 +166,7 @@ const EventForm = ({
               value={event.color}
               onChange={handleColorChange}
               className="w-full h-10 cursor-pointer bg-[#1a1f2c]/80 border-[#e8c28233]"
+              aria-label="Custom color picker"
             />
           </div>
         </div>

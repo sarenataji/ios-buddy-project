@@ -33,22 +33,23 @@ const EventListSection = ({
       )}
       
       {sortedActiveEvents.map((event) => (
-        <ScheduleItem 
-          key={event.id}
-          time={format(new Date(event.time), "h:mm a")}
-          title={event.title}
-          description={event.description}
-          person={event.person}
-          color={event.color}
-          icon={event.icon}
-          progress={calculateEventProgress(event, new Date()).progress}
-          timeLeft={calculateEventProgress(event, new Date()).timeLeft}
-          location={event.location}
-          isCurrent={currentEvent?.id === event.id}
-          onEdit={() => onEventEdit(event)}
-          onDelete={() => onEventDelete(event.id)}
-          onComplete={() => onEventComplete(event.id)}
-        />
+        <div key={`active-event-${event.id}`}>
+          <ScheduleItem 
+            time={format(new Date(event.time), "h:mm a")}
+            title={event.title}
+            description={event.description}
+            person={event.person}
+            color={event.color}
+            icon={event.icon}
+            progress={calculateEventProgress(event, new Date()).progress}
+            timeLeft={calculateEventProgress(event, new Date()).timeLeft}
+            location={event.location}
+            isCurrent={currentEvent?.id === event.id}
+            onEdit={() => onEventEdit(event)}
+            onDelete={() => onEventDelete(event.id)}
+            onComplete={() => onEventComplete(event.id)}
+          />
+        </div>
       ))}
     </div>
   );

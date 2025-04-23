@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
 import { Clock } from "lucide-react";
@@ -21,6 +22,26 @@ import {
 } from "@/utils/eventUtils";
 import { SAMPLE_EVENTS } from "@/utils/scheduleConstants";
 
+// Define a type for the event form data
+interface EventFormData {
+  title: string;
+  startTime: string;
+  endTime: string;
+  person: string;
+  location: string;
+  color: string;
+  icon: string;
+  repeat: {
+    enabled: boolean;
+    days: string[];
+  };
+}
+
+// Extend the Event type to include optional formData
+interface EditingEvent extends Event {
+  formData?: EventFormData;
+}
+
 const Schedule = () => {
   const { 
     events, 
@@ -34,14 +55,14 @@ const Schedule = () => {
   
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [editingEvent, setEditingEvent] = useState<EditingEvent | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showCompletedEvents, setShowCompletedEvents] = useState(false);
   const [isAddEventSheetOpen, setIsAddEventSheetOpen] = useState(false);
   const [showCongratsAnimation, setShowCongratsAnimation] = useState(false);
   const [sampleEventsAdded, setSampleEventsAdded] = useState(false);
   
-  const [newEvent, setNewEvent] = useState({
+  const [newEvent, setNewEvent] = useState<EventFormData>({
     title: "",
     startTime: "",
     endTime: "",
@@ -51,7 +72,7 @@ const Schedule = () => {
     icon: "📅",
     repeat: {
       enabled: false,
-      days: [] as string[]
+      days: []
     }
   });
   
@@ -164,19 +185,19 @@ const Schedule = () => {
   };
   
   const handleWeekdayToggle = (day: string, isAdd: boolean, isEditing: boolean = false) => {
-    if (isEditing && editingEvent) {
-      const updatedEvent = { ...editingEvent };
-      if (!updatedEvent.repeat) {
-        updatedEvent.repeat = { enabled: true, days: [] };
-      }
+    if (isEditing && editingEvent && editingEvent.formData) {
+      const updatedFormData = { ...editingEvent.formData };
       
       if (isAdd) {
-        updatedEvent.repeat.days = [...updatedEvent.repeat.days, day];
+        updatedFormData.repeat.days = [...updatedFormData.repeat.days, day];
       } else {
-        updatedEvent.repeat.days = updatedEvent.repeat.days.filter(d => d !== day);
+        updatedFormData.repeat.days = updatedFormData.repeat.days.filter(d => d !== day);
       }
       
-      setEditingEvent(updatedEvent);
+      setEditingEvent({
+        ...editingEvent,
+        formData: updatedFormData
+      });
     } else {
       setNewEvent(prev => {
         const newRepeatDays = isAdd 
@@ -222,7 +243,7 @@ const Schedule = () => {
       }
     }
     
-    const formEvent = {
+    const formData: EventFormData = {
       title: event.title,
       startTime: timeStr,
       endTime: endTimeStr,
@@ -236,9 +257,9 @@ const Schedule = () => {
       }
     };
     
-    const eventToEdit = {
+    const eventToEdit: EditingEvent = {
       ...event,
-      formData: formEvent
+      formData
     };
     
     setEditingEvent(eventToEdit);
@@ -253,7 +274,7 @@ const Schedule = () => {
       const updatedTime = new Date(editingEvent.time);
       updatedTime.setHours(startHours, startMinutes, 0, 0);
       
-      const updatedEvent = {
+      const updatedEvent: Event = {
         ...editingEvent,
         time: updatedTime,
         title: formData.title,
@@ -265,7 +286,8 @@ const Schedule = () => {
         repeat: formData.repeat
       };
       
-      delete (updatedEvent as any).formData;
+      // Remove the formData property before updating
+      delete (updatedEvent as EditingEvent).formData;
       
       updateEvent(updatedEvent);
       setIsEditDialogOpen(false);
@@ -274,6 +296,18 @@ const Schedule = () => {
         description: "Your event has been successfully updated.",
       });
     }
+  };
+  
+  const handleEventDelete = (eventId: number) => {
+    deleteEvent(eventId);
+    // Close the edit dialog if the deleted event was being edited
+    if (editingEvent && editingEvent.id === eventId) {
+      setIsEditDialogOpen(false);
+    }
+    toast({
+      title: "Event deleted",
+      description: "The event has been removed from your schedule.",
+    });
   };
   
   const handleEventSelect = (eventId: number) => {
@@ -303,43 +337,16 @@ const Schedule = () => {
   };
   
   const getEventFormData = () => {
-    if (!editingEvent) return null;
-    
-    if ((editingEvent as any).formData) {
-      return (editingEvent as any).formData;
-    }
-    
-    const timeStr = format(new Date(editingEvent.time), "HH:mm");
-    
-    let endTimeStr = "";
-    if (editingEvent.description) {
-      const parts = editingEvent.description.split(" - ");
-      if (parts.length > 1) {
-        endTimeStr = parts[1];
-      }
-    }
-    
-    return {
-      title: editingEvent.title,
-      startTime: timeStr,
-      endTime: endTimeStr,
-      person: editingEvent.person,
-      location: editingEvent.location || "",
-      color: editingEvent.color,
-      icon: editingEvent.icon || "📅",
-      repeat: editingEvent.repeat || {
-        enabled: false,
-        days: []
-      }
-    };
+    if (!editingEvent || !editingEvent.formData) return null;
+    return editingEvent.formData;
   };
   
-  const handleEditFormChange = (updatedForm: any) => {
+  const handleEditFormChange = (updatedForm: EventFormData) => {
     if (editingEvent) {
       setEditingEvent({
         ...editingEvent,
         formData: updatedForm
-      } as any);
+      });
     }
   };
 
@@ -364,7 +371,7 @@ const Schedule = () => {
         <EventListSection 
           activeEvents={activeEvents}
           onEventEdit={handleEditEvent}
-          onEventDelete={deleteEvent}
+          onEventDelete={handleEventDelete}
           onEventComplete={toggleEventCompletion}
           currentEvent={currentEvent}
         />
@@ -372,7 +379,7 @@ const Schedule = () => {
         <CompletedEventsList 
           completedEvents={completedEvents}
           onEventEdit={handleEditEvent}
-          onEventDelete={deleteEvent}
+          onEventDelete={handleEventDelete}
         />
         
         <ActionButtons onAddEvent={() => setIsAddEventSheetOpen(true)} />

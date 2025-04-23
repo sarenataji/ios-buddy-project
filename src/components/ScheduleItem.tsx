@@ -8,12 +8,6 @@ import { MoreVertical, MapPin, Edit, Trash2, Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -52,7 +46,7 @@ const ScheduleItem = ({
   onDelete,
   onComplete,
 }: ScheduleItemProps) => {
-  const [showMenu, setShowMenu] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Render icon or emoji
   const renderIcon = () => {
@@ -126,11 +120,12 @@ const ScheduleItem = ({
             </div>
           </div>
           
-          <Popover>
+          <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <PopoverTrigger asChild>
               <button 
-                className="text-[#e8c282aa] hover:text-[#edd6ae] p-1.5"
-                onClick={() => setShowMenu(true)}
+                className="text-[#e8c282aa] hover:text-[#edd6ae] p-1.5 rounded-full hover:bg-[#e8c28215]"
+                onClick={() => setIsMenuOpen(true)}
+                aria-label="Event menu"
               >
                 <MoreVertical size={18} />
               </button>
@@ -139,9 +134,9 @@ const ScheduleItem = ({
               <div className="flex flex-col gap-1">
                 {!completed && onComplete && (
                   <button 
-                    className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm"
+                    className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm w-full text-left"
                     onClick={() => {
-                      setShowMenu(false);
+                      setIsMenuOpen(false);
                       if (onComplete) onComplete();
                     }}
                   >
@@ -150,9 +145,9 @@ const ScheduleItem = ({
                   </button>
                 )}
                 <button 
-                  className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm"
+                  className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm w-full text-left"
                   onClick={() => {
-                    setShowMenu(false);
+                    setIsMenuOpen(false);
                     if (onEdit) onEdit();
                   }}
                 >
@@ -160,9 +155,9 @@ const ScheduleItem = ({
                   Edit Event
                 </button>
                 <button 
-                  className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm"
+                  className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm w-full text-left"
                   onClick={() => {
-                    setShowMenu(false);
+                    setIsMenuOpen(false);
                     if (onDelete) onDelete();
                   }}
                 >
