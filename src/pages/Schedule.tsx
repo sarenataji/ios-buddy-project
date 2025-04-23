@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
 import { Clock } from "lucide-react";
@@ -5,9 +6,9 @@ import { useSchedule } from "@/contexts/ScheduleContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import EventForm from "@/components/EventForm";
 import CongratsAnimation from "@/components/CongratsAnimation";
-import CountdownTimer from "@/components/CountdownTimer";
 import ScheduleHeader from "@/components/ScheduleHeader";
 import EventListSection from "@/components/EventListSection";
 import TimelineSection from "@/components/TimelineSection";
@@ -15,7 +16,6 @@ import ActionButtons from "@/components/ActionButtons";
 import { 
   getCurrentEvent, 
   getNextEvent,
-  calculateEventProgress,
   getEventEndTime,
   type Event 
 } from "@/utils/eventUtils";

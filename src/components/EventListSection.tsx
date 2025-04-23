@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { format } from "date-fns";
 import {
   Accordion,
   AccordionContent,
@@ -8,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import ScheduleItem from "@/components/ScheduleItem";
-import { Event } from "@/utils/eventUtils";
+import { Event, calculateEventProgress } from "@/utils/eventUtils";
 
 interface EventListSectionProps {
   activeEvents: Event[];

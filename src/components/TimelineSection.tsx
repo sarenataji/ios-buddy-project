@@ -2,7 +2,9 @@
 import React from "react";
 import { Clock } from "lucide-react";
 import TimelineProgress from "@/components/TimelineProgress";
-import { Event, calculateEventProgress } from "@/utils/eventUtils";
+import { Event, calculateEventProgress, getEventEndTime } from "@/utils/eventUtils";
+import CountdownTimer from "@/components/CountdownTimer";
+import { isToday } from "date-fns";
 
 interface TimelineSectionProps {
   currentTime: Date;
