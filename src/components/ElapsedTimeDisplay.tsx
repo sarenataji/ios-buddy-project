@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote, MoveUp, MoveDown } from "lucide-react";
 import {
@@ -111,51 +112,45 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#161213] border-0 p-8 rounded-lg max-w-lg">
+        <DialogContent className="bg-[#1A1F2C] border-[#e8c28244] p-8 rounded-lg max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm mb-4">title</DialogTitle>
+            <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm mb-4">details</DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-8">
-            <div className="text-[#edd6ae] text-2xl font-serif">{title}</div>
+          <div className="space-y-4">
+            <div className="text-[#edd6ae] text-2xl font-serif mb-4">{title}</div>
 
-            <div className="space-y-2">
-              <div className="text-[#e8c282] lowercase tracking-wider text-sm">start date & time</div>
-              <div className="flex items-center gap-2 text-[#edd6ae]">
-                <Calendar className="w-5 h-5 opacity-70" />
-                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
-              </div>
+            <div className="flex items-center gap-3 text-[#edd6ae]">
+              <Calendar className="w-4 h-4 text-[#e8c28288]" />
+              <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
             </div>
 
             {location && (
-              <div className="space-y-2">
-                <div className="text-[#e8c282] lowercase tracking-wider text-sm">location</div>
-                <div className="flex items-center gap-2 text-[#edd6ae]">
-                  <MapPin className="w-5 h-5 opacity-70" />
-                  <span>{location}</span>
-                </div>
+              <div className="flex items-center gap-3 text-[#edd6ae]">
+                <MapPin className="w-4 h-4 text-[#e8c28288]" />
+                <span>{location}</span>
               </div>
             )}
 
             {note && (
-              <div className="space-y-2">
-                <div className="text-[#e8c282] lowercase tracking-wider text-sm">memories</div>
-                <div className="flex items-start gap-2 text-[#edd6ae]">
-                  <StickyNote className="w-5 h-5 opacity-70 mt-1" />
-                  <span>{note}</span>
+              <div className="bg-[#e8c28215] rounded-lg p-4 mt-4">
+                <div className="flex items-center gap-2 text-[#e8c282] mb-2">
+                  <StickyNote className="w-4 h-4" />
+                  <span className="lowercase tracking-wider text-sm">memories</span>
                 </div>
+                <p className="text-[#edd6ae]">{note}</p>
               </div>
             )}
 
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-end pt-4">
               {onEdit && id !== undefined && (
                 <Button
                   onClick={handleEdit}
                   variant="outline"
-                  className="bg-[#161213] border border-[#e8c28244] text-[#e8c282] hover:bg-[#e8c28215]"
+                  className="bg-[#1A1F2C] border border-[#e8c28244] text-[#e8c282] hover:bg-[#e8c28215]"
                 >
                   <Pencil className="w-4 h-4 mr-2" />
-                  Edit this moment
+                  Edit
                 </Button>
               )}
             </div>
