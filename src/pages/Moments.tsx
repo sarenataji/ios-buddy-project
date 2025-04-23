@@ -67,7 +67,7 @@ const Moments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1f2c] p-4 md:p-8">
+    <div className="min-h-screen bg-[#161213] p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col items-center justify-center mb-12">
           <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{ letterSpacing: "0.22em" }}>moments</div>
@@ -114,12 +114,11 @@ const Moments = () => {
             </SheetHeader>
             <div className="space-y-6 mt-8">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">Title</label>
                 <Input
                   value={newMomentTitle}
                   onChange={(e) => setNewMomentTitle(e.target.value)}
                   placeholder="Enter moment title"
-                  className="bg-[#1a1f2c] border-[#e8c28244] text-[#edd6ae] text-center"
+                  className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
                 />
               </div>
               <div className="space-y-2">
@@ -134,7 +133,7 @@ const Moments = () => {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-[#1a1f2c] border border-[#e8c28233]">
+                  <PopoverContent className="w-auto p-0 bg-[#161213] border border-[#e8c28233]">
                     <div className="p-3">
                       <Calendar
                         mode="single"
