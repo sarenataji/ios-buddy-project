@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { ChevronRight } from "lucide-react";
+import { Clock } from "lucide-react";
 
 interface ElapsedTimeDisplayProps {
   title: string;
@@ -32,29 +32,40 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({ title, startDat
   return (
     <button 
       onClick={onClick}
-      className="w-full text-left p-4 bg-[#1a1f2c]/85 border border-[#e8c28244] rounded-lg hover:bg-[#1a1f2c] transition-all duration-300 group
-        relative overflow-hidden
-        shadow-[0_0_20px_0_#e8c28215]
-        hover:shadow-[0_0_30px_0_#e8c28225]
-      "
+      className="w-full text-left p-6 bg-[#1a1f2c]/85 border border-[#e8c28244] rounded-lg 
+        hover:bg-[#1a1f2c] transition-all duration-300 group relative overflow-hidden
+        shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#e8c28205] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#e8c28205] to-transparent 
+        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+      
       <div className="relative z-10">
-        <div className="text-[#e8c282] mb-2 tracking-wide">{title}</div>
-        <div className="flex items-baseline space-x-2 text-[#edd6ae]">
-          <span className="text-4xl font-bold">{elapsed.days}</span>
-          <span className="text-xl">d</span>
-          <span className="text-4xl font-bold">{elapsed.hours}</span>
-          <span className="text-xl">h</span>
-          <span className="text-4xl font-bold">{elapsed.minutes}</span>
-          <span className="text-xl">m</span>
-          <span className="text-4xl font-bold">{elapsed.seconds}</span>
-          <span className="text-xl">s</span>
-          <ChevronRight className="ml-auto text-[#e8c28266] group-hover:text-[#e8c282] transition-colors duration-300" />
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="text-[#e8c282] w-5 h-5" />
+          <span className="text-[#e8c282] tracking-wide">{title}</span>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-4">
+          <TimeUnit value={elapsed.days} unit="Days" />
+          <TimeUnit value={elapsed.hours} unit="Hours" />
+          <TimeUnit value={elapsed.minutes} unit="Minutes" />
+          <TimeUnit value={elapsed.seconds} unit="Seconds" />
         </div>
       </div>
     </button>
   );
 };
+
+const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
+  <div className="text-center p-3 rounded-lg bg-[#e8c28208] border border-[#e8c28222]
+    backdrop-blur-sm group-hover:border-[#e8c28233] transition-colors duration-300">
+    <div className="text-3xl font-bold text-[#edd6ae] mb-1 font-mono tracking-tight">
+      {value.toString().padStart(2, '0')}
+    </div>
+    <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+      {unit}
+    </div>
+  </div>
+);
 
 export default ElapsedTimeDisplay;
