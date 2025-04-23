@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Clock } from "lucide-react";
 
@@ -45,11 +44,11 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({ title, startDat
           <span className="text-[#e8c282] tracking-wide">{title}</span>
         </div>
         
-        <div className="grid grid-cols-4 gap-4">
-          <TimeUnit value={elapsed.days} unit="Days" />
-          <TimeUnit value={elapsed.hours} unit="Hours" />
-          <TimeUnit value={elapsed.minutes} unit="Minutes" />
-          <TimeUnit value={elapsed.seconds} unit="Seconds" />
+        <div className="inline-flex items-baseline gap-3 text-[#edd6ae]">
+          <TimeUnit value={elapsed.days} unit="d" />
+          <TimeUnit value={elapsed.hours} unit="h" />
+          <TimeUnit value={elapsed.minutes} unit="m" />
+          <TimeUnit value={elapsed.seconds} unit="s" />
         </div>
       </div>
     </button>
@@ -57,14 +56,13 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({ title, startDat
 };
 
 const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
-  <div className="text-center p-3 rounded-lg bg-[#e8c28208] border border-[#e8c28222]
-    backdrop-blur-sm group-hover:border-[#e8c28233] transition-colors duration-300">
-    <div className="text-3xl font-bold text-[#edd6ae] mb-1 font-mono tracking-tight">
+  <div className="flex items-baseline gap-1">
+    <span className="text-3xl font-bold font-mono tracking-tight">
       {value.toString().padStart(2, '0')}
-    </div>
-    <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+    </span>
+    <span className="text-sm uppercase tracking-wider text-[#e8c28288]">
       {unit}
-    </div>
+    </span>
   </div>
 );
 

@@ -1,10 +1,10 @@
-
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import ThreeCube from "../three/ThreeCube";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { MomentsSection } from "@/components/MomentsSection";
 
 const Index = () => {
   return (
@@ -19,14 +19,12 @@ const Index = () => {
               Stay hyper-aware of your time.<br />
               <span className="text-primary">Organize</span>, <span className="text-primary">see the countdown</span>, and <span className="text-primary">reflect</span> — all in one elegant flow.
             </p>
-            {/* 3D animation placeholder */}
             <div className="mt-4 w-full h-60 rounded-2xl overflow-hidden bg-accent/80 flex items-center justify-center border border-accent shadow-glass backdrop-blur-md">
               <Suspense fallback={<div className="text-muted-foreground">Loading 3D...</div>}>
                 <ThreeCube />
               </Suspense>
             </div>
             
-            {/* Feature navigation buttons */}
             <div className="flex flex-col md:flex-row gap-4 mt-8 w-full">
               <Button 
                 asChild
@@ -50,7 +48,13 @@ const Index = () => {
           </CardContent>
         </Card>
         
-        {/* Minimal explanation of app features */}
+        <Card className="w-full mt-8 bg-card/90 shadow-xl border-none">
+          <CardContent className="py-6">
+            <h2 className="text-2xl font-bold text-primary-foreground mb-4">Time Tracking</h2>
+            <MomentsSection />
+          </CardContent>
+        </Card>
+        
         <div className="text-[#e8c282aa] text-center text-sm mb-8 max-w-md">
           <p className="mb-2">
             Track your time with precision and meaning. Schedule your events, follow real-time countdowns, and manage your moments.

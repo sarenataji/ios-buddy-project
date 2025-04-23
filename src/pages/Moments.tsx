@@ -1,7 +1,5 @@
-
 import React, { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
-import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
 import { Plus } from "lucide-react";
 import {
   Sheet,
@@ -12,15 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { MomentsSection } from "@/components/MomentsSection";
 
 const Moments = () => {
-  const { moments, addMoment } = useMoment();
+  const { addMoment } = useMoment();
   const [isAddingMoment, setIsAddingMoment] = useState(false);
   const [newMomentTitle, setNewMomentTitle] = useState("");
   const { toast } = useToast();
-
-  const predefinedMoments = moments.filter(m => m.isPredefined);
-  const customMoments = moments.filter(m => !m.isPredefined);
 
   const handleAddMoment = () => {
     if (!newMomentTitle.trim()) {
@@ -85,41 +81,7 @@ const Moments = () => {
           </Button>
         </div>
 
-        {predefinedMoments.length > 0 && (
-          <div className="mb-12">
-            <div className="relative">
-              <h2 className="text-[#e8c282] text-lg font-medium mb-6 text-center tracking-wide lowercase">Life Events</h2>
-              <div className="space-y-4 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#e8c28205] to-transparent pointer-events-none" style={{ height: "150%" }} />
-                {predefinedMoments.map((moment) => (
-                  <ElapsedTimeDisplay
-                    key={moment.id}
-                    title={moment.title}
-                    startDate={moment.startDate}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {customMoments.length > 0 && (
-          <div>
-            <div className="relative">
-              <h2 className="text-[#e8c282] text-lg font-medium mb-6 text-center tracking-wide lowercase">Custom Moments</h2>
-              <div className="space-y-4 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#e8c28205] to-transparent pointer-events-none" style={{ height: "150%" }} />
-                {customMoments.map((moment) => (
-                  <ElapsedTimeDisplay
-                    key={moment.id}
-                    title={moment.title}
-                    startDate={moment.startDate}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
           <SheetContent className="bg-[#1a1f2c] border-l border-[#e8c28233] text-[#edd6ae]">
