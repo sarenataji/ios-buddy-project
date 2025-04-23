@@ -67,7 +67,7 @@ const Moments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-[#1a1f2c] p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col items-center justify-center mb-12">
           <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{ letterSpacing: "0.22em" }}>moments</div>
@@ -108,7 +108,7 @@ const Moments = () => {
         <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
-          <SheetContent className="bg-[#1a1f2c] border-l border-[#e8c28233] text-[#edd6ae]">
+          <SheetContent className="bg-[#161213] border-l border-[#e8c28233] text-[#edd6ae]">
             <SheetHeader>
               <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">New Moment</SheetTitle>
             </SheetHeader>
@@ -119,7 +119,7 @@ const Moments = () => {
                   value={newMomentTitle}
                   onChange={(e) => setNewMomentTitle(e.target.value)}
                   placeholder="Enter moment title"
-                  className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
+                  className="bg-[#1a1f2c] border-[#e8c28244] text-[#edd6ae] text-center"
                 />
               </div>
               <div className="space-y-2">

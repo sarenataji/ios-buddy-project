@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
@@ -76,7 +77,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
             <span className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold">{title}</span>
           </div>
           
-          <div className="inline-flex items-baseline gap-6 text-[#edd6ae]">
+          <div className="inline-flex items-baseline gap-3 text-[#edd6ae]">
             {elapsed.years > 0 && (
               <TimeUnit value={elapsed.years} unit="years" />
             )}
@@ -179,7 +180,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 };
 
 const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
-  <div className="space-y-1 bg-[#e8c28208] p-2 sm:p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+  <div className="flex flex-col items-center">
     <div className="text-xl sm:text-2xl font-serif font-bold text-[#edd6ae]">
       {value.toString().padStart(2, '0')}
     </div>
