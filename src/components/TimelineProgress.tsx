@@ -1,7 +1,14 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { format } from "date-fns";
 
 interface TimelineEvent {
   time: Date;
@@ -9,6 +16,8 @@ interface TimelineEvent {
   completed?: boolean;
   color?: string;
   icon?: string;
+  location?: string;
+  description?: string;
 }
 
 interface TimelineProgressProps {
@@ -65,65 +74,81 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
   }
   
   return (
-    <div className="relative w-full my-4 px-4">
-      {/* Current time indicator */}
-      <div 
-        className="absolute top-0 h-full flex flex-col items-center z-20"
-        style={{ left: `${currentPosition}%` }}
-      >
-        <div className="bg-[#e8c282] text-[#1a1f2c] px-3 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md">
-          <Clock size={12} />
-          {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    <TooltipProvider>
+      <div className="relative w-full my-4 px-4">
+        {/* Current time indicator */}
+        <div 
+          className="absolute top-0 h-full flex flex-col items-center z-20"
+          style={{ left: `${currentPosition}%` }}
+        >
+          <div className="bg-[#e8c282] text-[#1a1f2c] px-3 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md">
+            <Clock size={12} />
+            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+          <div className="h-full w-0.5 bg-[#e8c282] opacity-70"></div>
         </div>
-        <div className="h-full w-0.5 bg-[#e8c282] opacity-70"></div>
-      </div>
-      
-      {/* Event markers on timeline */}
-      {sortedEvents.map((event, index) => {
-        const position = calculateEventPosition(event.time);
-        return (
-          <div
-            key={index}
-            className="absolute z-10"
-            style={{ left: `${position}%`, top: "8px" }}
-            title={`${event.label} - ${event.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-          >
-            <div 
-              className={cn(
-                "w-8 h-8 flex items-center justify-center transform -translate-x-1/2 rounded-full",
-                event.completed ? "opacity-50" : "opacity-90"
-              )}
-              style={{ 
-                backgroundColor: event.color ? `${event.color}33` : "#e8c28233",
-                border: `2px solid ${event.color || "#e8c282"}`
-              }}
-            >
-              {event.icon ? (
-                <span className="text-xs">{event.icon}</span>
-              ) : (
-                <div 
-                  className="w-3 h-3 rounded-full" 
-                  style={{ backgroundColor: event.color || "#e8c282" }}
-                />
-              )}
+        
+        {/* Event markers on timeline */}
+        {sortedEvents.map((event, index) => {
+          const position = calculateEventPosition(event.time);
+          const extractedTime = format(event.time, "h:mm a");
+          const description = event.description || "";
+          
+          return (
+            <Tooltip key={index}>
+              <TooltipTrigger asChild>
+                <div
+                  className="absolute z-10 cursor-pointer"
+                  style={{ left: `${position}%`, top: "8px" }}
+                >
+                  <div 
+                    className={cn(
+                      "w-8 h-8 flex items-center justify-center transform -translate-x-1/2 rounded-full",
+                      event.completed ? "opacity-50" : "opacity-90"
+                    )}
+                    style={{ 
+                      backgroundColor: event.color ? `${event.color}33` : "#e8c28233",
+                      border: `2px solid ${event.color || "#e8c282"}`
+                    }}
+                  >
+                    {event.icon ? (
+                      <span className="text-xs">{event.icon}</span>
+                    ) : (
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: event.color || "#e8c282" }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-[#1a1f2c] border border-[#e8c28233] p-3 max-w-xs">
+                <div className="space-y-1">
+                  <p className="font-medium text-[#edd6ae]">{event.label}</p>
+                  <p className="text-sm text-[#e8c282]">{extractedTime} {description}</p>
+                  {event.location && (
+                    <p className="text-sm text-[#e8c282aa]">📍 {event.location}</p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
+        
+        {/* Timeline hours */}
+        <div className="flex justify-between mb-2 pt-8">
+          {timelineHours.map((hour, index) => (
+            <div key={index} className="text-[#e8c282aa] text-xs flex flex-col items-center">
+              <div className="h-1.5 w-0.5 bg-[#e8c28244] mb-1"></div>
+              {formatHour(hour)}
             </div>
-          </div>
-        );
-      })}
-      
-      {/* Timeline hours */}
-      <div className="flex justify-between mb-2 pt-8">
-        {timelineHours.map((hour, index) => (
-          <div key={index} className="text-[#e8c282aa] text-xs flex flex-col items-center">
-            <div className="h-1.5 w-0.5 bg-[#e8c28244] mb-1"></div>
-            {formatHour(hour)}
-          </div>
-        ))}
+          ))}
+        </div>
+        
+        {/* Timeline line */}
+        <div className="w-full h-0.5 bg-[#e8c28233]"></div>
       </div>
-      
-      {/* Timeline line */}
-      <div className="w-full h-0.5 bg-[#e8c28233]"></div>
-    </div>
+    </TooltipProvider>
   );
 };
 

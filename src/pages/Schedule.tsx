@@ -71,7 +71,7 @@ const Schedule = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 10000);
+    }, 1000); // Update every second for accurate countdown
     
     return () => clearInterval(interval);
   }, []);
@@ -169,7 +169,9 @@ const Schedule = () => {
     label: event.title,
     completed: event.completed,
     color: event.color,
-    icon: event.icon
+    icon: event.icon,
+    location: event.location,
+    description: event.description
   }));
   
   const handleEditEvent = (event: Event) => {
@@ -256,7 +258,7 @@ const Schedule = () => {
           ) : nextEvent ? (
             <>
               <div className="text-[#e8c282] text-sm mb-2">
-                <span className="font-medium">Next Event In:</span> {nextEvent.title}
+                <span className="font-medium">Next Event:</span> {nextEvent.title}
               </div>
               <CountdownTimer targetDate={new Date(nextEvent.time)} />
             </>
@@ -281,6 +283,8 @@ const Schedule = () => {
           
           {activeEvents.map((event) => {
             const { progress, timeLeft } = calculateEventProgress(event, currentTime);
+            const isCurrentEventItem = currentEvent && currentEvent.id === event.id;
+            
             return (
               <ScheduleItem 
                 key={event.id}
@@ -293,6 +297,7 @@ const Schedule = () => {
                 progress={progress}
                 timeLeft={timeLeft}
                 location={event.location}
+                isCurrent={isCurrentEventItem}
                 onEdit={() => handleEditEvent(event)}
                 onDelete={() => deleteEvent(event.id)}
                 onComplete={() => toggleEventCompletion(event.id)}
@@ -309,7 +314,7 @@ const Schedule = () => {
             >
               <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-[#e8c282] hover:text-[#edd6ae] text-sm">
                 <span>Completed Events ({completedEvents.length})</span>
-                <span>{showCompletedEvents ? "▲" : "▼"}</span>
+                <span>{showCompletedEvents ? "Show Less" : "Show More"}</span>
               </CollapsibleTrigger>
               
               <CollapsibleContent className="mt-2 space-y-4">

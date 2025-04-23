@@ -30,6 +30,7 @@ interface ScheduleItemProps {
   timeLeft: string;
   location?: string;
   completed?: boolean;
+  isCurrent?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
   onComplete?: () => void;
@@ -41,11 +42,12 @@ const ScheduleItem = ({
   description,
   person,
   icon,
-  color = "#7e5a39", // Changed from purple to brown
+  color = "#7e5a39", // Brown
   progress,
   timeLeft,
   location,
   completed = false,
+  isCurrent = false,
   onEdit,
   onDelete,
   onComplete,
@@ -80,8 +82,9 @@ const ScheduleItem = ({
         <div className="text-[#e8c282aa] text-sm">{time}</div>
       </div>
       <Card className={cn(
-        "w-full bg-[#1a1f2c]/90 border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]",
-        completed ? "bg-[#1a1f2c]/60" : ""
+        "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]",
+        completed ? "bg-[#1a1f2c]/60" : "bg-[#1a1f2c]/90",
+        isCurrent ? "ring-2 ring-[#e8c282] ring-opacity-70 shadow-[0_0_10px_rgba(232,194,130,0.4)]" : ""
       )}>
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">

@@ -33,6 +33,11 @@ const EventForm = ({
   onChange,
   onWeekdayToggle 
 }: EventFormProps) => {
+  // Function to handle custom color input
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({...event, color: e.target.value});
+  };
+
   return (
     <div className="mt-6 space-y-4">
       <div className="space-y-2">
@@ -95,6 +100,7 @@ const EventForm = ({
         <div className="flex space-x-2">
           <div 
             className="h-10 w-10 flex items-center justify-center rounded border border-[#e8c28233] bg-[#1a1f2c]/80 cursor-pointer"
+            style={{backgroundColor: event.color ? `${event.color}33` : undefined}}
           >
             <span className="text-xl">{event.icon}</span>
           </div>
@@ -125,16 +131,16 @@ const EventForm = ({
       
       <div className="space-y-2">
         <label className="text-sm text-[#e8c282] mb-1 block">Color</label>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 flex-wrap gap-2">
           <div 
-            className="h-10 w-10 rounded border border-[#e8c28233] cursor-pointer"
+            className="h-10 w-10 rounded border border-[#e8c28233] cursor-pointer flex items-center justify-center"
             style={{backgroundColor: event.color}}
           />
           
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae] hover:bg-[#e8c28222]">
-                Choose Color
+                Preset Colors
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-64 bg-[#1a1f2c] border border-[#e8c28233]">
@@ -151,6 +157,16 @@ const EventForm = ({
               </div>
             </PopoverContent>
           </Popover>
+          
+          <div className="flex-grow">
+            <Input
+              type="color"
+              id="colorPicker"
+              value={event.color}
+              onChange={handleColorChange}
+              className="w-full h-10 cursor-pointer bg-[#1a1f2c]/80 border-[#e8c28233]"
+            />
+          </div>
         </div>
       </div>
       

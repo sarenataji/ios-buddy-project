@@ -40,7 +40,7 @@ const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) => {
     };
     
     calculateTimeLeft();
-    const interval = setInterval(calculateTimeLeft, 1000);
+    const interval = setInterval(calculateTimeLeft, 1000); // Update every second
     
     return () => clearInterval(interval);
   }, [targetDate, onComplete]);
