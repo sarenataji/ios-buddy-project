@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote, MoveUp, MoveDown } from "lucide-react";
 import {
@@ -68,39 +67,16 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       <div 
         onClick={() => setShowDetails(true)}
         className="relative w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
-          hover:bg-[#161213] transition-all duration-300 group
+          hover:bg-[#161213] transition-all duration-300
           shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]
-          cursor-pointer backdrop-blur-sm"
+          cursor-pointer"
       >
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex items-center gap-4 mb-6">
+          <Clock className="w-5 h-5 text-[#e8c282]" />
           <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
-          {(onMoveUp || onMoveDown) && (
-            <div className="flex gap-2">
-              {onMoveUp && (
-                <Button
-                  onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
-                  variant="ghost"
-                  size="icon"
-                  className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
-                >
-                  <MoveUp className="h-4 w-4 text-[#e8c282]" />
-                </Button>
-              )}
-              {onMoveDown && (
-                <Button
-                  onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
-                  variant="ghost"
-                  size="icon"
-                  className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
-                >
-                  <MoveDown className="h-4 w-4 text-[#e8c282]" />
-                </Button>
-              )}
-            </div>
-          )}
         </div>
 
-        <div className="grid grid-cols-5 gap-4 mt-6 text-center">
+        <div className="grid grid-cols-5 gap-4 text-center">
           {elapsed.years > 0 && (
             <TimeUnit value={elapsed.years} unit="years" />
           )}
@@ -109,48 +85,79 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
           <TimeUnit value={elapsed.minutes} unit="minutes" />
           <TimeUnit value={elapsed.seconds} unit="seconds" />
         </div>
+
+        {(onMoveUp || onMoveDown) && (
+          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {onMoveUp && (
+              <Button
+                onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
+                variant="ghost"
+                size="icon"
+                className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
+              >
+                <MoveUp className="h-4 w-4 text-[#e8c282]" />
+              </Button>
+            )}
+            {onMoveDown && (
+              <Button
+                onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
+                variant="ghost"
+                size="icon"
+                className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
+              >
+                <MoveDown className="h-4 w-4 text-[#e8c282]" />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#1A1F2C] border-[#e8c28244] p-8 rounded-lg max-w-lg">
+        <DialogContent className="bg-[#161213] border-0 p-8 rounded-lg max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm mb-4">details</DialogTitle>
+            <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm mb-4">title</DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="text-[#edd6ae] text-2xl font-serif mb-4">{title}</div>
+          <div className="space-y-8">
+            <div className="text-[#edd6ae] text-2xl font-serif">{title}</div>
 
-            <div className="flex items-center gap-3 text-[#edd6ae]">
-              <Calendar className="w-4 h-4 text-[#e8c28288]" />
-              <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
+            <div className="space-y-2">
+              <div className="text-[#e8c282] lowercase tracking-wider text-sm">start date & time</div>
+              <div className="flex items-center gap-2 text-[#edd6ae]">
+                <Calendar className="w-5 h-5 opacity-70" />
+                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
+              </div>
             </div>
 
             {location && (
-              <div className="flex items-center gap-3 text-[#edd6ae]">
-                <MapPin className="w-4 h-4 text-[#e8c28288]" />
-                <span>{location}</span>
+              <div className="space-y-2">
+                <div className="text-[#e8c282] lowercase tracking-wider text-sm">location</div>
+                <div className="flex items-center gap-2 text-[#edd6ae]">
+                  <MapPin className="w-5 h-5 opacity-70" />
+                  <span>{location}</span>
+                </div>
               </div>
             )}
 
             {note && (
-              <div className="bg-[#e8c28215] rounded-lg p-4 mt-4">
-                <div className="flex items-center gap-2 text-[#e8c282] mb-2">
-                  <StickyNote className="w-4 h-4" />
-                  <span className="lowercase tracking-wider text-sm">memories</span>
+              <div className="space-y-2">
+                <div className="text-[#e8c282] lowercase tracking-wider text-sm">memories</div>
+                <div className="flex items-start gap-2 text-[#edd6ae]">
+                  <StickyNote className="w-5 h-5 opacity-70 mt-1" />
+                  <span>{note}</span>
                 </div>
-                <p className="text-[#edd6ae]">{note}</p>
               </div>
             )}
 
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-center pt-4">
               {onEdit && id !== undefined && (
                 <Button
                   onClick={handleEdit}
                   variant="outline"
-                  className="bg-[#1A1F2C] border border-[#e8c28244] text-[#e8c282] hover:bg-[#e8c28215]"
+                  className="bg-[#161213] border border-[#e8c28244] text-[#e8c282] hover:bg-[#e8c28215]"
                 >
                   <Pencil className="w-4 h-4 mr-2" />
-                  Edit
+                  Edit this moment
                 </Button>
               )}
             </div>
