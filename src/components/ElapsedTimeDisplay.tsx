@@ -114,57 +114,63 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="bg-[#161213] border-0 p-8 rounded-2xl overflow-hidden max-w-md">
           <div className="space-y-8">
-            <div className="space-y-2">
-              <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">title</div>
-              <div className="text-[#e8c282] text-3xl font-serif">{title}</div>
+            <div className="text-center text-2xl text-[#e8c282] font-serif tracking-wide mb-8">
+              Moment Details
             </div>
 
-            <div className="space-y-2">
-              <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">start date & time</div>
-              <div className="flex items-center gap-2 text-[#e8c282]">
-                <Calendar className="w-5 h-5 opacity-70" />
-                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
-              </div>
-            </div>
-
-            {location && (
+            <div className="space-y-6">
               <div className="space-y-2">
-                <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">location</div>
+                <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">title</div>
+                <div className="text-[#e8c282] text-3xl font-serif">{title}</div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">start date & time</div>
                 <div className="flex items-center gap-2 text-[#e8c282]">
-                  <MapPin className="w-5 h-5 opacity-70" />
-                  <span>{location}</span>
+                  <Calendar className="w-5 h-5 opacity-70" />
+                  <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
                 </div>
               </div>
-            )}
 
-            {note && (
-              <div className="space-y-2">
-                <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">memories</div>
-                <div className="flex items-start gap-2 text-[#e8c282]">
-                  <StickyNote className="w-5 h-5 opacity-70 mt-1" />
-                  <span>{note}</span>
+              {location && (
+                <div className="space-y-2">
+                  <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">location</div>
+                  <div className="flex items-center gap-2 text-[#e8c282]">
+                    <MapPin className="w-5 h-5 opacity-70" />
+                    <span>{location}</span>
+                  </div>
                 </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-5 gap-4 text-center py-6">
-              {elapsed.years > 0 && (
-                <TimeUnit value={elapsed.years} unit="years" size="large" />
               )}
-              <TimeUnit value={elapsed.days} unit="days" size="large" />
-              <TimeUnit value={elapsed.hours} unit="hours" size="large" />
-              <TimeUnit value={elapsed.minutes} unit="minutes" size="large" />
-              <TimeUnit value={elapsed.seconds} unit="seconds" size="large" />
-            </div>
 
-            <div className="flex justify-center pt-4">
-              <Button
-                onClick={handleEdit}
-                className="bg-[#292524] hover:bg-[#292524]/80 text-[#e8c282] border-none px-6 py-5 text-lg rounded-xl"
-              >
-                <Pencil className="w-5 h-5 mr-2" />
-                Edit this moment
-              </Button>
+              {note && (
+                <div className="space-y-2">
+                  <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">memories</div>
+                  <div className="flex items-start gap-2 text-[#e8c282]">
+                    <StickyNote className="w-5 h-5 opacity-70 mt-1" />
+                    <span>{note}</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-5 gap-4 text-center py-6">
+                {elapsed.years > 0 && (
+                  <TimeUnit value={elapsed.years} unit="years" size="large" />
+                )}
+                <TimeUnit value={elapsed.days} unit="days" size="large" />
+                <TimeUnit value={elapsed.hours} unit="hours" size="large" />
+                <TimeUnit value={elapsed.minutes} unit="minutes" size="large" />
+                <TimeUnit value={elapsed.seconds} unit="seconds" size="large" />
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <Button
+                  onClick={handleEdit}
+                  className="bg-[#292524] hover:bg-[#292524]/80 text-[#e8c282] border-none px-6 py-5 text-lg rounded-xl"
+                >
+                  <Pencil className="w-5 h-5 mr-2" />
+                  Edit this moment
+                </Button>
+              </div>
             </div>
           </div>
         </DialogContent>
