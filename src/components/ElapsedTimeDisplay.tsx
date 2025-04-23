@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil, Calendar, MapPin, StickyNote, MoveUp, MoveDown } from "lucide-react";
+import { Clock, Pencil, Calendar, MapPin, StickyNote } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -71,19 +72,9 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
           shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]
           cursor-pointer group"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Clock className="w-5 h-5 text-[#e8c282]" />
-            <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
-          </div>
-          <Button
-            onClick={handleEdit}
-            variant="ghost"
-            size="icon"
-            className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#222]/50 hover:bg-[#333]/50"
-          >
-            <Pencil className="h-4 w-4 text-[#e8c282]" />
-          </Button>
+        <div className="flex items-center gap-4 mb-6">
+          <Clock className="w-5 h-5 text-[#e8c282]" />
+          <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
         </div>
 
         <div className="grid grid-cols-5 gap-4 text-center">
@@ -95,57 +86,92 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
           <TimeUnit value={elapsed.minutes} unit="minutes" />
           <TimeUnit value={elapsed.seconds} unit="seconds" />
         </div>
+
+        {(onMoveUp || onMoveDown) && (
+          <div className="absolute top-4 right-4 flex gap-2">
+            {onMoveUp && (
+              <Button
+                onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
+                variant="ghost"
+                size="icon"
+                className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
+              >
+                <Pencil className="h-4 w-4 text-[#e8c282]" />
+              </Button>
+            )}
+          </div>
+        )}
+
+        {onEdit && id !== undefined && (
+          <button
+            onClick={handleEdit}
+            className="absolute top-4 right-4 p-2 opacity-70 hover:opacity-100"
+          >
+            <Pencil className="h-4 w-4 text-[#e8c282]" />
+          </button>
+        )}
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#161213] border-0 p-8 rounded-lg max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm mb-4">title</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-8">
-            <div className="text-[#edd6ae] text-2xl font-serif">{title}</div>
+        <DialogContent className="bg-[#161213] border-0 p-0 rounded-lg overflow-hidden max-w-md">
+          <div className="p-8 bg-[#161213] border-t-2 border-[#e8c282]/20">
+            <DialogHeader>
+              <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm">title</DialogTitle>
+            </DialogHeader>
+            
+            <div className="mt-2 text-[#e8c282] text-2xl font-serif">{title}</div>
 
-            <div className="space-y-2">
-              <div className="text-[#e8c282] lowercase tracking-wider text-sm">start date & time</div>
-              <div className="flex items-center gap-2 text-[#edd6ae]">
-                <Calendar className="w-5 h-5 opacity-70" />
-                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
-              </div>
-            </div>
-
-            {location && (
+            <div className="mt-8 space-y-6">
               <div className="space-y-2">
-                <div className="text-[#e8c282] lowercase tracking-wider text-sm">location</div>
+                <div className="text-[#e8c282] lowercase tracking-wider text-sm">start date & time</div>
                 <div className="flex items-center gap-2 text-[#edd6ae]">
-                  <MapPin className="w-5 h-5 opacity-70" />
-                  <span>{location}</span>
+                  <Calendar className="w-5 h-5 opacity-70" />
+                  <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
                 </div>
               </div>
-            )}
 
-            {note && (
-              <div className="space-y-2">
-                <div className="text-[#e8c282] lowercase tracking-wider text-sm">memories</div>
-                <div className="flex items-start gap-2 text-[#edd6ae]">
-                  <StickyNote className="w-5 h-5 opacity-70 mt-1" />
-                  <span>{note}</span>
+              {location && (
+                <div className="space-y-2">
+                  <div className="text-[#e8c282] lowercase tracking-wider text-sm">location</div>
+                  <div className="flex items-center gap-2 text-[#edd6ae]">
+                    <MapPin className="w-5 h-5 opacity-70" />
+                    <span>{location}</span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="flex justify-center pt-4">
-              {onEdit && id !== undefined && (
+              {note && (
+                <div className="space-y-2">
+                  <div className="text-[#e8c282] lowercase tracking-wider text-sm">memories</div>
+                  <div className="flex items-start gap-2 text-[#edd6ae]">
+                    <StickyNote className="w-5 h-5 opacity-70 mt-1" />
+                    <span>{note}</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-4 flex justify-center">
                 <Button
                   onClick={handleEdit}
                   variant="outline"
-                  className="bg-[#161213] border border-[#e8c28244] text-[#e8c282] hover:bg-[#e8c28215]"
+                  className="bg-transparent text-[#e8c282] border border-[#e8c282]/30 hover:bg-[#e8c282]/10"
                 >
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit this moment
                 </Button>
-              )}
+              </div>
             </div>
+          </div>
+
+          {/* Time display in dialog */}
+          <div className="grid grid-cols-5 gap-4 text-center p-6 bg-[#0f0d0c]">
+            {elapsed.years > 0 && (
+              <TimeUnit value={elapsed.years} unit="years" />
+            )}
+            <TimeUnit value={elapsed.days} unit="days" />
+            <TimeUnit value={elapsed.hours} unit="hours" />
+            <TimeUnit value={elapsed.minutes} unit="minutes" />
+            <TimeUnit value={elapsed.seconds} unit="seconds" />
           </div>
         </DialogContent>
       </Dialog>
