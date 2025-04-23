@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
-import { Plus, ArrowLeft, ArrowRight } from "lucide-react";
+import { Plus, ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "@/components/ui/accordion";
 import ScheduleItem from "@/components/ScheduleItem";
 import TimelineProgress from "@/components/TimelineProgress";
 import CountdownTimer from "@/components/CountdownTimer";
@@ -238,7 +243,11 @@ const Schedule = () => {
   const handleEventSelect = (eventId: number) => {
     const selectedEvent = events.find(event => event.id === eventId);
     if (selectedEvent) {
-      handleEditEvent(selectedEvent);
+      const viewEvent = {
+        ...selectedEvent
+      };
+      setEditingEvent(viewEvent);
+      setIsEditDialogOpen(true);
     }
   };
   
@@ -355,37 +364,48 @@ const Schedule = () => {
         {completedEvents.length > 0 && (
           <div className="fixed bottom-20 left-0 right-0 px-4 md:px-8 z-10">
             <div className="max-w-lg mx-auto">
-              <Collapsible 
-                open={showCompletedEvents} 
-                onOpenChange={setShowCompletedEvents}
+              <Accordion 
+                type="single" 
+                collapsible
                 className="bg-[#1a1f2c]/95 border border-[#e8c28222] rounded-lg shadow-lg backdrop-blur-sm"
               >
-                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-[#e8c282] hover:text-[#edd6ae]">
-                  <span>Completed Events ({completedEvents.length})</span>
-                  <span>{showCompletedEvents ? "Show Less" : "Show More"}</span>
-                </CollapsibleTrigger>
-                
-                <CollapsibleContent className="px-4 pb-4 space-y-2 max-h-[40vh] overflow-y-auto">
-                  {completedEvents.map((event) => (
-                    <div key={event.id} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
-                      <ScheduleItem 
-                        time={format(new Date(event.time), "h:mm a")}
-                        title={event.title}
-                        description={event.description}
-                        person={event.person}
-                        color={event.color}
-                        icon={event.icon}
-                        progress={100}
-                        timeLeft="Completed"
-                        location={event.location}
-                        completed={true}
-                        onEdit={() => handleEditEvent(event)}
-                        onDelete={() => deleteEvent(event.id)}
-                      />
+                <AccordionItem value="completed-events" className="border-none">
+                  <AccordionTrigger className="px-4 py-3 text-[#e8c282] hover:text-[#edd6ae] hover:no-underline">
+                    <div className="flex items-center justify-between w-full">
+                      <span>Completed Events ({completedEvents.length})</span>
+                      <span className="flex items-center">
+                        {showCompletedEvents ? (
+                          <>Show Less <ChevronUp className="ml-1 h-4 w-4" /></>
+                        ) : (
+                          <>Show More <ChevronDown className="ml-1 h-4 w-4" /></>
+                        )}
+                      </span>
                     </div>
-                  ))}
-                </CollapsibleContent>
-              </Collapsible>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <div className="max-h-[40vh] overflow-y-auto space-y-2">
+                      {completedEvents.map((event) => (
+                        <div key={event.id} className="transform scale-95 opacity-75 transition-all hover:opacity-90">
+                          <ScheduleItem 
+                            time={format(new Date(event.time), "h:mm a")}
+                            title={event.title}
+                            description={event.description}
+                            person={event.person}
+                            color={event.color}
+                            icon={event.icon}
+                            progress={100}
+                            timeLeft="Completed"
+                            location={event.location}
+                            completed={true}
+                            onEdit={() => handleEditEvent(event)}
+                            onDelete={() => deleteEvent(event.id)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
         )}
@@ -412,27 +432,36 @@ const Schedule = () => {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="bg-[#1a1f2c] border border-[#e8c28233] text-[#edd6ae] max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-[#edd6ae]">Edit Event</DialogTitle>
+              <DialogTitle className="text-[#edd6ae] flex items-center gap-2">
+                {editingEvent?.icon && <span>{editingEvent.icon}</span>}
+                {editingEvent?.title}
+              </DialogTitle>
             </DialogHeader>
             
             {editingEvent && (
-              <EventForm
-                event={{
-                  title: editingEvent.title,
-                  person: editingEvent.person,
-                  location: editingEvent.location || "",
-                  color: editingEvent.color,
-                  icon: editingEvent.icon || "📅",
-                  repeat: editingEvent.repeat || { enabled: false, days: [] }
-                }}
-                isEditing={true}
-                onSubmit={handleSaveEditedEvent}
-                onChange={(updated) => setEditingEvent({
-                  ...editingEvent,
-                  ...updated
-                })}
-                onWeekdayToggle={handleWeekdayToggle}
-              />
+              <div className="space-y-4">
+                <div className="text-[#e8c282] flex items-center gap-2">
+                  <Clock size={16} />
+                  {format(new Date(editingEvent.time), "h:mm a")}
+                </div>
+                {editingEvent.description && (
+                  <p className="text-[#e8c282cc]">{editingEvent.description}</p>
+                )}
+                {editingEvent.location && (
+                  <p className="text-[#e8c282aa] flex items-center gap-2">
+                    📍 {editingEvent.location}
+                  </p>
+                )}
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    variant="outline"
+                    className="border-[#e8c28233] text-[#e8c282] hover:bg-[#e8c28215] hover:text-[#edd6ae]"
+                    onClick={() => setIsEditDialogOpen(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
             )}
           </DialogContent>
         </Dialog>

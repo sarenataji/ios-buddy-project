@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,9 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   
   const sortedEvents = [...events].sort((a, b) => a.time.getTime() - b.time.getTime());
+  
+  // Filter out completed events from timeline display
+  const activeEvents = sortedEvents.filter(event => !event.completed);
   
   const startOfDay = new Date(currentTime);
   startOfDay.setHours(6, 0, 0, 0);
@@ -96,7 +100,7 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
           <div className="h-full w-0.5 bg-[#e8c282] opacity-70"></div>
         </div>
         
-        {sortedEvents.filter(event => !event.completed).map((event, index) => {
+        {activeEvents.map((event, index) => {
           const position = calculateEventPosition(event.time);
           const extractedTime = format(event.time, "h:mm a");
           const description = event.description || "";
@@ -108,7 +112,13 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
                 <div
                   className="absolute z-10 cursor-pointer"
                   style={{ left: `${position}%`, top: "8px" }}
-                  onClick={() => setSelectedEvent(event)}
+                  onClick={() => {
+                    if (event.id && onEventClick) {
+                      setSelectedEvent(event);
+                    } else {
+                      setSelectedEvent(event);
+                    }
+                  }}
                 >
                   <div 
                     className={cn(
