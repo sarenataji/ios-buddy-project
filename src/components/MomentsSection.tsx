@@ -106,13 +106,15 @@ export const MomentsSection = () => {
       <Dialog open={editingMoment !== null} onOpenChange={(open) => {
         if (!open) handleCancel();
       }}>
-        <DialogContent className="bg-[#161213] border border-[#e8c28233] text-[#edd6ae]">
+        <DialogContent className="bg-[#161213] border border-[#e8c28233] text-[#edd6ae] rounded-xl
+          max-h-[90vh] w-[95vw] max-w-lg overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">Edit Moment</DialogTitle>
             <DialogDescription className="text-center text-[#e8c28288]">
               Make changes to your moment details
             </DialogDescription>
           </DialogHeader>
+          
           <div className="space-y-4 mt-4">
             <div>
               <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">Title</label>
@@ -178,21 +180,19 @@ export const MomentsSection = () => {
                   Delete
                 </Button>
               )}
-              <div className="flex-1 flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={handleCancel}
-                  variant="outline"
-                  className="w-full bg-transparent border-[#e8c28233] text-[#edd6ae] hover:bg-[#e8c28215]"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  className="w-full bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
-                >
-                  Save Changes
-                </Button>
-              </div>
+              <Button
+                onClick={handleCancel}
+                variant="outline"
+                className="w-full bg-transparent border-[#e8c28233] text-[#edd6ae] hover:bg-[#e8c28215]"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="w-full bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
+              >
+                Save Changes
+              </Button>
             </DialogFooter>
           </div>
         </DialogContent>
