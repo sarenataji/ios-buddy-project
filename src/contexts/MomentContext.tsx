@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface Moment {
@@ -6,6 +5,7 @@ interface Moment {
   title: string;
   startDate: Date;
   description?: string;
+  isPredefined?: boolean;
 }
 
 interface MomentContextType {
@@ -14,6 +14,39 @@ interface MomentContextType {
   deleteMoment: (id: number) => void;
   updateMoment: (moment: Moment) => void;
 }
+
+const predefinedMoments: Omit<Moment, "id">[] = [
+  {
+    title: "Hair",
+    startDate: new Date(2024, 3, 8), // April 8, 2024
+    isPredefined: true
+  },
+  {
+    title: "Türkiye",
+    startDate: new Date(2023, 8, 15), // September 15, 2023
+    isPredefined: true
+  },
+  {
+    title: "Europe",
+    startDate: new Date(2023, 5, 1), // June 1, 2023
+    isPredefined: true
+  },
+  {
+    title: "Abroad",
+    startDate: new Date(2023, 0, 1), // January 1, 2023
+    isPredefined: true
+  },
+  {
+    title: "S. Birth",
+    startDate: new Date(2000, 3, 15), // April 15, 2000
+    isPredefined: true
+  },
+  {
+    title: "L. Birth",
+    startDate: new Date(1998, 0, 1), // January 1, 1998
+    isPredefined: true
+  }
+];
 
 const MomentContext = createContext<MomentContextType | undefined>(undefined);
 
@@ -27,12 +60,15 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [moments, setMoments] = useState<Moment[]>(() => {
     const saved = localStorage.getItem("moments");
     if (saved) {
-      return JSON.parse(saved, (key, value) => {
+      const parsedMoments = JSON.parse(saved, (key, value) => {
         if (key === "startDate") return new Date(value);
         return value;
       });
+      const predefinedIds = predefinedMoments.map(m => m.title);
+      const filteredSaved = parsedMoments.filter((m: Moment) => !predefinedIds.includes(m.title));
+      return [...predefinedMoments.map((m, i) => ({ ...m, id: -1 - i })), ...filteredSaved];
     }
-    return [];
+    return predefinedMoments.map((m, i) => ({ ...m, id: -1 - i }));
   });
 
   useEffect(() => {

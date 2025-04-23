@@ -19,6 +19,9 @@ const Moments = () => {
   const [newMomentTitle, setNewMomentTitle] = useState("");
   const { toast } = useToast();
 
+  const predefinedMoments = moments.filter(m => m.isPredefined);
+  const customMoments = moments.filter(m => !m.isPredefined);
+
   const handleAddMoment = () => {
     if (!newMomentTitle.trim()) {
       toast({
@@ -47,7 +50,7 @@ const Moments = () => {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-[#edd6ae]">Moment</h1>
+          <h1 className="text-4xl font-bold text-[#edd6ae]">Moments</h1>
           <Button
             onClick={() => setIsAddingMoment(true)}
             className="bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
@@ -56,15 +59,35 @@ const Moments = () => {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          {moments.map((moment) => (
-            <ElapsedTimeDisplay
-              key={moment.id}
-              title={moment.title}
-              startDate={moment.startDate}
-            />
-          ))}
-        </div>
+        {predefinedMoments.length > 0 && (
+          <>
+            <h2 className="text-[#e8c282] text-lg font-medium mb-4">Life Events</h2>
+            <div className="space-y-4 mb-8">
+              {predefinedMoments.map((moment) => (
+                <ElapsedTimeDisplay
+                  key={moment.id}
+                  title={moment.title}
+                  startDate={moment.startDate}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {customMoments.length > 0 && (
+          <>
+            <h2 className="text-[#e8c282] text-lg font-medium mb-4">Custom Moments</h2>
+            <div className="space-y-4">
+              {customMoments.map((moment) => (
+                <ElapsedTimeDisplay
+                  key={moment.id}
+                  title={moment.title}
+                  startDate={moment.startDate}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
           <SheetContent className="bg-[#1a1f2c] border-l border-[#e8c28233] text-[#edd6ae]">
