@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info } from "lucide-react";
 import {
@@ -8,7 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { format } from "date-fns";
+import { format, isThisYear } from "date-fns";
 
 interface ElapsedTimeDisplayProps {
   title: string;
@@ -97,69 +96,61 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#1a1f2c] border border-[#e8c28233] text-[#edd6ae] overflow-hidden relative">
-          <DialogHeader>
-            <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase flex items-center justify-center gap-2">
-              <Info className="w-5 h-5" />
+        <DialogContent className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-lg
+          bg-[#edd6ae] border border-[#e8c28255] text-[#1a1f2c] rounded-xl
+          shadow-[0_8px_32px_rgba(232,194,130,0.2)]
+          overflow-hidden backdrop-blur-md">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#edd6ae] to-[#e8c282] opacity-50 pointer-events-none" />
+          
+          <DialogHeader className="relative z-10">
+            <DialogTitle className="text-[#1a1f2c] text-center text-2xl tracking-wide font-serif">
+              <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
               Moment Details
             </DialogTitle>
-            <DialogDescription className="text-center text-[#e8c28288]">
-              View detailed information about this moment
-            </DialogDescription>
           </DialogHeader>
           
-          <div className="absolute inset-0 bg-gradient-to-br from-[#e8c28205] to-transparent pointer-events-none" />
-          <div className="relative z-10">
-            <div className="mt-6 space-y-6">
-              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg border border-[#e8c28222] backdrop-blur-sm">
-                <div className="text-sm font-medium text-[#e8c282] tracking-wider lowercase">Title</div>
-                <div className="text-lg font-serif tracking-wide">{title}</div>
+          <div className="relative z-10 mt-6 space-y-6">
+            <div className="space-y-2 bg-white/20 p-4 rounded-lg backdrop-blur-sm border border-white/30">
+              <div className="text-sm font-medium text-[#1a1f2c]/70 tracking-wider lowercase">Title</div>
+              <div className="text-xl font-serif tracking-wide text-[#1a1f2c]">{title}</div>
+            </div>
+            
+            <div className="space-y-2 bg-white/20 p-4 rounded-lg backdrop-blur-sm border border-white/30">
+              <div className="text-sm font-medium text-[#1a1f2c]/70 tracking-wider lowercase">Start Date & Time</div>
+              <div className="flex items-center gap-2 text-[#1a1f2c]">
+                <Calendar className="w-4 h-4 opacity-70" />
+                <span>
+                  {format(startDate, isThisYear(startDate) ? "MMMM d 'at' p" : "MMMM d, yyyy 'at' p")}
+                </span>
               </div>
-              
-              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg border border-[#e8c28222] backdrop-blur-sm">
-                <div className="text-sm font-medium text-[#e8c282] tracking-wider lowercase">Start Date & Time</div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-[#e8c282]" />
-                  <span>{format(startDate, "PPP 'at' p")}</span>
-                </div>
-              </div>
+            </div>
 
-              {location && (
-                <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg border border-[#e8c28222] backdrop-blur-sm">
-                  <div className="text-sm font-medium text-[#e8c282] tracking-wider lowercase">Location</div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#e8c282]" />
-                    <span>{location}</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="space-y-1 bg-[#e8c28208] p-4 rounded-lg text-center border border-[#e8c28222] backdrop-blur-sm">
-                  <div className="text-3xl font-serif font-bold text-[#edd6ae]">
-                    {elapsed.days.toString().padStart(2, '0')}
-                  </div>
-                  <div className="text-xs uppercase tracking-wider text-[#e8c28288]">Days</div>
-                </div>
-                <div className="space-y-1 bg-[#e8c28208] p-4 rounded-lg text-center border border-[#e8c28222] backdrop-blur-sm">
-                  <div className="text-3xl font-serif font-bold text-[#edd6ae]">
-                    {elapsed.hours.toString().padStart(2, '0')}
-                  </div>
-                  <div className="text-xs uppercase tracking-wider text-[#e8c28288]">Hours</div>
-                </div>
-                <div className="space-y-1 bg-[#e8c28208] p-4 rounded-lg text-center border border-[#e8c28222] backdrop-blur-sm">
-                  <div className="text-3xl font-serif font-bold text-[#edd6ae]">
-                    {elapsed.minutes.toString().padStart(2, '0')}
-                  </div>
-                  <div className="text-xs uppercase tracking-wider text-[#e8c28288]">Minutes</div>
-                </div>
-                <div className="space-y-1 bg-[#e8c28208] p-4 rounded-lg text-center border border-[#e8c28222] backdrop-blur-sm">
-                  <div className="text-3xl font-serif font-bold text-[#edd6ae]">
-                    {elapsed.seconds.toString().padStart(2, '0')}
-                  </div>
-                  <div className="text-xs uppercase tracking-wider text-[#e8c28288]">Seconds</div>
+            {location && (
+              <div className="space-y-2 bg-white/20 p-4 rounded-lg backdrop-blur-sm border border-white/30">
+                <div className="text-sm font-medium text-[#1a1f2c]/70 tracking-wider lowercase">Location</div>
+                <div className="flex items-center gap-2 text-[#1a1f2c]">
+                  <MapPin className="w-4 h-4 opacity-70" />
+                  <span>{location}</span>
                 </div>
               </div>
+            )}
+
+            <div className="grid grid-cols-4 gap-3">
+              {[
+                { value: elapsed.days, label: "Days" },
+                { value: elapsed.hours, label: "Hours" },
+                { value: elapsed.minutes, label: "Minutes" },
+                { value: elapsed.seconds, label: "Seconds" }
+              ].map((item, index) => (
+                <div key={index} className="space-y-1 bg-white/20 p-3 rounded-lg text-center backdrop-blur-sm border border-white/30">
+                  <div className="text-2xl font-serif font-bold text-[#1a1f2c]">
+                    {item.value.toString().padStart(2, '0')}
+                  </div>
+                  <div className="text-xs uppercase tracking-wider text-[#1a1f2c]/60">
+                    {item.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </DialogContent>
