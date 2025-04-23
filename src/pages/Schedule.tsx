@@ -282,13 +282,13 @@ const Schedule = () => {
           />
         </div>
         
-        <EventListSection 
+        {/* <EventListSection 
           activeEvents={activeEvents}
           onEventEdit={handleEditEvent}
           onEventDelete={deleteEvent}
           onEventComplete={toggleEventCompletion}
           currentEvent={currentEvent}
-        />
+        /> */}
         
         <CompletedEventsList 
           completedEvents={completedEvents}
