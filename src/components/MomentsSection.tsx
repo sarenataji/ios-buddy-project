@@ -8,18 +8,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { Calendar, MapPin } from "lucide-react";
 
 export const MomentsSection = () => {
   const { moments, updateMoment, deleteMoment } = useMoment();
   const [editingMoment, setEditingMoment] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDate, setEditDate] = useState("");
+  const [editTime, setEditTime] = useState("");
+  const [editLocation, setEditLocation] = useState("");
   const { toast } = useToast();
 
   const handleEdit = (id: number) => {
@@ -27,8 +31,15 @@ export const MomentsSection = () => {
     if (moment) {
       setEditingMoment(id);
       setEditTitle(moment.title);
+      
       // Format the date to match the input type="date" format (YYYY-MM-DD)
       setEditDate(format(new Date(moment.startDate), "yyyy-MM-dd"));
+      
+      // Format the time to match the input type="time" format (HH:MM)
+      setEditTime(format(new Date(moment.startDate), "HH:mm"));
+      
+      // Set location if it exists
+      setEditLocation(moment.location || "");
     }
   };
 
@@ -53,10 +64,17 @@ export const MomentsSection = () => {
 
     const momentToUpdate = moments.find(m => m.id === editingMoment);
     if (momentToUpdate) {
+      // Create a new date object from the date and time inputs
+      const [year, month, day] = editDate.split('-').map(Number);
+      const [hours, minutes] = editTime ? editTime.split(':').map(Number) : [0, 0];
+      
+      const updatedDate = new Date(year, month - 1, day, hours, minutes);
+      
       updateMoment({
         ...momentToUpdate,
         title: editTitle,
-        startDate: new Date(editDate),
+        startDate: updatedDate,
+        location: editLocation.trim() || undefined,
       });
       
       toast({
@@ -91,15 +109,22 @@ export const MomentsSection = () => {
             id={moment.id}
             title={moment.title}
             startDate={moment.startDate}
+            location={moment.location}
+            description={moment.description}
             onEdit={handleEdit}
           />
         </div>
       ))}
 
-      <Dialog open={editingMoment !== null} onOpenChange={handleCancel}>
+      <Dialog open={editingMoment !== null} onOpenChange={(open) => {
+        if (!open) handleCancel();
+      }}>
         <DialogContent className="bg-[#1a1f2c] border border-[#e8c28233] text-[#edd6ae]">
           <DialogHeader>
             <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">Edit Moment</DialogTitle>
+            <DialogDescription className="text-center text-[#e8c28288]">
+              Make changes to your moment details
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div>
@@ -118,6 +143,31 @@ export const MomentsSection = () => {
                 onChange={(e) => setEditDate(e.target.value)}
                 className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae]"
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">Time</label>
+              <Input
+                type="time"
+                value={editTime}
+                onChange={(e) => setEditTime(e.target.value)}
+                className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae]"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">
+                Location <span className="text-[#e8c28277]">(optional)</span>
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 bg-[#e8c28215] border border-r-0 border-[#e8c28233] rounded-l-md">
+                  <MapPin className="h-4 w-4 text-[#e8c282]" />
+                </span>
+                <Input
+                  value={editLocation}
+                  onChange={(e) => setEditLocation(e.target.value)}
+                  className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae] rounded-l-none"
+                  placeholder="Enter location"
+                />
+              </div>
             </div>
             
             <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">

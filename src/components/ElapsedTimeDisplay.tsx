@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil, Calendar, Info } from "lucide-react";
+import { Clock, Pencil, Calendar, MapPin, Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 
@@ -14,6 +16,8 @@ interface ElapsedTimeDisplayProps {
   onClick?: () => void;
   onEdit?: (id: number) => void;
   id?: number;
+  location?: string;
+  description?: string;
 }
 
 const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({ 
@@ -21,7 +25,9 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   startDate, 
   onClick,
   onEdit,
-  id 
+  id,
+  location,
+  description
 }) => {
   const [elapsed, setElapsed] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showDetails, setShowDetails] = useState(false);
@@ -92,14 +98,18 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="bg-[#1a1f2c] border border-[#e8c28233] text-[#edd6ae] overflow-hidden relative">
+          <DialogHeader>
+            <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase flex items-center justify-center gap-2">
+              <Info className="w-5 h-5" />
+              Moment Details
+            </DialogTitle>
+            <DialogDescription className="text-center text-[#e8c28288]">
+              View detailed information about this moment
+            </DialogDescription>
+          </DialogHeader>
+          
           <div className="absolute inset-0 bg-gradient-to-br from-[#e8c28205] to-transparent pointer-events-none" />
           <div className="relative z-10">
-            <DialogHeader>
-              <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase flex items-center justify-center gap-2">
-                <Info className="w-5 h-5" />
-                Moment Details
-              </DialogTitle>
-            </DialogHeader>
             <div className="mt-6 space-y-6">
               <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg border border-[#e8c28222] backdrop-blur-sm">
                 <div className="text-sm font-medium text-[#e8c282] tracking-wider lowercase">Title</div>
@@ -113,6 +123,16 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
                   <span>{format(startDate, "PPP 'at' p")}</span>
                 </div>
               </div>
+
+              {location && (
+                <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg border border-[#e8c28222] backdrop-blur-sm">
+                  <div className="text-sm font-medium text-[#e8c282] tracking-wider lowercase">Location</div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-[#e8c282]" />
+                    <span>{location}</span>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="space-y-1 bg-[#e8c28208] p-4 rounded-lg text-center border border-[#e8c28222] backdrop-blur-sm">
