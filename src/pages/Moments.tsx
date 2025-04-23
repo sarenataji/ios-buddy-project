@@ -24,6 +24,7 @@ const Moments = () => {
   const [isAddingMoment, setIsAddingMoment] = useState(false);
   const [newMomentTitle, setNewMomentTitle] = useState("");
   const [newMomentDate, setNewMomentDate] = useState<Date | undefined>(new Date());
+  const [newMomentLocation, setNewMomentLocation] = useState("");
   const { toast } = useToast();
 
   const handleAddMoment = () => {
@@ -48,10 +49,12 @@ const Moments = () => {
     addMoment({
       title: newMomentTitle,
       startDate: newMomentDate,
+      location: newMomentLocation.trim() || undefined,
     });
 
     setNewMomentTitle("");
     setNewMomentDate(new Date());
+    setNewMomentLocation("");
     setIsAddingMoment(false);
     
     toast({
@@ -117,27 +120,55 @@ const Moments = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">Start Date</label>
+                <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">Date & Time</label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start bg-[#161213] border-[#e8c28244] text-[#edd6ae] hover:bg-[#e8c28215]">
                       {newMomentDate ? (
-                        format(newMomentDate, "PPP")
+                        format(newMomentDate, "PPP p")
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Pick a date and time</span>
                       )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-[#1a1f2c] border border-[#e8c28233]">
-                    <Calendar
-                      mode="single"
-                      selected={newMomentDate}
-                      onSelect={setNewMomentDate}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
+                    <div className="p-3">
+                      <Calendar
+                        mode="single"
+                        selected={newMomentDate}
+                        onSelect={setNewMomentDate}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                      <div className="px-3 pb-2">
+                        <Input
+                          type="time"
+                          className="mt-2 bg-[#161213] border-[#e8c28244] text-[#edd6ae]"
+                          onChange={(e) => {
+                            if (newMomentDate && e.target.value) {
+                              const [hours, minutes] = e.target.value.split(':');
+                              const newDate = new Date(newMomentDate);
+                              newDate.setHours(parseInt(hours), parseInt(minutes));
+                              setNewMomentDate(newDate);
+                            }
+                          }}
+                          defaultValue={newMomentDate ? format(newMomentDate, "HH:mm") : undefined}
+                        />
+                      </div>
+                    </div>
                   </PopoverContent>
                 </Popover>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">
+                  Location <span className="text-[#e8c28277]">(optional)</span>
+                </label>
+                <Input
+                  value={newMomentLocation}
+                  onChange={(e) => setNewMomentLocation(e.target.value)}
+                  placeholder="Enter location"
+                  className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
+                />
               </div>
               <Button
                 onClick={handleAddMoment}

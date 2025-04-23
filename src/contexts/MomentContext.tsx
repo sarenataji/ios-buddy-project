@@ -1,9 +1,11 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface Moment {
   id: number;
   title: string;
   startDate: Date;
+  location?: string;
   description?: string;
   isPredefined?: boolean;
 }
