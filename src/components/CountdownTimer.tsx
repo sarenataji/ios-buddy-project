@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 
 interface CountdownTimerProps {
@@ -50,17 +49,15 @@ const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) => {
   
   return (
     <div className="flex items-center w-full gap-4">
-      {/* Horizontal countdown display */}
       <div className="font-mono text-xl text-[#edd6ae] tracking-wider flex items-baseline gap-1">
         <span className="text-[#edd6ae] font-medium">{formatTimeUnit(timeLeft.hours)}</span>
         <span className="text-[#e8c282aa] text-sm">h</span>
         <span className="text-[#edd6ae] font-medium">{formatTimeUnit(timeLeft.minutes)}</span>
         <span className="text-[#e8c282aa] text-sm">m</span>
-        <span className="text-[#edd6ae] font-medium animate-pulse-subtle">{formatTimeUnit(timeLeft.seconds)}</span>
+        <span className="text-[#edd6ae] font-medium">{formatTimeUnit(timeLeft.seconds)}</span>
         <span className="text-[#e8c282aa] text-sm">s</span>
       </div>
       
-      {/* Progress bar */}
       <div className="flex-grow h-1.5 bg-[#e8c28222] rounded-full overflow-hidden">
         <div 
           className="h-full bg-[#e8c282] transition-all duration-1000"
