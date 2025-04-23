@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil, Calendar, MapPin, StickyNote } from "lucide-react";
+import { Clock, Calendar, MapPin, StickyNote, Pencil } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { format, isThisYear, differenceInYears } from "date-fns";
+import { format, differenceInYears, isThisYear } from "date-fns";
 import { Button } from "@/components/ui/button";
 
 interface ElapsedTimeDisplayProps {
@@ -113,65 +112,60 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#161213] border-0 p-0 rounded-lg overflow-hidden max-w-md">
-          <div className="p-8 bg-[#161213] border-t-2 border-[#e8c282]/20">
-            <DialogHeader>
-              <DialogTitle className="text-[#e8c282] lowercase tracking-wider text-sm">title</DialogTitle>
-            </DialogHeader>
-            
-            <div className="mt-2 text-[#e8c282] text-2xl font-serif">{title}</div>
+        <DialogContent className="bg-[#161213] border-0 p-8 rounded-2xl overflow-hidden max-w-md">
+          <div className="space-y-8">
+            <div className="space-y-2">
+              <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">title</div>
+              <div className="text-[#e8c282] text-3xl font-serif">{title}</div>
+            </div>
 
-            <div className="mt-8 space-y-6">
-              <div className="space-y-2">
-                <div className="text-[#e8c282] lowercase tracking-wider text-sm">start date & time</div>
-                <div className="flex items-center gap-2 text-[#edd6ae]">
-                  <Calendar className="w-5 h-5 opacity-70" />
-                  <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
-                </div>
-              </div>
-
-              {location && (
-                <div className="space-y-2">
-                  <div className="text-[#e8c282] lowercase tracking-wider text-sm">location</div>
-                  <div className="flex items-center gap-2 text-[#edd6ae]">
-                    <MapPin className="w-5 h-5 opacity-70" />
-                    <span>{location}</span>
-                  </div>
-                </div>
-              )}
-
-              {note && (
-                <div className="space-y-2">
-                  <div className="text-[#e8c282] lowercase tracking-wider text-sm">memories</div>
-                  <div className="flex items-start gap-2 text-[#edd6ae]">
-                    <StickyNote className="w-5 h-5 opacity-70 mt-1" />
-                    <span>{note}</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-4 flex justify-center">
-                <Button
-                  onClick={handleEdit}
-                  variant="outline"
-                  className="bg-transparent text-[#e8c282] border border-[#e8c282]/30 hover:bg-[#e8c282]/10"
-                >
-                  <Pencil className="w-4 h-4 mr-2" />
-                  Edit this moment
-                </Button>
+            <div className="space-y-2">
+              <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">start date & time</div>
+              <div className="flex items-center gap-2 text-[#e8c282]">
+                <Calendar className="w-5 h-5 opacity-70" />
+                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
               </div>
             </div>
-          </div>
 
-          {/* Time display in dialog */}
-          <div className="grid grid-cols-5 gap-4 text-center p-6 bg-[#0f0d0c]">
-            {elapsed.years > 0 && (
-              <TimeUnit value={elapsed.years} unit="years" />
+            {location && (
+              <div className="space-y-2">
+                <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">location</div>
+                <div className="flex items-center gap-2 text-[#e8c282]">
+                  <MapPin className="w-5 h-5 opacity-70" />
+                  <span>{location}</span>
+                </div>
+              </div>
             )}
-            <TimeUnit value={elapsed.days} unit="days" />
-            <TimeUnit value={elapsed.hours} unit="hours" />
-            <TimeUnit value={elapsed.minutes} unit="minutes" />
-            <TimeUnit value={elapsed.seconds} unit="seconds" />
+
+            {note && (
+              <div className="space-y-2">
+                <div className="text-[#e8c282]/60 lowercase tracking-wider text-sm">memories</div>
+                <div className="flex items-start gap-2 text-[#e8c282]">
+                  <StickyNote className="w-5 h-5 opacity-70 mt-1" />
+                  <span>{note}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-5 gap-4 text-center py-6">
+              {elapsed.years > 0 && (
+                <TimeUnit value={elapsed.years} unit="years" size="large" />
+              )}
+              <TimeUnit value={elapsed.days} unit="days" size="large" />
+              <TimeUnit value={elapsed.hours} unit="hours" size="large" />
+              <TimeUnit value={elapsed.minutes} unit="minutes" size="large" />
+              <TimeUnit value={elapsed.seconds} unit="seconds" size="large" />
+            </div>
+
+            <div className="flex justify-center pt-4">
+              <Button
+                onClick={handleEdit}
+                className="bg-[#292524] hover:bg-[#292524]/80 text-[#e8c282] border-none px-6 py-5 text-lg rounded-xl"
+              >
+                <Pencil className="w-5 h-5 mr-2" />
+                Edit this moment
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -179,12 +173,18 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   );
 };
 
-const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
+interface TimeUnitProps {
+  value: number;
+  unit: string;
+  size?: 'normal' | 'large';
+}
+
+const TimeUnit = ({ value, unit, size = 'normal' }: TimeUnitProps) => (
   <div className="text-center">
-    <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+    <div className={`font-serif font-bold text-[#e8c282] ${size === 'large' ? 'text-4xl' : 'text-2xl'}`}>
       {value.toString().padStart(2, '0')}
     </div>
-    <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+    <div className={`uppercase tracking-wider text-[#e8c282]/40 ${size === 'large' ? 'text-sm' : 'text-xs'}`}>
       {unit}
     </div>
   </div>
