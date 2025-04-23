@@ -12,7 +12,7 @@ interface EventFormProps {
     startTime?: string;
     endTime?: string;
     person: string;
-    location: string;
+    location: string; // We keep this required for the form but handle empty strings
     color: string;
     icon: string;
     repeat: {
@@ -50,30 +50,29 @@ const EventForm = ({
         />
       </div>
       
-      {!isEditing && (
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm text-[#e8c282]">Start Time</label>
-            <Input 
-              type="time"
-              value={event.startTime}
-              onChange={(e) => onChange({...event, startTime: e.target.value})}
-              className="bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]"
-              style={{colorScheme: "dark"}}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm text-[#e8c282]">End Time</label>
-            <Input 
-              type="time"
-              value={event.endTime}
-              onChange={(e) => onChange({...event, endTime: e.target.value})}
-              className="bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]"
-              style={{colorScheme: "dark"}}
-            />
-          </div>
+      {/* Show time fields for both new and editing events */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-sm text-[#e8c282]">Start Time</label>
+          <Input 
+            type="time"
+            value={event.startTime}
+            onChange={(e) => onChange({...event, startTime: e.target.value})}
+            className="bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]"
+            style={{colorScheme: "dark"}}
+          />
         </div>
-      )}
+        <div className="space-y-2">
+          <label className="text-sm text-[#e8c282]">End Time</label>
+          <Input 
+            type="time"
+            value={event.endTime}
+            onChange={(e) => onChange({...event, endTime: e.target.value})}
+            className="bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]"
+            style={{colorScheme: "dark"}}
+          />
+        </div>
+      </div>
       
       <div className="space-y-2">
         <label className="text-sm text-[#e8c282]">Person/Category</label>

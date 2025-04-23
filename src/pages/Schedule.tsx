@@ -133,7 +133,7 @@ const Schedule = () => {
       person: newEvent.person || "Personal",
       color: newEvent.color,
       completed: false,
-      location: newEvent.location || undefined,
+      location: newEvent.location || "",
       icon: newEvent.icon,
       repeat: {
         enabled: newEvent.repeat.enabled,
@@ -212,20 +212,62 @@ const Schedule = () => {
   }));
   
   const handleEditEvent = (event: Event) => {
-    const eventToEdit = {
-      ...event,
+    const timeStr = format(new Date(event.time), "HH:mm");
+    
+    let endTimeStr = "";
+    if (event.description) {
+      const parts = event.description.split(" - ");
+      if (parts.length > 1) {
+        endTimeStr = parts[1];
+      }
+    }
+    
+    const formEvent = {
+      title: event.title,
+      startTime: timeStr,
+      endTime: endTimeStr,
+      person: event.person,
+      location: event.location || "",
+      color: event.color,
+      icon: event.icon || "📅",
       repeat: event.repeat || {
         enabled: false,
         days: []
       }
     };
+    
+    const eventToEdit = {
+      ...event,
+      formData: formEvent
+    };
+    
     setEditingEvent(eventToEdit);
     setIsEditDialogOpen(true);
   };
   
   const handleSaveEditedEvent = () => {
-    if (editingEvent) {
-      updateEvent(editingEvent);
+    if (editingEvent && editingEvent.formData) {
+      const { formData } = editingEvent;
+      
+      const [startHours, startMinutes] = formData.startTime.split(":").map(Number);
+      const updatedTime = new Date(editingEvent.time);
+      updatedTime.setHours(startHours, startMinutes, 0, 0);
+      
+      const updatedEvent = {
+        ...editingEvent,
+        time: updatedTime,
+        title: formData.title,
+        description: `${formData.startTime} - ${formData.endTime}`,
+        person: formData.person,
+        color: formData.color,
+        location: formData.location,
+        icon: formData.icon,
+        repeat: formData.repeat
+      };
+      
+      delete (updatedEvent as any).formData;
+      
+      updateEvent(updatedEvent);
       setIsEditDialogOpen(false);
       toast({
         title: "Event updated",
@@ -237,11 +279,7 @@ const Schedule = () => {
   const handleEventSelect = (eventId: number) => {
     const selectedEvent = events.find(event => event.id === eventId);
     if (selectedEvent) {
-      const viewEvent = {
-        ...selectedEvent
-      };
-      setEditingEvent(viewEvent);
-      setIsEditDialogOpen(true);
+      handleEditEvent(selectedEvent);
     }
   };
   
@@ -261,6 +299,47 @@ const Schedule = () => {
           timelineRef.current.classList.remove(direction === 'prev' ? 'animate-slide-out-right' : 'animate-slide-in-right');
         }
       }, 300);
+    }
+  };
+  
+  const getEventFormData = () => {
+    if (!editingEvent) return null;
+    
+    if ((editingEvent as any).formData) {
+      return (editingEvent as any).formData;
+    }
+    
+    const timeStr = format(new Date(editingEvent.time), "HH:mm");
+    
+    let endTimeStr = "";
+    if (editingEvent.description) {
+      const parts = editingEvent.description.split(" - ");
+      if (parts.length > 1) {
+        endTimeStr = parts[1];
+      }
+    }
+    
+    return {
+      title: editingEvent.title,
+      startTime: timeStr,
+      endTime: endTimeStr,
+      person: editingEvent.person,
+      location: editingEvent.location || "",
+      color: editingEvent.color,
+      icon: editingEvent.icon || "📅",
+      repeat: editingEvent.repeat || {
+        enabled: false,
+        days: []
+      }
+    };
+  };
+  
+  const handleEditFormChange = (updatedForm: any) => {
+    if (editingEvent) {
+      setEditingEvent({
+        ...editingEvent,
+        formData: updatedForm
+      } as any);
     }
   };
 
@@ -322,33 +401,19 @@ const Schedule = () => {
             <DialogHeader>
               <DialogTitle className="text-[#edd6ae] flex items-center gap-2">
                 {editingEvent?.icon && <span>{editingEvent.icon}</span>}
-                {editingEvent?.title}
+                Edit Event
               </DialogTitle>
             </DialogHeader>
             
-            {editingEvent && (
+            {editingEvent && getEventFormData() && (
               <div className="space-y-4">
-                <div className="text-[#e8c282] flex items-center gap-2">
-                  <Clock size={16} />
-                  {format(new Date(editingEvent.time), "h:mm a")}
-                </div>
-                {editingEvent.description && (
-                  <p className="text-[#e8c282cc]">{editingEvent.description}</p>
-                )}
-                {editingEvent.location && (
-                  <p className="text-[#e8c282aa] flex items-center gap-2">
-                    📍 {editingEvent.location}
-                  </p>
-                )}
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    className="border-[#e8c28233] text-[#e8c282] hover:bg-[#e8c28215] hover:text-[#edd6ae]"
-                    onClick={() => setIsEditDialogOpen(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
+                <EventForm
+                  event={getEventFormData()!}
+                  isEditing={true}
+                  onSubmit={handleSaveEditedEvent}
+                  onChange={handleEditFormChange}
+                  onWeekdayToggle={handleWeekdayToggle}
+                />
               </div>
             )}
           </DialogContent>
