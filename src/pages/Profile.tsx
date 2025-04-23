@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { format, differenceInYears, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, endOfDay, intervalToDuration } from "date-fns";
 import { MapPin } from "lucide-react";
@@ -28,7 +27,7 @@ function getBreakdown(birthdate: Date, now: Date) {
 
   let hours = differenceInHours(now, dAfterDays);
   let dAfterHours = new Date(dAfterDays);
-  dAfterHours.setHours(dAfterHours.getHours() + hours);
+  dAfterHours.setHours(dAfterDays.getHours() + hours);
 
   let minutes = differenceInMinutes(now, dAfterHours);
   let dAfterMinutes = new Date(dAfterHours);
@@ -64,7 +63,6 @@ function getTimeLeftTillEndOfDay(now: Date) {
   };
 }
 
-// NEW: Beautiful one-row, aesthetic breakdown bar with gold text, thin font, and a glowing border
 function GlowingLifetimeBar({
   details,
 }: {
@@ -78,75 +76,111 @@ function GlowingLifetimeBar({
     seconds: number;
   };
 }) {
-  // Array for cleaner mapping & comma separation
   const items = [
-    { value: details.years, unit: "years" },
-    { value: details.months, unit: "months" },
-    { value: details.weeks, unit: "weeks" },
-    { value: details.days, unit: "days" },
-    { value: details.hours, unit: "hours" },
-    { value: details.minutes, unit: "minutes" },
-    { value: details.seconds, unit: "seconds" },
+    { value: details.years, unit: "y" },
+    { value: details.months, unit: "m" },
+    { value: details.weeks, unit: "w" },
+    { value: details.days, unit: "d" },
+    { value: details.hours, unit: "h" },
+    { value: details.minutes, unit: "m" },
+    { value: details.seconds, unit: "s" },
   ];
   return (
     <div
       className="
         w-full
-        px-8 py-6 
-        rounded-3xl
-        bg-[#1a1e18]/90
-        border border-[#e8c28250]
-        shadow-[0_0_32px_0_#e8c28210,0_2px_16px_0_#00000040]
         flex flex-row items-center justify-center
+        px-3 py-2
+        rounded-[1.3rem]
+        bg-[#18151d]/76
+        border border-[#f2d6ad90]
+        shadow-[0_0_20px_2px_#e8c28244,0_2px_8px_0_#99774a22]
+        animate-glow3d
         transition-all
-        animate-fade-in
         backdrop-blur-[3px]
         mx-auto
+        relative
+        overflow-visible
       "
       style={{
-        maxWidth: 950,
-        fontFamily: "Inter, system-ui, sans-serif",
-        letterSpacing: "0.03em",
-        boxShadow: "0 0 54px 0 #e8c28223, 0 2px 20px 0 #0007",
-        borderWidth: 1.6,
+        maxWidth: 540,
+        minHeight: "36px",
+        fontFamily: "Inter,sans-serif",
+        fontSize: "1.01rem",
+        letterSpacing: "0.07em",
+        borderWidth: 1.1,
+        boxShadow: `
+          0 0 12px 2px #EDD6AED0,
+          0 0 22px 4px #e8c28231,
+          0 0 30px 4px #b1915455,
+          0 0 0px 1px #edd6ae50 inset
+        `,
+        animation: "glowPulse 1.4s ease-in-out infinite alternate"
       }}
     >
-      <span className="w-full flex flex-row flex-wrap items-center justify-center gap-x-5 gap-y-2 text-center">
+      <style>{`
+      @keyframes glowPulse {
+        0% {
+          box-shadow:
+            0 0 8px 2px #EDD6AE90,
+            0 0 15px 4px #e8c28211,
+            0 0 30px 4px #b1915411,
+            0 0 0px 1px #edd6ae50 inset;
+        }
+        100% {
+          box-shadow:
+            0 0 20px 5px #e5cfadAA,
+            0 0 35px 8px #e8c28233,
+            0 0 44px 10px #b1915477,
+            0 0 0px 1px #edd6ae80 inset;
+        }
+      }
+      `}</style>
+      <span className="flex flex-row items-center justify-center gap-x-4 w-full">
         {items.map((entry, i) => (
           <span
-            key={entry.unit}
-            className="
+            key={entry.unit + i}
+            className={`
               flex flex-row items-baseline
               text-[#dec897]
-              font-thin
-              text-[1.32rem] md:text-[1.48rem] 
-              mr-0
-              transition-colors
+              font-extralight
+              text-[1.03rem] md:text-[1.10rem]
               select-none
               whitespace-nowrap
-              drop-shadow-[0_1px_3px_#7e5a3940]
-            "
-            style={{ fontWeight: entry.unit === "years" || entry.unit === "months" || entry.unit === "weeks" ? 600 : 400, fontFamily: "Inter, system-ui, sans-serif" }}
+              drop-shadow-[0_1px_1px_#7e5a3937]
+              px-[3px]
+              leading-tight
+              ${i === 0 ? "pl-1" : ""}
+              ${i === items.length - 1 ? "pr-1" : ""}
+            `}
+            style={{
+              fontWeight: i <= 2 ? 500 : 300,
+              fontFamily: "Inter, system-ui, sans-serif"
+            }}
           >
             <span
               className={`
-                ${["years", "months", "weeks"].includes(entry.unit) 
-                    ? "font-semibold"
-                    : "font-normal"}
-                text-[#ecd6ae]
-                px-1
+                ${i <= 2 ? "font-semibold text-[#ecd6ae]" : "font-light text-[#edceaebb]"}
+                px-[0.5px]
+                mr-px
               `}
-              style={{ 
-                fontWeight: ["years", "months", "weeks"].includes(entry.unit) ? 600 : 400 
-              }}
+              style={{ fontWeight: i <= 2 ? 500 : 300 }}
             >
               {entry.value}
             </span>
-            <span className="pl-1 text-[1.02rem] md:text-[1.16rem] text-[#edd6aecc] font-light" style={{fontWeight: 400}}>
+            <span
+              className={`
+                text-[0.98rem] md:text-[1.03rem]
+                font-thin
+                text-[#ecd6aeac]
+                pl-0.5
+              `}
+              style={{ fontWeight: 300 }}
+            >
               {entry.unit}
             </span>
             {i < items.length - 1 && (
-              <span className="mx-3 text-[#ecd6ae70] select-none text-[1.32rem] font-light">,</span>
+              <span className="mx-1 text-[#ecd6ae55] text-[1.2rem] font-light">·</span>
             )}
           </span>
         ))}
@@ -185,7 +219,6 @@ const Profile = () => {
       >
         "{MOTIVATION_QUOTE}"
       </div>
-      {/* count boxes */}
       <div className="flex flex-col items-center w-full max-w-xl mx-auto mb-8">
         <div className="flex flex-row gap-5 w-full mb-3 items-stretch justify-center">
           <ProfileStat
@@ -201,7 +234,6 @@ const Profile = () => {
             value={breakdown.weeks}
           />
         </div>
-        {/* Glowing, single-row breakdown bar */}
         <div className="w-full flex justify-center mb-5">
           <GlowingLifetimeBar details={breakdown.details} />
         </div>
