@@ -8,6 +8,7 @@ interface TimelineEvent {
   label: string;
   completed?: boolean;
   color?: string;
+  icon?: string;
 }
 
 interface TimelineProgressProps {
@@ -89,11 +90,23 @@ const TimelineProgress = ({ currentTime, events }: TimelineProgressProps) => {
           >
             <div 
               className={cn(
-                "w-3 h-3 rounded-full border-2 border-[#1a1f2c] transform -translate-x-1/2",
-                event.completed ? "opacity-60" : ""
+                "w-8 h-8 flex items-center justify-center transform -translate-x-1/2 rounded-full",
+                event.completed ? "opacity-50" : "opacity-90"
               )}
-              style={{ backgroundColor: event.color || "#e8c282" }}
-            />
+              style={{ 
+                backgroundColor: event.color ? `${event.color}33` : "#e8c28233",
+                border: `2px solid ${event.color || "#e8c282"}`
+              }}
+            >
+              {event.icon ? (
+                <span className="text-xs">{event.icon}</span>
+              ) : (
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: event.color || "#e8c282" }}
+                />
+              )}
+            </div>
           </div>
         );
       })}

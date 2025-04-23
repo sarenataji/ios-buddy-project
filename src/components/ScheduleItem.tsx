@@ -4,7 +4,7 @@ import {
   Card, 
   CardContent,
 } from "@/components/ui/card";
-import { MoreVertical, MapPin, Edit, Trash2 } from "lucide-react";
+import { MoreVertical, MapPin, Edit, Trash2, Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
@@ -24,7 +24,7 @@ interface ScheduleItemProps {
   title: string;
   description: string;
   person: string;
-  icon?: React.ReactNode;
+  icon?: React.ReactNode | string;
   color?: string;
   progress: number;
   timeLeft: string;
@@ -32,6 +32,7 @@ interface ScheduleItemProps {
   completed?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  onComplete?: () => void;
 }
 
 const ScheduleItem = ({
@@ -40,15 +41,35 @@ const ScheduleItem = ({
   description,
   person,
   icon,
-  color = "#e8c282",
+  color = "#7e5a39", // Changed from purple to brown
   progress,
   timeLeft,
   location,
   completed = false,
   onEdit,
   onDelete,
+  onComplete,
 }: ScheduleItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
+
+  // Render icon or emoji
+  const renderIcon = () => {
+    if (typeof icon === 'string' && icon.length > 0) {
+      // If it's an emoji (string)
+      return <span className="text-lg">{icon}</span>;
+    } else if (icon) {
+      // If it's a React node
+      return icon;
+    } else {
+      // Default circle
+      return (
+        <div 
+          className="w-4 h-4 rounded-full" 
+          style={{ backgroundColor: color }}
+        />
+      );
+    }
+  };
 
   return (
     <div className={cn(
@@ -68,12 +89,7 @@ const ScheduleItem = ({
               className="w-9 h-9 rounded-full flex items-center justify-center"
               style={{ backgroundColor: `${color}33` }}
             >
-              {icon || (
-                <div 
-                  className="w-4 h-4 rounded-full" 
-                  style={{ backgroundColor: color }}
-                ></div>
-              )}
+              {renderIcon()}
             </div>
             <div className="flex-grow">
               <h3 className="text-[#edd6ae] font-medium text-base">{title}</h3>
@@ -105,6 +121,18 @@ const ScheduleItem = ({
             </PopoverTrigger>
             <PopoverContent className="w-48 p-2 bg-[#1a1f2c] border border-[#e8c28233]">
               <div className="flex flex-col gap-1">
+                {!completed && onComplete && (
+                  <button 
+                    className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm"
+                    onClick={() => {
+                      setShowMenu(false);
+                      if (onComplete) onComplete();
+                    }}
+                  >
+                    <Check size={16} />
+                    Mark Complete
+                  </button>
+                )}
                 <button 
                   className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm"
                   onClick={() => {
@@ -141,6 +169,9 @@ const ScheduleItem = ({
               completed ? "bg-[#927c41]" : "",
               progress === 100 ? "bg-[#927c41]" : ""
             )}
+            style={{
+              "--progress-background": color,
+            } as React.CSSProperties}
           />
         </div>
       </Card>
