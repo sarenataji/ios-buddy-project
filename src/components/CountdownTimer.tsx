@@ -56,7 +56,7 @@ const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) => {
         <span className="text-[#e8c282aa] text-sm">h</span>
         <span className="text-[#edd6ae] font-medium">{formatTimeUnit(timeLeft.minutes)}</span>
         <span className="text-[#e8c282aa] text-sm">m</span>
-        <span className="text-[#edd6ae] font-medium">{formatTimeUnit(timeLeft.seconds)}</span>
+        <span className="text-[#edd6ae] font-medium animate-pulse-subtle">{formatTimeUnit(timeLeft.seconds)}</span>
         <span className="text-[#e8c282aa] text-sm">s</span>
       </div>
       

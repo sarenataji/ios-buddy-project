@@ -86,7 +86,7 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
       <div className="relative w-full my-4 px-4">
         {/* Current time indicator */}
         <div 
-          className="absolute top-0 h-full flex flex-col items-center z-20"
+          className="absolute top-0 h-full flex flex-col items-center z-30"
           style={{ left: `${currentPosition}%` }}
         >
           <div className="bg-[#e8c282] text-[#1a1f2c] px-3 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md">
@@ -97,7 +97,7 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
         </div>
         
         {/* Event markers on timeline */}
-        {sortedEvents.map((event, index) => {
+        {sortedEvents.filter(event => !event.completed).map((event, index) => {
           const position = calculateEventPosition(event.time);
           const extractedTime = format(event.time, "h:mm a");
           const description = event.description || "";
@@ -114,8 +114,7 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
                   <div 
                     className={cn(
                       "flex items-center justify-center transform -translate-x-1/2 rounded-full transition-all duration-300",
-                      event.completed ? "opacity-50" : "opacity-90",
-                      approaching ? "w-8 h-8" : "w-6 h-6"
+                      approaching ? "w-7 h-7 animate-pulse-subtle" : "w-5 h-5"
                     )}
                     style={{ 
                       backgroundColor: event.color ? `${event.color}33` : "#e8c28233",
@@ -123,10 +122,10 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
                     }}
                   >
                     {event.icon ? (
-                      <span className={cn("transition-all", approaching ? "text-xs" : "text-[10px]")}>{event.icon}</span>
+                      <span className={cn("transition-all", approaching ? "text-xs" : "text-[9px]")}>{event.icon}</span>
                     ) : (
                       <div 
-                        className={cn("rounded-full transition-all", approaching ? "w-3 h-3" : "w-2 h-2")} 
+                        className={cn("rounded-full transition-all", approaching ? "w-2.5 h-2.5" : "w-1.5 h-1.5")} 
                         style={{ backgroundColor: event.color || "#e8c282" }}
                       />
                     )}
@@ -136,7 +135,7 @@ const TimelineProgress = ({ currentTime, events, onEventClick }: TimelineProgres
               <TooltipContent className="bg-[#1a1f2c] border border-[#e8c28233] p-3 max-w-xs">
                 <div className="space-y-1">
                   <p className="font-medium text-[#edd6ae]">{event.label}</p>
-                  <p className="text-sm text-[#e8c282]">{extractedTime} {description}</p>
+                  <p className="text-sm text-[#e8c282]">{extractedTime} {event.description}</p>
                   {event.location && (
                     <p className="text-sm text-[#e8c282aa]">📍 {event.location}</p>
                   )}

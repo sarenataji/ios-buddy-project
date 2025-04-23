@@ -66,40 +66,37 @@ const Schedule = () => {
   
   // Add sample events if there are none
   useEffect(() => {
-    if (!sampleEventsAdded) {
-      // Check if the user already has events
-      const allEvents = events.length;
-      if (allEvents < 5) { // Only add sample events if user has few events
-        SAMPLE_EVENTS.forEach(sampleEvent => {
-          const eventDate = addDays(new Date(), sampleEvent.dayOffset);
-          const [startHours, startMinutes] = sampleEvent.startTime.split(":").map(Number);
-          
-          const eventTime = new Date(eventDate);
-          eventTime.setHours(startHours, startMinutes, 0, 0);
-          
-          const newScheduleEvent = {
-            time: eventTime,
-            title: sampleEvent.title,
-            description: `${sampleEvent.startTime} - ${sampleEvent.endTime}`,
-            person: sampleEvent.person,
-            color: sampleEvent.color,
-            completed: false,
-            location: sampleEvent.location,
-            icon: sampleEvent.icon,
-            repeat: {
-              enabled: false,
-              days: []
-            }
-          };
-          
-          addEvent(newScheduleEvent);
-        });
+    if (!sampleEventsAdded && events.length < 15) { // Only add sample events if user has few events
+      SAMPLE_EVENTS.forEach(sampleEvent => {
+        const eventDate = addDays(new Date(), sampleEvent.dayOffset);
+        const [startHours, startMinutes] = sampleEvent.startTime.split(":").map(Number);
         
-        toast({
-          title: "Sample events added",
-          description: "We've added some sample events to your schedule for the next few weeks.",
-        });
-      }
+        const eventTime = new Date(eventDate);
+        eventTime.setHours(startHours, startMinutes, 0, 0);
+        
+        const newScheduleEvent = {
+          time: eventTime,
+          title: sampleEvent.title,
+          description: `${sampleEvent.startTime} - ${sampleEvent.endTime}`,
+          person: sampleEvent.person,
+          color: sampleEvent.color,
+          completed: false,
+          location: sampleEvent.location,
+          icon: sampleEvent.icon,
+          repeat: {
+            enabled: false,
+            days: []
+          }
+        };
+        
+        addEvent(newScheduleEvent);
+      });
+      
+      toast({
+        title: "Sample events added",
+        description: "We've added sample events for today and the upcoming weeks.",
+      });
+      
       setSampleEventsAdded(true);
     }
   }, []);
@@ -371,7 +368,7 @@ const Schedule = () => {
               
               <CollapsibleContent className="mt-2 space-y-2">
                 {completedEvents.map((event) => (
-                  <div key={event.id} className="transform scale-95 opacity-80">
+                  <div key={event.id} className="transform scale-95 opacity-75">
                     <ScheduleItem 
                       time={format(new Date(event.time), "h:mm a")}
                       title={event.title}

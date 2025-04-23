@@ -76,7 +76,7 @@ const ScheduleItem = ({
   return (
     <div className={cn(
       "relative mb-6 w-full transition-all duration-300",
-      completed ? "opacity-70" : ""
+      completed ? "opacity-70 scale-95" : ""
     )}>
       <div className="flex items-center mb-1">
         <div className="text-[#e8c282aa] text-sm">{time}</div>
@@ -84,14 +84,20 @@ const ScheduleItem = ({
       <Card className={cn(
         "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]",
         completed ? "bg-[#1a1f2c]/60" : "bg-[#1a1f2c]/90",
-        isCurrent ? "relative animate-pulse-subtle" : ""
+        isCurrent ? "relative" : ""
       )}>
-        {/* 3D Glow effect for current event */}
+        {/* 3D Glow effect for current event - more subtle, inspired by the provided image */}
         {isCurrent && (
-          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/30 rounded-lg -m-0.5 blur-[2px]"></div>
+          <div className="absolute inset-0 rounded-lg animate-pulse-subtle"></div>
         )}
         {isCurrent && (
-          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/20 rounded-lg -m-1 blur-[4px]"></div>
+          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/30 rounded-lg -m-0.5 blur-[1px]"></div>
+        )}
+        {isCurrent && (
+          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/20 rounded-lg -m-1 blur-[3px]"></div>
+        )}
+        {isCurrent && (
+          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/10 rounded-lg -m-1.5 blur-[5px]"></div>
         )}
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">

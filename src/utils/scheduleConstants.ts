@@ -1,4 +1,3 @@
-
 export const EMOJI_OPTIONS = [
   "📅", "📝", "📌", "🔔", "⏰", "🏃", "🍽️", "☕", 
   "🧠", "💼", "👥", "📞", "🎯", "🎮", "🛌", "🚗", 
@@ -36,157 +35,258 @@ export const WEEKDAYS = [
 
 // Sample events for the next few weeks
 export const SAMPLE_EVENTS = [
-  // This week
   {
-    title: "Morning Meditation",
-    startTime: "07:00",
-    endTime: "07:30",
+    dayOffset: 0,
+    startTime: "08:30",
+    endTime: "09:00",
+    title: "Morning Review",
     person: "Personal",
-    location: "Home",
     color: "#7e5a39",
-    icon: "🧘",
-    dayOffset: 0, // Today
+    location: "Home Office",
+    icon: "☕"
   },
   {
-    title: "Project Status Meeting",
+    dayOffset: 0,
     startTime: "10:00",
-    endTime: "11:00",
-    person: "Work",
+    endTime: "11:30",
+    title: "Weekly Team Meeting",
+    person: "Team",
+    color: "#e8c282",
     location: "Conference Room B",
-    color: "#B9975B",
-    icon: "💼",
-    dayOffset: 0, // Today
+    icon: "👥"
   },
   {
-    title: "Lunch with Alex",
-    startTime: "12:30",
-    endTime: "13:30",
-    person: "Social",
-    location: "Cafe Mocha",
-    color: "#D4B16A",
-    icon: "🍽️",
-    dayOffset: 0, // Today
-  },
-  {
-    title: "Gym Session",
-    startTime: "18:00",
-    endTime: "19:00",
+    dayOffset: 0,
+    startTime: "13:00",
+    endTime: "14:00",
+    title: "Lunch Break",
     person: "Personal",
-    location: "Fitness Center",
-    color: "#5D4824",
-    icon: "🏋️",
-    dayOffset: 1, // Tomorrow
+    color: "#8B784A",
+    location: "Cafeteria",
+    icon: "🍽️"
   },
   {
+    dayOffset: 0,
+    startTime: "15:30",
+    endTime: "16:30",
+    title: "Project Planning",
+    person: "Client",
+    color: "#A48C64",
+    location: "Meeting Room 3",
+    icon: "📝"
+  },
+  {
+    dayOffset: 0,
+    startTime: "17:00",
+    endTime: "17:30",
+    title: "Daily Wrap-up",
+    person: "Personal",
+    color: "#D6BC8A",
+    location: "Home Office",
+    icon: "🏁"
+  },
+  // Tomorrow events
+  {
+    dayOffset: 1,
+    startTime: "08:00",
+    endTime: "09:00",
+    title: "Morning Exercise",
+    person: "Personal",
+    color: "#7e5a39",
+    location: "Gym",
+    icon: "🏋️"
+  },
+  {
+    dayOffset: 1,
+    startTime: "09:30",
+    endTime: "10:30",
+    title: "Client Call",
+    person: "Work",
+    color: "#e8c282",
+    location: "Office",
+    icon: "📞"
+  },
+  {
+    dayOffset: 1,
+    startTime: "12:00",
+    endTime: "13:00",
+    title: "Lunch with Sarah",
+    person: "Social",
+    color: "#A48C64",
+    location: "Italian Restaurant",
+    icon: "🍝"
+  },
+  {
+    dayOffset: 1,
+    startTime: "14:30",
+    endTime: "16:00",
+    title: "Product Demo",
+    person: "Work",
+    color: "#8B784A",
+    location: "Conference Room",
+    icon: "💻"
+  },
+  {
+    dayOffset: 1,
+    startTime: "17:30",
+    endTime: "18:30",
+    title: "Evening Yoga",
+    person: "Personal",
+    color: "#D6BC8A",
+    location: "Yoga Studio",
+    icon: "🧘"
+  },
+  // Day after tomorrow
+  {
+    dayOffset: 2,
+    startTime: "07:30",
+    endTime: "08:30",
+    title: "Morning Run",
+    person: "Personal",
+    color: "#7e5a39",
+    location: "Park",
+    icon: "🏃"
+  },
+  {
+    dayOffset: 2,
+    startTime: "09:00",
+    endTime: "10:30",
+    title: "Strategy Meeting",
+    person: "Work",
+    color: "#e8c282",
+    location: "Board Room",
+    icon: "🧠"
+  },
+  {
+    dayOffset: 2,
+    startTime: "11:00",
+    endTime: "12:30",
     title: "Design Review",
+    person: "Work",
+    color: "#8B784A",
+    location: "Design Lab",
+    icon: "🎨"
+  },
+  {
+    dayOffset: 2,
+    startTime: "13:00",
+    endTime: "14:00",
+    title: "Lunch",
+    person: "Personal",
+    color: "#A48C64",
+    location: "Cafeteria",
+    icon: "🥗"
+  },
+  {
+    dayOffset: 2,
+    startTime: "15:00",
+    endTime: "16:30",
+    title: "Project Deadline",
+    person: "Work",
+    color: "#D6BC8A",
+    location: "Office",
+    icon: "⏰"
+  },
+  // Next week events (day 7)
+  {
+    dayOffset: 7,
+    startTime: "08:00",
+    endTime: "09:30",
+    title: "Weekly Planning",
+    person: "Work",
+    color: "#7e5a39",
+    location: "Office",
+    icon: "📅"
+  },
+  {
+    dayOffset: 7,
+    startTime: "10:00",
+    endTime: "11:30",
+    title: "Team Building",
+    person: "Team",
+    color: "#e8c282",
+    location: "Conference Hall",
+    icon: "🤝"
+  },
+  {
+    dayOffset: 7,
+    startTime: "13:00",
+    endTime: "14:00",
+    title: "Lunch with Team",
+    person: "Social",
+    color: "#8B784A",
+    location: "Restaurant",
+    icon: "🍔"
+  },
+  {
+    dayOffset: 7,
+    startTime: "15:00",
+    endTime: "16:30",
+    title: "Quarterly Review",
+    person: "Management",
+    color: "#A48C64",
+    location: "Meeting Room 1",
+    icon: "📊"
+  },
+  {
+    dayOffset: 7,
+    startTime: "17:00",
+    endTime: "18:00",
+    title: "Networking Event",
+    person: "Professional",
+    color: "#D6BC8A",
+    location: "Business Center",
+    icon: "🌐"
+  },
+  // Two weeks out (day 14)
+  {
+    dayOffset: 14,
+    startTime: "09:00",
+    endTime: "10:30",
+    title: "Conference Call",
+    person: "Work",
+    color: "#7e5a39",
+    location: "Virtual",
+    icon: "🎤"
+  },
+  {
+    dayOffset: 14,
+    startTime: "11:00",
+    endTime: "12:30",
+    title: "Client Presentation",
+    person: "Client",
+    color: "#e8c282",
+    location: "Client Office",
+    icon: "📢"
+  },
+  {
+    dayOffset: 14,
     startTime: "14:00",
     endTime: "15:30",
-    person: "Work",
-    location: "Meeting Room 3",
+    title: "Product Launch",
+    person: "Marketing",
     color: "#8B784A",
-    icon: "🎨",
-    dayOffset: 1, // Tomorrow
+    location: "Venue Hall",
+    icon: "🚀"
   },
   {
-    title: "Dinner with Family",
-    startTime: "19:30",
-    endTime: "21:00",
-    person: "Personal",
-    location: "Mom's House",
-    color: "#CBA76B",
-    icon: "👥",
-    dayOffset: 2,
-  },
-  {
-    title: "Client Call",
-    startTime: "11:00",
-    endTime: "11:30",
-    person: "Work",
-    location: "Office",
-    color: "#9C7A3C",
-    icon: "📞",
-    dayOffset: 2,
-  },
-  {
-    title: "Book Club Meeting",
-    startTime: "19:00",
-    endTime: "20:30",
-    person: "Social",
-    location: "Library",
-    color: "#BFA36F",
-    icon: "📚",
-    dayOffset: 3,
-  },
-  // Next week
-  {
-    title: "Team Building",
-    startTime: "09:00",
-    endTime: "17:00",
-    person: "Work",
-    location: "Park",
-    color: "#7e5a39",
-    icon: "🎮",
-    dayOffset: 7,
-  },
-  {
-    title: "Doctor Appointment",
-    startTime: "14:00",
-    endTime: "15:00",
-    person: "Personal",
-    location: "Medical Center",
-    color: "#5D4824",
-    icon: "🏥",
-    dayOffset: 8,
-  },
-  {
-    title: "Movie Night",
-    startTime: "20:00",
-    endTime: "22:00",
-    person: "Social",
-    location: "Cinema",
-    color: "#D4B16A",
-    icon: "🎬",
-    dayOffset: 9,
-  },
-  {
-    title: "Quarterly Planning",
-    startTime: "09:00",
-    endTime: "12:00",
-    person: "Work",
-    location: "Conference Room",
-    color: "#B9975B",
-    icon: "📝",
-    dayOffset: 10,
-  },
-  // Two weeks from now
-  {
-    title: "Vacation Start",
-    startTime: "08:00",
-    endTime: "10:00",
-    person: "Personal",
-    location: "Airport",
-    color: "#CBA76B",
-    icon: "✈️",
     dayOffset: 14,
-  },
-  {
-    title: "Beach Day",
-    startTime: "10:00",
+    startTime: "16:00",
     endTime: "17:00",
-    person: "Personal",
-    location: "Seaside",
-    color: "#BFA36F",
-    icon: "🏄",
-    dayOffset: 15,
+    title: "Stakeholder Meeting",
+    person: "Executive",
+    color: "#A48C64",
+    location: "Board Room",
+    icon: "👔"
   },
   {
-    title: "Hiking Trip",
-    startTime: "09:00",
-    endTime: "16:00",
+    dayOffset: 14,
+    startTime: "18:00",
+    endTime: "20:00",
+    title: "Team Dinner",
     person: "Social",
-    location: "Mountains",
-    color: "#8B784A",
-    icon: "🚶",
-    dayOffset: 16,
-  },
+    color: "#D6BC8A",
+    location: "Restaurant",
+    icon: "🍽️"
+  }
 ];
