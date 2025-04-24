@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { format, getDaysInYear, isAfter, isBefore, isSameDay, addDays } from 'date-fns';
@@ -145,15 +146,18 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                 />
               </Canvas>
               
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
-                <div className="w-64 bg-[#1a1f2c]/60 rounded-full p-1.5 backdrop-blur-sm border border-[#e8c28222]">
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-3">
+                <div className="w-72 bg-[#1a1f2c]/40 rounded-full p-1 backdrop-blur-sm border border-[#e8c28222]">
                   <div 
-                    className="h-1 rounded-full bg-gradient-to-r from-[#e8c282] to-[#d4af6b] transition-all duration-500 ease-out"
+                    className="h-1.5 rounded-full bg-gradient-to-r from-[#e8c282] to-[#d4af6b] transition-all duration-500 ease-out"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-                <span className="text-[#e8c282]/60 text-sm tracking-wider font-light">
-                  {Math.round(progress)}% of {year} completed
+                <span 
+                  className="text-[#e8c282]/80 text-sm font-['Inter'] tracking-wide"
+                  style={{ fontWeight: 300 }}
+                >
+                  {Math.round(progress)}%
                 </span>
               </div>
             </div>
@@ -168,9 +172,6 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                 ) : (
                   <span className="text-2xl font-serif">{year}</span>
                 )}
-              </div>
-              <div className="text-sm opacity-80 tracking-wider font-light font-['Inter']">
-                {daysLeft} days remaining in {year}
               </div>
             </div>
           </div>
