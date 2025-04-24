@@ -41,7 +41,7 @@ const Moments = () => {
         <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
-          <SheetContent className="bg-[#2a180f] border-l border-[#e8c28233] text-[#edd6ae]">
+          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae]">
             <SheetHeader>
               <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">New Moment</SheetTitle>
             </SheetHeader>
