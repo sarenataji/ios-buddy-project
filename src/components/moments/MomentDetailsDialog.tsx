@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Calendar, Info, MapPin, Pencil, StickyNote } from "lucide-react";
 import {
@@ -26,7 +25,7 @@ interface MomentDetailsDialogProps {
   location?: string;
   note?: string;
   elapsed: ElapsedTime;
-  onEdit?: () => void;
+  onEdit?: (e?: React.MouseEvent) => void;
 }
 
 const MomentDetailsDialog = ({

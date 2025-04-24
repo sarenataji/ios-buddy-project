@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil } from "lucide-react";
 import { differenceInYears } from "date-fns";
@@ -50,8 +49,10 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
     return () => clearInterval(interval);
   }, [startDate]);
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     if (onEdit && id !== undefined) {
       onEdit(id);
     }
@@ -95,7 +96,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
         location={location}
         note={note}
         elapsed={elapsed}
-        onEdit={id !== undefined && onEdit ? (e) => handleEdit(e) : undefined}
+        onEdit={id !== undefined && onEdit ? handleEdit : undefined}
       />
     </>
   );
