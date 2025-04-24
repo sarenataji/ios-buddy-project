@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Calendar, Info, MapPin, Pencil, StickyNote, Clock } from "lucide-react";
+import { Calendar, Info, MapPin, Pencil, StickyNote, Clock, PlayCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import TimeUnit from "./TimeUnit";
+import { Button } from "@/components/ui/button";
 
 interface ElapsedTime {
   years: number;
@@ -28,6 +29,7 @@ interface MomentDetailsDialogProps {
   elapsed: ElapsedTime;
   onEdit?: (e?: React.MouseEvent) => void;
   stoppedAt?: Date;
+  onContinue?: () => void;
 }
 
 const MomentDetailsDialog = ({
@@ -39,7 +41,8 @@ const MomentDetailsDialog = ({
   note,
   elapsed,
   onEdit,
-  stoppedAt
+  stoppedAt,
+  onContinue
 }: MomentDetailsDialogProps) => {
   return (
     <Dialog open={showDetails} onOpenChange={setShowDetails}>
@@ -105,8 +108,8 @@ const MomentDetailsDialog = ({
             <TimeUnit value={elapsed.seconds} unit="Seconds" />
           </div>
           
-          {onEdit && !stoppedAt && (
-            <div className="mt-4 text-center">
+          <div className="mt-4 text-center space-y-3">
+            {onEdit && !stoppedAt && (
               <button
                 onClick={() => {
                   setShowDetails(false);
@@ -118,8 +121,21 @@ const MomentDetailsDialog = ({
                 <Pencil className="w-4 h-4" />
                 Edit this moment
               </button>
-            </div>
-          )}
+            )}
+            
+            {stoppedAt && onContinue && (
+              <Button 
+                onClick={() => {
+                  setShowDetails(false);
+                  onContinue();
+                }}
+                className="bg-[#2a7b53] hover:bg-[#35946a] text-[#eddcbe] flex gap-2 justify-center py-6 text-base w-full"
+              >
+                <PlayCircle className="w-5 h-5" />
+                Continue This Moment
+              </Button>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -21,6 +21,7 @@ interface MomentContextType {
   updateMoment: (moment: Moment) => void;
   reorderMoments: (moments: Moment[]) => void;
   stopMoment: (id: number) => void;
+  continueMoment: (id: number) => void;
 }
 
 const predefinedMoments: Omit<Moment, "id">[] = [
@@ -82,7 +83,11 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           moment.startDate = new Date(moment.startDate);
           if (moment.stoppedAt) {
             moment.stoppedAt = new Date(moment.stoppedAt);
+            // Explicitly set isActive to false for moments with stoppedAt
             moment.isActive = false;
+          } else {
+            // Only set isActive to true if it's not explicitly set to false
+            moment.isActive = moment.isActive !== false;
           }
         });
         
@@ -97,7 +102,8 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           ...filteredSaved.map((m: Moment, i: number) => ({ 
             ...m, 
             order: predefinedMoments.length + i,
-            isActive: m.stoppedAt ? false : (m.isActive !== undefined ? m.isActive : true)
+            // Ensure completed moments stay completed after reload
+            isActive: m.stoppedAt ? false : (m.isActive === false ? false : true)
           }))];
         return orderedMoments;
       }
@@ -142,6 +148,14 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     ));
   };
 
+  const continueMoment = (id: number) => {
+    setMoments(prev => prev.map(m => 
+      m.id === id 
+        ? { ...m, isActive: true, stoppedAt: undefined }
+        : m
+    ));
+  };
+
   return (
     <MomentContext.Provider value={{ 
       moments, 
@@ -149,7 +163,8 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       deleteMoment, 
       updateMoment, 
       reorderMoments,
-      stopMoment 
+      stopMoment,
+      continueMoment
     }}>
       {children}
     </MomentContext.Provider>
