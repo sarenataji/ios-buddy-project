@@ -13,6 +13,7 @@ import Moments from "./pages/Moments";
 import Reflection from "./pages/Reflection";
 import { MomentProvider } from "./contexts/MomentContext";
 import { CountdownProvider } from "./contexts/CountdownContext";
+import { FaceProvider } from "./contexts/FaceContext";
 
 const queryClient = new QueryClient();
 
@@ -22,19 +23,21 @@ const App = () => (
       <ScheduleProvider>
         <MomentProvider>
           <CountdownProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/schedule" element={<Schedule />} />
-                <Route path="/moments" element={<Moments />} />
-                <Route path="/reflection" element={<Reflection />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+            <FaceProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/schedule" element={<Schedule />} />
+                  <Route path="/moments" element={<Moments />} />
+                  <Route path="/reflection" element={<Reflection />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </FaceProvider>
           </CountdownProvider>
         </MomentProvider>
       </ScheduleProvider>
