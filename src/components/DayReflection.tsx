@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import MoodFace from './MoodFace';
@@ -40,38 +40,38 @@ const DayReflection = () => {
         
         <div className="p-6 flex flex-col items-center bg-gradient-to-b from-[#140D07] to-[#1a0c05]">
           <div className="w-full h-[400px] mb-4 relative overflow-hidden">
-            {/* Background Mood Text */}
+            {/* Enhanced Background Mood Text */}
             <div className="absolute inset-0 flex items-center justify-center z-0">
-              <h2 className="text-8xl font-bold tracking-wider text-[#e8c28215] transition-all duration-500 transform">
+              <h2 className="text-8xl font-bold tracking-[0.2em] font-sans text-[#e8c28215] transition-all duration-500 transform">
                 {selectedMood}
               </h2>
             </div>
             
-            {/* 3D Face Container with Elevation */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 transform translate-y-[-2%]">
+            {/* Enhanced 3D Face Container with Elevation */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 transform hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full max-w-[300px] relative">
-                <div className="absolute inset-0 animate-pulse-subtle"></div>
+                <div className="absolute inset-0 animate-glow-3d"></div>
                 <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
               </div>
             </div>
           </div>
           
-          {/* Mood Selection Bar */}
-          <div className="w-full px-4 py-6 bg-[#1a0c0580] rounded-xl">
+          {/* Enhanced Mood Selection Bar */}
+          <div className="w-full px-4 py-6 bg-[#1a0c0580] rounded-xl backdrop-blur-sm">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-[#ff5252] text-sm cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => handleMoodSelect([0], "BAD")}>Bad</span>
-              <span className="text-[#e8c282] text-sm cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => handleMoodSelect([1], "OKAY")}>Okay</span>
-              <span className="text-[#4caf50] text-sm cursor-pointer hover:opacity-80 transition-opacity"
+              <span className="text-[#4caf50] text-sm font-semibold tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleMoodSelect([2], "GOOD")}>Good</span>
+              <span className="text-[#e8c282] text-sm font-semibold tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => handleMoodSelect([1], "OKAY")}>Okay</span>
+              <span className="text-[#ff5252] text-sm font-semibold tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => handleMoodSelect([0], "BAD")}>Bad</span>
             </div>
             
-            {/* Submit Button */}
+            {/* Enhanced Submit Button */}
             {showSubmit && (
               <Button
                 onClick={handleSubmit}
-                className="w-full mt-4 bg-[#e8c282] text-[#1a0c05] hover:bg-[#e8c282]/90 transition-colors"
+                className="w-full mt-4 bg-[#e8c282] text-[#1a0c05] hover:bg-[#e8c282]/90 transition-colors font-semibold tracking-wider"
               >
                 Submit Reflection
               </Button>
