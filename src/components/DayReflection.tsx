@@ -4,29 +4,30 @@ import { ThumbsUp, Smile, Meh } from 'lucide-react';
 import { useToast } from "@/hooks/useToast";
 import MoodFace from './MoodFace';
 import { useFace } from '@/hooks/useFace';
+import { Slider } from "@/components/ui/slider";
 
 const DayReflection = () => {
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [selectedMood, setSelectedMood] = useState<string>("OKAY");
+  const [moodValue, setMoodValue] = useState([1]); // 0: BAD, 1: OKAY, 2: GOOD
   const { toast } = useToast();
   const { saveFace } = useFace();
   
-  const handleMoodSelect = (mood: string) => {
+  const handleMoodChange = (value: number[]) => {
+    const moodIndex = value[0];
+    let mood = "OKAY";
+    
+    if (moodIndex === 0) mood = "BAD";
+    if (moodIndex === 2) mood = "GOOD";
+    
+    setMoodValue(value);
     setSelectedMood(mood);
-    saveFace(getMoodIndex(mood), mood);
+    saveFace(moodIndex, mood);
+    
     toast({
       title: "Day Reflection",
       description: `You've marked today as ${mood.toLowerCase()}`,
       duration: 3000,
     });
-  };
-
-  const getMoodIndex = (mood: string): number => {
-    switch(mood) {
-      case "GOOD": return 0;
-      case "OKAY": return 1;
-      case "BAD": return 2;
-      default: return 1;
-    }
   };
 
   const getMoodIcon = (mood: string) => {
@@ -50,23 +51,34 @@ const DayReflection = () => {
         </div>
         
         <div className="p-4 flex flex-col items-center">
-          <MoodFace mood={selectedMood} />
+          <div className="w-full h-[350px] mb-6">
+            <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
+          </div>
           
-          <div className="grid grid-cols-3 gap-3 w-full mt-6">
-            {["GOOD", "OKAY", "BAD"].map((mood) => (
-              <button
-                key={mood}
-                className={`py-4 px-4 rounded-lg font-['Inter'] transition-all duration-200 flex flex-col items-center gap-2 ${
-                  selectedMood === mood 
-                    ? 'bg-[#e8c282] text-[#1a0c05] shadow-[0_0_15px_0_#e8c28244]' 
-                    : 'bg-[#1a0c05]/80 text-[#edd6ae] border border-[#e8c28233] hover:bg-[#1a0c05]'
-                }`}
-                onClick={() => handleMoodSelect(mood)}
-              >
-                {getMoodIcon(mood)}
-                <span className="text-sm tracking-wide">{mood.toLowerCase()}</span>
-              </button>
-            ))}
+          <div className="w-full px-4 py-6">
+            <Slider
+              defaultValue={[1]}
+              max={2}
+              step={0.01}
+              value={moodValue}
+              onValueChange={handleMoodChange}
+              className="w-full"
+            />
+            
+            <div className="flex justify-between mt-4 px-2">
+              <div className="flex flex-col items-center">
+                {getMoodIcon("BAD")}
+                <span className="text-sm text-[#2a180f] mt-1">Bad</span>
+              </div>
+              <div className="flex flex-col items-center">
+                {getMoodIcon("OKAY")}
+                <span className="text-sm text-[#7e5a39] mt-1">Okay</span>
+              </div>
+              <div className="flex flex-col items-center">
+                {getMoodIcon("GOOD")}
+                <span className="text-sm text-[#e8c282] mt-1">Good</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
