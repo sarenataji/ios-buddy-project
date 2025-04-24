@@ -18,7 +18,17 @@ interface StoppedMomentsListProps {
 }
 
 const StoppedMomentsList: React.FC<StoppedMomentsListProps> = ({ moments }) => {
-  if (moments.length === 0) return null;
+  if (moments.length === 0) {
+    return (
+      <div className="mt-12 border-t border-[#e8c28233] pt-8">
+        <h2 className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold mb-6 flex items-center gap-2">
+          <CheckCircle className="w-5 h-5" />
+          Completed Moments
+        </h2>
+        <p className="text-[#e8c28288] italic text-center py-4">You have no completed moments yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-12 border-t border-[#e8c28233] pt-8">

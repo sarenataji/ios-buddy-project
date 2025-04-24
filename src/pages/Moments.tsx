@@ -38,6 +38,8 @@ const Moments = () => {
       <div className="max-w-3xl mx-auto">
         <MomentsHeader />
         <AddMomentButton onClick={() => setIsAddingMoment(true)} />
+        
+        {/* The MomentsSection component contains both active and completed moments */}
         <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>

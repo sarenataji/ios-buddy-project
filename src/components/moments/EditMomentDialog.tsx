@@ -1,6 +1,5 @@
 
 import React from "react";
-import { format } from "date-fns";
 import { MapPin, Clock, CheckCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -109,30 +108,28 @@ const EditMomentDialog = ({
             />
           </div>
           
-          <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
+          <DialogFooter className="flex flex-col gap-3 mt-6">
+            {onComplete && (
+              <Button
+                onClick={onComplete}
+                className="w-full bg-[#2a7b53] hover:bg-[#35946a] text-[#eddcbe] flex gap-2 justify-center py-6 text-base"
+              >
+                <CheckCircle className="w-5 h-5" />
+                Complete This Moment
+              </Button>
+            )}
+            
             <div className="flex flex-col sm:flex-row gap-3 w-full">
-              {showDelete && (
-                <div className="flex gap-3 w-full">
-                  {onDelete && (
-                    <Button
-                      onClick={onDelete}
-                      variant="destructive"
-                      className="w-full sm:w-auto"
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  {onComplete && (
-                    <Button
-                      onClick={onComplete}
-                      className="w-full sm:w-auto bg-[#2a7b53] hover:bg-[#35946a] text-[#eddcbe] flex gap-2"
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      Complete Moment
-                    </Button>
-                  )}
-                </div>
+              {showDelete && onDelete && (
+                <Button
+                  onClick={onDelete}
+                  variant="destructive"
+                  className="w-full sm:w-auto"
+                >
+                  Delete
+                </Button>
               )}
+              
               <div className="flex-1 flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={onClose}
