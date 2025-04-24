@@ -1,91 +1,202 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { format, parseISO } from "date-fns";
+import { Calendar, MapPin } from "lucide-react";
 
 export const MomentsSection = () => {
-  const { moments, updateMoment, moveMomentUp, moveMomentDown } = useMoment();
-  const [editingMoment, setEditingMoment] = useState<any>(null);
+  const { moments, updateMoment, deleteMoment } = useMoment();
+  const [editingMoment, setEditingMoment] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editTime, setEditTime] = useState("");
+  const [editLocation, setEditLocation] = useState("");
+  const [editNote, setEditNote] = useState("");
   const { toast } = useToast();
 
-  const handleEditSave = () => {
-    if (editingMoment) {
-      updateMoment(editingMoment);
+  const handleEdit = (id: number) => {
+    const moment = moments.find(m => m.id === id);
+    if (moment) {
+      setEditingMoment(id);
+      setEditTitle(moment.title);
+      setEditDate(format(moment.startDate, "yyyy-MM-dd"));
+      setEditTime(format(moment.startDate, "HH:mm"));
+      setEditLocation(moment.location || "");
+      setEditNote(moment.note || "");
+    }
+  };
+
+  const handleSave = () => {
+    if (!editTitle.trim()) {
+      toast({
+        title: "Title required",
+        description: "Please enter a title for your moment",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const momentToUpdate = moments.find(m => m.id === editingMoment);
+    if (momentToUpdate) {
+      const [year, month, day] = editDate.split('-').map(Number);
+      const [hours, minutes] = editTime ? editTime.split(':').map(Number) : [0, 0];
+      
+      const updatedDate = new Date(year, month - 1, day, hours, minutes);
+      
+      updateMoment({
+        ...momentToUpdate,
+        title: editTitle,
+        startDate: updatedDate,
+        location: editLocation.trim() || undefined,
+        note: editNote.trim() || undefined,
+      });
+      
+      toast({
+        title: "Moment updated",
+        description: "Your moment has been updated successfully",
+      });
+    }
+
+    setEditingMoment(null);
+  };
+
+  const handleCancel = () => {
+    setEditingMoment(null);
+  };
+
+  const handleDeleteMoment = () => {
+    if (editingMoment !== null) {
+      deleteMoment(editingMoment);
       setEditingMoment(null);
       toast({
-        title: "Changes saved",
-        description: "Your moment has been updated successfully.",
+        title: "Moment deleted",
+        description: "Your moment has been removed",
       });
     }
   };
 
   return (
     <div className="space-y-6">
-      {moments.map((moment, index) => (
+      {moments.map((moment) => (
         <div key={moment.id}>
           <ElapsedTimeDisplay
             id={moment.id}
             title={moment.title}
             startDate={moment.startDate}
             location={moment.location}
+            description={moment.description}
             note={moment.note}
-            onEdit={(id) => setEditingMoment(moments.find(m => m.id === id))}
-            onMoveUp={index > 0 ? () => moveMomentUp(moment.id) : undefined}
-            onMoveDown={index < moments.length - 1 ? () => moveMomentDown(moment.id) : undefined}
+            onEdit={handleEdit}
           />
         </div>
       ))}
 
-      <Sheet open={!!editingMoment} onOpenChange={(open) => !open && setEditingMoment(null)}>
-        <SheetContent className="bg-[#161213] border-l border-[#e8c28244]">
-          <SheetHeader>
-            <SheetTitle className="text-[#e8c282] text-center">Edit Moment</SheetTitle>
-          </SheetHeader>
-          {editingMoment && (
-            <div className="space-y-6 mt-8">
-              <div>
-                <label className="text-[#e8c282]/60 text-sm block mb-2">Title</label>
+      <Dialog open={editingMoment !== null} onOpenChange={(open) => {
+        if (!open) handleCancel();
+      }}>
+        <DialogContent className="bg-[#161213] border border-[#e8c28233] text-[#edd6ae] rounded-xl
+          max-h-[90vh] w-[95vw] max-w-lg overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">Edit Moment</DialogTitle>
+            <DialogDescription className="text-center text-[#e8c28288]">
+              Make changes to your moment details
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4">
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">Title</label>
+              <Input
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae]"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">Start Date</label>
+              <Input
+                type="date"
+                value={editDate}
+                onChange={(e) => setEditDate(e.target.value)}
+                className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae]"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">Time</label>
+              <Input
+                type="time"
+                value={editTime}
+                onChange={(e) => setEditTime(e.target.value)}
+                className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae]"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">
+                Location <span className="text-[#e8c28277]">(optional)</span>
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 bg-[#e8c28215] border border-r-0 border-[#e8c28233] rounded-l-md">
+                  <MapPin className="h-4 w-4 text-[#e8c282]" />
+                </span>
                 <Input
-                  value={editingMoment.title}
-                  onChange={(e) => setEditingMoment({...editingMoment, title: e.target.value})}
-                  className="bg-[#161213] border-[#e8c28244] text-[#e8c282]"
+                  value={editLocation}
+                  onChange={(e) => setEditLocation(e.target.value)}
+                  className="bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae] rounded-l-none"
+                  placeholder="Enter location"
                 />
               </div>
-              <div>
-                <label className="text-[#e8c282]/60 text-sm block mb-2">Location</label>
-                <Input
-                  value={editingMoment.location || ""}
-                  onChange={(e) => setEditingMoment({...editingMoment, location: e.target.value})}
-                  className="bg-[#161213] border-[#e8c28244] text-[#e8c282]"
-                />
-              </div>
-              <div>
-                <label className="text-[#e8c282]/60 text-sm block mb-2">Memories</label>
-                <Input
-                  value={editingMoment.note || ""}
-                  onChange={(e) => setEditingMoment({...editingMoment, note: e.target.value})}
-                  className="bg-[#161213] border-[#e8c28244] text-[#e8c282]"
-                />
-              </div>
-              <Button 
-                onClick={handleEditSave}
-                className="w-full bg-[#e8c282] text-[#161213] hover:bg-[#e8c282]/90"
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#e8c282] block mb-2 tracking-wider lowercase">
+                Memories <span className="text-[#e8c28277]">(optional)</span>
+              </label>
+              <textarea
+                value={editNote}
+                onChange={(e) => setEditNote(e.target.value)}
+                className="w-full bg-[#e8c28208] border-[#e8c28233] text-[#edd6ae] rounded-md p-3 min-h-[100px]"
+                placeholder="Add a memory or note about this moment..."
+              />
+            </div>
+            
+            <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
+              {editingMoment !== null && moments.find(m => m.id === editingMoment)?.isPredefined !== true && (
+                <Button
+                  onClick={handleDeleteMoment}
+                  variant="destructive"
+                  className="w-full sm:w-auto"
+                >
+                  Delete
+                </Button>
+              )}
+              <Button
+                onClick={handleCancel}
+                variant="outline"
+                className="w-full bg-transparent border-[#e8c28233] text-[#edd6ae] hover:bg-[#e8c28215]"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="w-full bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
               >
                 Save Changes
               </Button>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

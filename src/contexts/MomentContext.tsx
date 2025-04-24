@@ -15,8 +15,6 @@ interface MomentContextType {
   addMoment: (moment: Omit<Moment, "id">) => void;
   deleteMoment: (id: number) => void;
   updateMoment: (moment: Moment) => void;
-  moveMomentUp: (id: number) => void;
-  moveMomentDown: (id: number) => void;
 }
 
 const predefinedMoments: Omit<Moment, "id">[] = [
@@ -91,35 +89,8 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setMoments(prev => prev.map(m => m.id === moment.id ? moment : m));
   };
 
-  const moveMomentUp = (id: number) => {
-    setMoments(prev => {
-      const index = prev.findIndex(m => m.id === id);
-      if (index <= 0) return prev;
-      const newMoments = [...prev];
-      [newMoments[index], newMoments[index - 1]] = [newMoments[index - 1], newMoments[index]];
-      return newMoments;
-    });
-  };
-
-  const moveMomentDown = (id: number) => {
-    setMoments(prev => {
-      const index = prev.findIndex(m => m.id === id);
-      if (index === -1 || index === prev.length - 1) return prev;
-      const newMoments = [...prev];
-      [newMoments[index], newMoments[index + 1]] = [newMoments[index + 1], newMoments[index]];
-      return newMoments;
-    });
-  };
-
   return (
-    <MomentContext.Provider value={{ 
-      moments, 
-      addMoment, 
-      deleteMoment, 
-      updateMoment, 
-      moveMomentUp, 
-      moveMomentDown 
-    }}>
+    <MomentContext.Provider value={{ moments, addMoment, deleteMoment, updateMoment }}>
       {children}
     </MomentContext.Provider>
   );

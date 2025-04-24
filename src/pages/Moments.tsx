@@ -70,9 +70,19 @@ const Moments = () => {
     <div className="min-h-screen bg-[#161213] p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col items-center justify-center mb-12">
-          <div className="uppercase tracking-[0.25em] text-sm mb-2 text-[#e8c282]">moments</div>
-          <h1 className="font-serif text-6xl text-[#e8c282] mb-1">Time Capsule</h1>
-          <div className="text-[#e8c28277] text-xs lowercase tracking-[0.07em] max-w-md mx-auto px-2">
+          <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{ letterSpacing: "0.22em" }}>moments</div>
+          <h1 className="font-serif text-5xl md:text-6xl font-bold text-[#edd6ae] mb-1 tracking-wide text-center drop-shadow-md">Time Capsule</h1>
+          <div
+            className="text-[#e8c282bb] text-xs font-light text-center opacity-80 max-w-md mx-auto px-2"
+            style={{
+              fontWeight: 300,
+              fontFamily: "Inter, system-ui, sans-serif",
+              letterSpacing: "0.07em",
+              lineHeight: 1.7,
+              textTransform: "lowercase",
+              fontStyle: "normal"
+            }}
+          >
             capturing the essence of time, one moment at a time
           </div>
         </div>
@@ -81,12 +91,13 @@ const Moments = () => {
           <Button
             onClick={() => setIsAddingMoment(true)}
             className="
-              bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]
-              px-8 py-4 rounded-full text-lg
-              flex items-center gap-3 font-medium
-              shadow-[0_0_20px_0_#e8c28233]
-              hover:shadow-[0_0_30px_0_#e8c28244]
-              transition-all duration-300
+              bg-[#e8c282] text-[#1a1f2c]
+              hover:bg-[#edd6ae] transition-all duration-300
+              px-6 py-2 rounded-xl
+              flex items-center gap-2
+              shadow-[0_0_15px_0_#e8c28233]
+              hover:shadow-[0_0_25px_0_#e8c28266]
+              font-medium
             "
           >
             <Plus className="h-5 w-5" />
@@ -97,7 +108,7 @@ const Moments = () => {
         <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
-          <SheetContent className="bg-[#161213] border-l border-[#e8c28244] text-[#edd6ae]">
+          <SheetContent className="bg-[#161213] border-l border-[#e8c28233] text-[#edd6ae]">
             <SheetHeader>
               <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">New Moment</SheetTitle>
             </SheetHeader>

@@ -1,22 +1,19 @@
 
 import React, { useState, useEffect } from "react";
-import { Clock, Calendar, MapPin, StickyNote, Pencil, X } from "lucide-react";
+import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { format, differenceInYears, isThisYear } from "date-fns";
-import { Button } from "@/components/ui/button";
+import { format, isThisYear, differenceInYears } from "date-fns";
 
 interface ElapsedTimeDisplayProps {
   title: string;
   startDate: Date;
   onClick?: () => void;
   onEdit?: (id: number) => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
   id?: number;
   location?: string;
   description?: string;
@@ -28,10 +25,9 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   startDate, 
   onClick,
   onEdit,
-  onMoveUp,
-  onMoveDown,
   id,
   location,
+  description,
   note
 }) => {
   const [elapsed, setElapsed] = useState({ years: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -61,131 +57,120 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
     if (onEdit && id !== undefined) {
       onEdit(id);
     }
-    setShowDetails(false); // Close the details dialog when edit is clicked
   };
 
   return (
     <>
       <div 
         onClick={() => setShowDetails(true)}
-        className="relative w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
-          hover:bg-[#161213] transition-all duration-300
+        className="w-full text-left p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg 
+          hover:bg-[#161213] transition-all duration-300 group relative overflow-hidden
           shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]
-          cursor-pointer group"
+          cursor-pointer backdrop-blur-sm"
       >
-        <div className="flex items-center gap-4 mb-6">
-          <Clock className="w-5 h-5 text-[#e8c282]" />
-          <div className="text-lg text-[#e8c282] tracking-[0.25em] font-serif uppercase">{title}</div>
-        </div>
-
-        <div className="grid grid-cols-5 gap-4 text-center">
-          {elapsed.years > 0 && (
-            <TimeUnit value={elapsed.years} unit="years" />
-          )}
-          <TimeUnit value={elapsed.days} unit="days" />
-          <TimeUnit value={elapsed.hours} unit="hours" />
-          <TimeUnit value={elapsed.minutes} unit="minutes" />
-          <TimeUnit value={elapsed.seconds} unit="seconds" />
-        </div>
-
-        {(onMoveUp || onMoveDown) && (
-          <div className="absolute top-4 right-4 flex gap-2">
-            {onMoveUp && (
-              <Button
-                onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
-                variant="ghost"
-                size="icon"
-                className="opacity-50 hover:opacity-100 hover:bg-[#e8c28215]"
-              >
-                <Pencil className="h-4 w-4 text-[#e8c282]" />
-              </Button>
-            )}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#e8c28205] to-transparent 
+          translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+        
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="text-[#e8c282] w-5 h-5" />
+            <span className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold">{title}</span>
           </div>
-        )}
-
+          
+          <div className="inline-flex items-baseline gap-3 text-[#edd6ae]">
+            {elapsed.years > 0 && (
+              <TimeUnit value={elapsed.years} unit="years" />
+            )}
+            <TimeUnit value={elapsed.days} unit="days" />
+            <TimeUnit value={elapsed.hours} unit="hours" />
+            <TimeUnit value={elapsed.minutes} unit="minutes" />
+            <TimeUnit value={elapsed.seconds} unit="seconds" />
+          </div>
+        </div>
+        
         {onEdit && id !== undefined && (
           <button
             onClick={handleEdit}
-            className="absolute top-4 right-4 p-2 opacity-70 hover:opacity-100"
+            className="absolute top-6 right-6 p-2 opacity-70 group-hover:opacity-100 
+              transition-opacity duration-300 rounded-full 
+              bg-[#e8c28215] hover:bg-[#e8c28222]"
+            aria-label="Edit moment"
           >
-            <Pencil className="h-4 w-4 text-[#e8c282]" />
+            <Pencil className="w-4 h-4 text-[#e8c282]" />
           </button>
         )}
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-lg bg-[#1a1a1a] border-0 rounded-2xl px-8 pt-12 pb-8 overflow-hidden">
-          <DialogHeader>
-            <div className="absolute right-6 top-6">
-              <Button variant="ghost" size="icon" onClick={() => setShowDetails(false)} className="text-[#e8c282]">
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-            <div className="text-center">
-              <h2 className="text-[#e8c282] text-3xl font-serif mb-8">
-                <span className="inline-block mr-3">ⓘ</span>Moment Details
-              </h2>
-            </div>
+        <DialogContent className="bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-xl p-6
+          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-y-auto max-h-[90vh] w-[95vw] max-w-lg">
+          <DialogHeader className="relative z-10">
+            <DialogTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-serif">
+              <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
+              Moment Details
+            </DialogTitle>
           </DialogHeader>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-6">
+            {elapsed.years > 0 && (
+              <TimeUnit value={elapsed.years} unit="years" />
+            )}
+            <TimeUnit value={elapsed.days} unit="days" />
+            <TimeUnit value={elapsed.hours} unit="hours" />
+            <TimeUnit value={elapsed.minutes} unit="minutes" />
+            <TimeUnit value={elapsed.seconds} unit="seconds" />
+          </div>
 
-          <div className="space-y-8">
-            {/* Title Section */}
-            <div className="bg-[#1c1c1c] p-6 rounded-xl border border-[#e8c28230]">
-              <div className="text-[#e8c282]/70 text-sm mb-2">title</div>
-              <div className="text-[#e8c282] text-3xl font-serif">{title}</div>
+          <div className="relative z-10 mt-6 space-y-6">
+            <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+              <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Title</div>
+              <div className="text-xl font-serif tracking-wide text-[#edd6ae]">{title}</div>
             </div>
             
-            {/* Start Date Section */}
-            <div className="bg-[#1c1c1c] p-6 rounded-xl border border-[#e8c28230]">
-              <div className="text-[#e8c282]/70 text-sm mb-2">start date & time</div>
-              <div className="flex items-center text-[#e8c282]">
-                <Calendar className="w-5 h-5 mr-3 text-[#e8c282]/80" />
-                <span>{format(startDate, "MMMM d, yyyy 'at' h:mm a")}</span>
+            <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+              <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Start Date & Time</div>
+              <div className="flex items-center gap-2 text-[#edd6ae]">
+                <Calendar className="w-4 h-4 opacity-70" />
+                <span>
+                  {format(startDate, "MMMM d, yyyy 'at' p")}
+                </span>
               </div>
             </div>
 
-            {/* Location Section (if available) */}
             {location && (
-              <div className="bg-[#1c1c1c] p-6 rounded-xl border border-[#e8c28230]">
-                <div className="text-[#e8c282]/70 text-sm mb-2">location</div>
-                <div className="flex items-center text-[#e8c282]">
-                  <MapPin className="w-5 h-5 mr-3 text-[#e8c282]/80" />
+              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Location</div>
+                <div className="flex items-center gap-2 text-[#edd6ae]">
+                  <MapPin className="w-4 h-4 opacity-70" />
                   <span>{location}</span>
                 </div>
               </div>
             )}
 
-            {/* Memories Section (if available) */}
             {note && (
-              <div className="bg-[#1c1c1c] p-6 rounded-xl border border-[#e8c28230]">
-                <div className="text-[#e8c282]/70 text-sm mb-2">memories</div>
-                <div className="flex items-start text-[#e8c282]">
-                  <StickyNote className="w-5 h-5 mr-3 mt-0.5 text-[#e8c282]/80" />
-                  <span>{note}</span>
+              <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Memories</div>
+                <div className="flex items-start gap-2 text-[#edd6ae]">
+                  <StickyNote className="w-4 h-4 opacity-70 mt-1" />
+                  <span className="whitespace-pre-wrap">{note}</span>
                 </div>
               </div>
             )}
-
-            {/* Time Units */}
-            <div className="grid grid-cols-5 gap-3 mt-8">
-              {elapsed.years > 0 && (
-                <DetailTimeUnit value={elapsed.years} unit="years" />
+            
+            <div className="mt-4 text-center">
+              {onEdit && id !== undefined && (
+                <button
+                  onClick={(e) => {
+                    setShowDetails(false);
+                    handleEdit(e);
+                  }}
+                  className="px-4 py-2 bg-[#e8c28222] hover:bg-[#e8c28233] rounded-md text-[#e8c282] 
+                    transition-colors duration-300 inline-flex items-center gap-2"
+                >
+                  <Pencil className="w-4 h-4" />
+                  Edit this moment
+                </button>
               )}
-              <DetailTimeUnit value={elapsed.days} unit="days" />
-              <DetailTimeUnit value={elapsed.hours} unit="hours" />
-              <DetailTimeUnit value={elapsed.minutes} unit="minutes" />
-              <DetailTimeUnit value={elapsed.seconds} unit="seconds" />
-            </div>
-
-            {/* Edit Button */}
-            <div className="flex justify-center mt-4">
-              <Button
-                onClick={handleEdit}
-                className="bg-[#2a2a2a] hover:bg-[#333333] border border-[#e8c28240] text-[#e8c282] px-8 py-6 rounded-xl"
-              >
-                <Pencil className="h-5 w-5 mr-2" />
-                Edit this moment
-              </Button>
             </div>
           </div>
         </DialogContent>
@@ -194,30 +179,12 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   );
 };
 
-interface TimeUnitProps {
-  value: number;
-  unit: string;
-  size?: 'normal' | 'large';
-}
-
-const TimeUnit = ({ value, unit, size = 'normal' }: TimeUnitProps) => (
-  <div className="text-center">
-    <div className={`font-serif font-bold text-[#e8c282] ${size === 'large' ? 'text-4xl' : 'text-2xl'}`}>
+const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
+  <div className="flex flex-col items-center">
+    <div className="text-xl sm:text-2xl font-serif font-bold text-[#edd6ae]">
       {value.toString().padStart(2, '0')}
     </div>
-    <div className={`uppercase tracking-wider text-[#e8c282]/40 ${size === 'large' ? 'text-sm' : 'text-xs'}`}>
-      {unit}
-    </div>
-  </div>
-);
-
-// New component specifically for the details view time units
-const DetailTimeUnit = ({ value, unit }: { value: number, unit: string }) => (
-  <div className="bg-[#1c1c1c] py-6 rounded-xl border border-[#e8c28230] text-center">
-    <div className="text-[#e8c282] text-3xl font-serif font-bold">
-      {value.toString().padStart(2, '0')}
-    </div>
-    <div className="uppercase tracking-wider text-[#e8c282]/60 text-xs mt-1">
+    <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#e8c28288]">
       {unit}
     </div>
   </div>
