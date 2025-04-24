@@ -5,8 +5,32 @@ import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MomentsSection } from "@/components/MomentsSection";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { NewMomentForm } from "@/components/NewMomentForm";
+import { useState } from "react";
+import { useMoment } from "@/hooks/useMoment";
+import { useToast } from "@/hooks/useToast";
 
 const Index = () => {
+  const [isAddingMoment, setIsAddingMoment] = useState(false);
+  const { addMoment } = useMoment();
+  const { toast } = useToast();
+
+  const handleAddMoment = (data: {
+    title: string;
+    startDate: Date;
+    location?: string;
+    note?: string;
+  }) => {
+    addMoment(data);
+    setIsAddingMoment(false);
+    
+    toast({
+      title: "Moment added",
+      description: "Your new moment has been created",
+    });
+  };
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background py-12">
       <div className="w-full max-w-xl px-4 flex flex-col items-center">
@@ -50,7 +74,15 @@ const Index = () => {
         
         <Card className="w-full mt-8 bg-card/90 shadow-xl border-none">
           <CardContent className="py-6">
-            <h2 className="text-2xl font-bold text-primary-foreground mb-4">Time Tracking</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-primary-foreground">Time Tracking</h2>
+              <Button
+                onClick={() => setIsAddingMoment(true)}
+                className="bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
+              >
+                Add Moment
+              </Button>
+            </div>
             <MomentsSection />
           </CardContent>
         </Card>
@@ -63,6 +95,15 @@ const Index = () => {
             Designed for elegance, simplicity, and mindful organization.
           </p>
         </div>
+        
+        <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
+          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae]">
+            <SheetHeader>
+              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">new moment</SheetTitle>
+            </SheetHeader>
+            <NewMomentForm onSubmit={handleAddMoment} />
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   );
