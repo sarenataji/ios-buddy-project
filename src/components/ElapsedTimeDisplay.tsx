@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from "react";
-import { Clock, Pencil } from "lucide-react";
+import { Clock, Pencil, StopCircle } from "lucide-react";
 import { differenceInYears } from "date-fns";
 import MomentDetailsDialog from "./moments/MomentDetailsDialog";
 import TimeUnit from "./moments/TimeUnit";
+import { Button } from "./ui/button";
 
 interface ElapsedTimeDisplayProps {
   title: string;
@@ -14,6 +16,8 @@ interface ElapsedTimeDisplayProps {
   location?: string;
   description?: string;
   note?: string;
+  isCompleted?: boolean;
+  stoppedAt?: Date;
 }
 
 const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
@@ -25,14 +29,16 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   id,
   location,
   description,
-  note
+  note,
+  isCompleted,
+  stoppedAt
 }) => {
   const [elapsed, setElapsed] = useState({ years: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const calculateElapsed = () => {
-      const now = new Date();
+      const now = stoppedAt || new Date();
       const diff = now.getTime() - startDate.getTime();
       const years = differenceInYears(now, startDate);
       
@@ -45,9 +51,11 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
     };
 
     calculateElapsed();
-    const interval = setInterval(calculateElapsed, 1000);
-    return () => clearInterval(interval);
-  }, [startDate]);
+    const interval = !stoppedAt ? setInterval(calculateElapsed, 1000) : null;
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [startDate, stoppedAt]);
 
   const handleEdit = (e?: React.MouseEvent) => {
     if (e) {
@@ -71,9 +79,26 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
           translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
         
         <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="text-[#e8c282] w-5 h-5" />
-            <span className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold">{title}</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Clock className="text-[#e8c282] w-5 h-5" />
+              <span className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold">
+                {title}
+              </span>
+            </div>
+            {!isCompleted && onStop && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  onStop(e);
+                }}
+                className="text-[#e8c282] hover:text-[#e8c282] hover:bg-[#e8c28222]"
+              >
+                <StopCircle className="w-4 h-4" />
+              </Button>
+            )}
           </div>
           
           <div className="inline-flex items-baseline gap-6 text-[#edd6ae]">
@@ -97,6 +122,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
         note={note}
         elapsed={elapsed}
         onEdit={id !== undefined && onEdit ? handleEdit : undefined}
+        stoppedAt={stoppedAt}
       />
     </>
   );

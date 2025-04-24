@@ -1,5 +1,6 @@
+
 import React from "react";
-import { Calendar, Info, MapPin, Pencil, StickyNote } from "lucide-react";
+import { Calendar, Info, MapPin, Pencil, StickyNote, Clock } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ interface MomentDetailsDialogProps {
   note?: string;
   elapsed: ElapsedTime;
   onEdit?: (e?: React.MouseEvent) => void;
+  stoppedAt?: Date;
 }
 
 const MomentDetailsDialog = ({
@@ -36,7 +38,8 @@ const MomentDetailsDialog = ({
   location,
   note,
   elapsed,
-  onEdit
+  onEdit,
+  stoppedAt
 }: MomentDetailsDialogProps) => {
   return (
     <Dialog open={showDetails} onOpenChange={setShowDetails}>
@@ -57,12 +60,18 @@ const MomentDetailsDialog = ({
           </div>
           
           <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
-            <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Start Date & Time</div>
-            <div className="flex items-center gap-2 text-[#edd6ae]">
-              <Calendar className="w-4 h-4 opacity-70" />
-              <span>
-                {format(startDate, "MMMM d, yyyy 'at' p")}
-              </span>
+            <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Timeline</div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-[#edd6ae]">
+                <Calendar className="w-4 h-4 opacity-70" />
+                <span>Started: {format(startDate, "MMMM d, yyyy 'at' p")}</span>
+              </div>
+              {stoppedAt && (
+                <div className="flex items-center gap-2 text-[#edd6ae]">
+                  <Clock className="w-4 h-4 opacity-70" />
+                  <span>Completed: {format(stoppedAt, "MMMM d, yyyy 'at' p")}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -96,8 +105,8 @@ const MomentDetailsDialog = ({
             <TimeUnit value={elapsed.seconds} unit="Seconds" />
           </div>
           
-          <div className="mt-4 text-center">
-            {onEdit && (
+          {onEdit && !stoppedAt && (
+            <div className="mt-4 text-center">
               <button
                 onClick={() => {
                   setShowDetails(false);
@@ -109,8 +118,8 @@ const MomentDetailsDialog = ({
                 <Pencil className="w-4 h-4" />
                 Edit this moment
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
