@@ -1,29 +1,23 @@
 import React from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { format, parseISO } from "date-fns";
-import { Calendar, MapPin } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar, MapPin, MoveVertical } from "lucide-react";
 
 export const MomentsSection = () => {
-  const { moments, updateMoment, deleteMoment } = useMoment();
+  const { moments, updateMoment, deleteMoment, reorderMoments } = useMoment();
   const [editingMoment, setEditingMoment] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDate, setEditDate] = useState("");
   const [editTime, setEditTime] = useState("");
   const [editLocation, setEditLocation] = useState("");
   const [editNote, setEditNote] = useState("");
+  const [draggedMoment, setDraggedMoment] = useState<number | null>(null);
   const { toast } = useToast();
 
   const handleEdit = (id: number) => {
@@ -87,10 +81,55 @@ export const MomentsSection = () => {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, id: number) => {
+    setDraggedMoment(id);
+    e.currentTarget.classList.add('opacity-50');
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    e.currentTarget.classList.remove('opacity-50');
+    setDraggedMoment(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: number) => {
+    e.preventDefault();
+    if (draggedMoment === null) return;
+    
+    const reorderedMoments = [...moments];
+    const draggedIndex = moments.findIndex(m => m.id === draggedMoment);
+    const targetIndex = moments.findIndex(m => m.id === targetId);
+    
+    if (draggedIndex === -1 || targetIndex === -1) return;
+    
+    const [draggedItem] = reorderedMoments.splice(draggedIndex, 1);
+    reorderedMoments.splice(targetIndex, 0, draggedItem);
+    
+    reorderMoments(reorderedMoments);
+  };
+
+  const sortedMoments = [...moments].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
   return (
     <div className="space-y-6">
-      {moments.map((moment) => (
-        <div key={moment.id}>
+      {sortedMoments.map((moment) => (
+        <div 
+          key={moment.id}
+          draggable={!moment.isPredefined}
+          onDragStart={(e) => handleDragStart(e, moment.id)}
+          onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, moment.id)}
+          className={`relative ${!moment.isPredefined ? 'cursor-move' : ''}`}
+        >
+          {!moment.isPredefined && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 text-[#e8c28277]">
+              <MoveVertical size={16} />
+            </div>
+          )}
           <ElapsedTimeDisplay
             id={moment.id}
             title={moment.title}

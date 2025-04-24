@@ -8,6 +8,7 @@ interface Moment {
   description?: string;
   note?: string;
   isPredefined?: boolean;
+  order?: number;
 }
 
 interface MomentContextType {
@@ -15,6 +16,7 @@ interface MomentContextType {
   addMoment: (moment: Omit<Moment, "id">) => void;
   deleteMoment: (id: number) => void;
   updateMoment: (moment: Moment) => void;
+  reorderMoments: (moments: Moment[]) => void;
 }
 
 const predefinedMoments: Omit<Moment, "id">[] = [
@@ -68,9 +70,11 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
       const predefinedIds = predefinedMoments.map(m => m.title);
       const filteredSaved = parsedMoments.filter((m: Moment) => !predefinedIds.includes(m.title));
-      return [...predefinedMoments.map((m, i) => ({ ...m, id: -1 - i })), ...filteredSaved];
+      const orderedMoments = [...predefinedMoments.map((m, i) => ({ ...m, id: -1 - i, order: i })), 
+        ...filteredSaved.map((m: Moment, i: number) => ({ ...m, order: predefinedMoments.length + i }))];
+      return orderedMoments;
     }
-    return predefinedMoments.map((m, i) => ({ ...m, id: -1 - i }));
+    return predefinedMoments.map((m, i) => ({ ...m, id: -1 - i, order: i }));
   });
 
   useEffect(() => {
@@ -78,19 +82,26 @@ export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [moments]);
 
   const addMoment = (moment: Omit<Moment, "id">) => {
-    setMoments(prev => [...prev, { ...moment, id: Date.now() }]);
+    setMoments(prev => [...prev, { ...moment, id: Date.now(), order: prev.length }]);
   };
 
   const deleteMoment = (id: number) => {
-    setMoments(prev => prev.filter(m => m.id !== id));
+    setMoments(prev => {
+      const filtered = prev.filter(m => m.id !== id);
+      return filtered.map((m, i) => ({ ...m, order: i }));
+    });
   };
 
   const updateMoment = (moment: Moment) => {
     setMoments(prev => prev.map(m => m.id === moment.id ? moment : m));
   };
 
+  const reorderMoments = (reorderedMoments: Moment[]) => {
+    setMoments(reorderedMoments.map((m, i) => ({ ...m, order: i })));
+  };
+
   return (
-    <MomentContext.Provider value={{ moments, addMoment, deleteMoment, updateMoment }}>
+    <MomentContext.Provider value={{ moments, addMoment, deleteMoment, updateMoment, reorderMoments }}>
       {children}
     </MomentContext.Provider>
   );
