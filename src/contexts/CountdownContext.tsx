@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 interface Countdown {
   id: number;
@@ -20,13 +20,7 @@ interface CountdownContextType {
   completeCountdown: (id: number) => void;
 }
 
-const CountdownContext = createContext<CountdownContextType | undefined>(undefined);
-
-export const useCountdown = () => {
-  const context = useContext(CountdownContext);
-  if (!context) throw new Error("useCountdown must be used within CountdownProvider");
-  return context;
-};
+export const CountdownContext = createContext<CountdownContextType | undefined>(undefined);
 
 export const CountdownProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [countdowns, setCountdowns] = useState<Countdown[]>(() => {
