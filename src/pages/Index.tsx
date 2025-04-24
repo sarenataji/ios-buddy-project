@@ -1,3 +1,4 @@
+
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import ThreeCube from "../three/ThreeCube";
@@ -93,8 +94,8 @@ const Index = () => {
                 asChild
                 className="flex-1 h-12 bg-[#e8c282]/20 hover:bg-[#e8c282]/30 text-[#e8c282] border border-[#e8c28244]"
               >
-                <Link to="/profile" className="flex items-center justify-center">
-                  <span>Profile</span>
+                <Link to="/reflection" className="flex items-center justify-center">
+                  <span>Reflection</span>
                 </Link>
               </Button>
             </div>

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Schedule from "./pages/Schedule";
 import Moments from "./pages/Moments";
+import Reflection from "./pages/Reflection";
 import { MomentProvider } from "./contexts/MomentContext";
 import { CountdownProvider } from "./contexts/CountdownContext";
 
@@ -28,6 +30,7 @@ const App = () => (
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/schedule" element={<Schedule />} />
                 <Route path="/moments" element={<Moments />} />
+                <Route path="/reflection" element={<Reflection />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
