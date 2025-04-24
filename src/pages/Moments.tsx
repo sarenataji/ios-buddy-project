@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import { Plus } from "lucide-react";
@@ -67,7 +68,7 @@ const Moments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-[#1a2232] p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col items-center justify-center mb-12">
           <div className="uppercase tracking-widest text-sm mb-2 text-[#e8c282] text-center" style={{ letterSpacing: "0.22em" }}>moments</div>
@@ -108,7 +109,7 @@ const Moments = () => {
         <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
-          <SheetContent className="bg-[#1a1f2c] border-l border-[#e8c28233] text-[#edd6ae]">
+          <SheetContent className="bg-[#1a2232] border-l border-[#e8c28233] text-[#edd6ae]">
             <SheetHeader>
               <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">New Moment</SheetTitle>
             </SheetHeader>
@@ -119,14 +120,14 @@ const Moments = () => {
                   value={newMomentTitle}
                   onChange={(e) => setNewMomentTitle(e.target.value)}
                   placeholder="Enter moment title"
-                  className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
+                  className="bg-[#1a2232] border-[#e8c28244] text-[#edd6ae] text-center"
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[#e8c282] block text-center lowercase tracking-wider">Date & Time</label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start bg-[#161213] border-[#e8c28244] text-[#edd6ae] hover:bg-[#e8c28215]">
+                    <Button variant="outline" className="w-full justify-start bg-[#1a2232] border-[#e8c28244] text-[#edd6ae] hover:bg-[#e8c28215]">
                       {newMomentDate ? (
                         format(newMomentDate, "PPP p")
                       ) : (
@@ -134,7 +135,7 @@ const Moments = () => {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-[#1a1f2c] border border-[#e8c28233]">
+                  <PopoverContent className="w-auto p-0 bg-[#1a2232] border border-[#e8c28233]">
                     <div className="p-3">
                       <Calendar
                         mode="single"
@@ -146,7 +147,7 @@ const Moments = () => {
                       <div className="px-3 pb-2">
                         <Input
                           type="time"
-                          className="mt-2 bg-[#161213] border-[#e8c28244] text-[#edd6ae]"
+                          className="mt-2 bg-[#1a2232] border-[#e8c28244] text-[#edd6ae]"
                           onChange={(e) => {
                             if (newMomentDate && e.target.value) {
                               const [hours, minutes] = e.target.value.split(':');
@@ -170,7 +171,7 @@ const Moments = () => {
                   value={newMomentLocation}
                   onChange={(e) => setNewMomentLocation(e.target.value)}
                   placeholder="Enter location"
-                  className="bg-[#161213] border-[#e8c28244] text-[#edd6ae] text-center"
+                  className="bg-[#1a2232] border-[#e8c28244] text-[#edd6ae] text-center"
                 />
               </div>
               <div className="space-y-2">
@@ -181,7 +182,7 @@ const Moments = () => {
                   value={newMomentNote}
                   onChange={(e) => setNewMomentNote(e.target.value)}
                   placeholder="Add a special memory or note about this moment..."
-                  className="w-full min-h-[100px] bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-md p-3 text-center placeholder:text-[#e8c28277]"
+                  className="w-full min-h-[100px] bg-[#1a2232] border border-[#e8c28244] text-[#edd6ae] rounded-md p-3 text-center placeholder:text-[#e8c28277]"
                 />
               </div>
               <Button
@@ -200,3 +201,4 @@ const Moments = () => {
 };
 
 export default Moments;
+
