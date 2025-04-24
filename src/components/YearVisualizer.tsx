@@ -30,7 +30,7 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
   const daysLeft = daysInYear.filter(day => isAfter(day, today)).length;
 
   // Calculate days per row for UI layout
-  const daysPerRow = 15; // This creates a nice grid that fits well on most screens
+  const daysPerRow = 15;
   const rows = Math.ceil(daysInYear.length / daysPerRow);
 
   const handlePointerEnter = (day: Date) => {
@@ -54,7 +54,8 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent 
-          className="bg-[#000000] border-none p-0 max-w-xs max-h-[90vh] overflow-hidden rounded-3xl"
+          className="bg-[#000000] border-none p-0 max-w-[640px] max-h-[90vh] overflow-hidden rounded-3xl
+            shadow-[0_0_50px_0_#e8c28215]"
           onPointerDown={() => setPointerDown(true)}
           onPointerUp={() => {
             setPointerDown(false);
@@ -65,14 +66,14 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
             setHoveredDate(null);
           }}
         >
-          <div className="w-full h-full flex flex-col p-4">
+          <div className="w-full h-full flex flex-col p-6">
             <div 
-              className="flex-1 grid gap-2 p-2" 
+              className="flex-1 grid gap-[3px] sm:gap-1" 
               style={{ 
                 gridTemplateColumns: `repeat(${daysPerRow}, 1fr)`,
                 width: '100%',
                 aspectRatio: `${daysPerRow}/${rows}`,
-                maxHeight: 'calc(90vh - 120px)'
+                maxHeight: 'calc(90vh - 140px)'
               }}
             >
               {daysInYear.map((day, index) => {
@@ -83,9 +84,10 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                   <div
                     key={index}
                     className={`
-                      w-4 h-4 rounded-full transition-colors cursor-pointer
+                      w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-200
                       ${isPast ? 'bg-[#2a180f]' : 'bg-[#edd6ae]'}
-                      ${hoveredDate && isSameDay(hoveredDate, day) ? 'ring-2 ring-[#e8c282]' : ''}
+                      ${hoveredDate && isSameDay(hoveredDate, day) ? 'ring-2 ring-[#e8c282] scale-110' : ''}
+                      hover:scale-110
                     `}
                     onPointerEnter={() => handlePointerEnter(day)}
                     onPointerDown={() => {
@@ -97,11 +99,11 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
               })}
             </div>
             
-            <div className="flex justify-between items-center text-[#e8c282] font-mono text-sm mt-8 px-4 pb-4">
-              <div>
+            <div className="flex justify-between items-center text-[#e8c282] font-serif text-sm mt-8 px-4">
+              <div className="text-lg tracking-wide">
                 {hoveredDate ? format(hoveredDate, "EEEE, MMMM d, yyyy") : year}
               </div>
-              <div>
+              <div className="text-sm opacity-80 tracking-wider">
                 {daysLeft} days left
               </div>
             </div>
