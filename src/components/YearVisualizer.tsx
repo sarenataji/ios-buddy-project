@@ -30,7 +30,7 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
   const daysLeft = daysInYear.filter(day => isAfter(day, today)).length;
 
   // Calculate days per row for UI layout
-  const daysPerRow = 15; // Adjust based on the image layout
+  const daysPerRow = 15; // This creates a nice grid that fits well on most screens
   const rows = Math.ceil(daysInYear.length / daysPerRow);
 
   const handlePointerEnter = (day: Date) => {
@@ -66,7 +66,15 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
           }}
         >
           <div className="w-full h-full flex flex-col p-4">
-            <div className="flex-1 grid grid-cols-15 gap-2 p-2" style={{ gridTemplateColumns: `repeat(${daysPerRow}, 1fr)` }}>
+            <div 
+              className="flex-1 grid gap-2 p-2" 
+              style={{ 
+                gridTemplateColumns: `repeat(${daysPerRow}, 1fr)`,
+                width: '100%',
+                aspectRatio: `${daysPerRow}/${rows}`,
+                maxHeight: 'calc(90vh - 120px)'
+              }}
+            >
               {daysInYear.map((day, index) => {
                 const isPast = isBefore(day, today) && !isSameDay(day, today);
                 const isFuture = isAfter(day, today) || isSameDay(day, today);
@@ -74,9 +82,11 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                 return (
                   <div
                     key={index}
-                    className={`w-4 h-4 rounded-full transition-colors cursor-pointer
-                    ${isPast ? 'bg-gray-600' : 'bg-white'}
-                    ${hoveredDate && isSameDay(hoveredDate, day) ? 'ring-2 ring-[#e8c282]' : ''}`}
+                    className={`
+                      w-4 h-4 rounded-full transition-colors cursor-pointer
+                      ${isPast ? 'bg-[#2a180f]' : 'bg-[#edd6ae]'}
+                      ${hoveredDate && isSameDay(hoveredDate, day) ? 'ring-2 ring-[#e8c282]' : ''}
+                    `}
                     onPointerEnter={() => handlePointerEnter(day)}
                     onPointerDown={() => {
                       setPointerDown(true);
@@ -87,7 +97,7 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
               })}
             </div>
             
-            <div className="flex justify-between items-center text-gray-300 font-mono text-sm mt-8 px-4 pb-4">
+            <div className="flex justify-between items-center text-[#e8c282] font-mono text-sm mt-8 px-4 pb-4">
               <div>
                 {hoveredDate ? format(hoveredDate, "EEEE, MMMM d, yyyy") : year}
               </div>
@@ -103,3 +113,4 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
 };
 
 export default YearVisualizer;
+
