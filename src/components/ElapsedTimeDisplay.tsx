@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
@@ -14,6 +13,7 @@ interface ElapsedTimeDisplayProps {
   startDate: Date;
   onClick?: () => void;
   onEdit?: (id: number) => void;
+  onStop?: (e: React.MouseEvent) => void;
   id?: number;
   location?: string;
   description?: string;
@@ -25,6 +25,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
   startDate, 
   onClick,
   onEdit,
+  onStop,
   id,
   location,
   description,
@@ -88,17 +89,30 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
           </div>
         </div>
         
-        {onEdit && id !== undefined && (
-          <button
-            onClick={handleEdit}
-            className="absolute top-6 right-6 p-2 opacity-70 group-hover:opacity-100 
-              transition-opacity duration-300 rounded-full 
-              bg-[#e8c28215] hover:bg-[#e8c28222]"
-            aria-label="Edit moment"
-          >
-            <Pencil className="w-4 h-4 text-[#e8c282]" />
-          </button>
-        )}
+        <div className="absolute top-6 right-6 flex items-center gap-2">
+          {onStop && (
+            <button
+              onClick={onStop}
+              className="p-2 opacity-70 group-hover:opacity-100 
+                transition-opacity duration-300 rounded-full 
+                bg-[#e8c28215] hover:bg-[#e8c28222]"
+              aria-label="Stop moment"
+            >
+              <Clock className="w-4 h-4 text-[#e8c282]" />
+            </button>
+          )}
+          {onEdit && id !== undefined && (
+            <button
+              onClick={handleEdit}
+              className="p-2 opacity-70 group-hover:opacity-100 
+                transition-opacity duration-300 rounded-full 
+                bg-[#e8c28215] hover:bg-[#e8c28222]"
+              aria-label="Edit moment"
+            >
+              <Pencil className="w-4 h-4 text-[#e8c282]" />
+            </button>
+          )}
+        </div>
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>

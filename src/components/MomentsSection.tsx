@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import MomentItem from "./moments/MomentItem";
 import EditMomentDialog from "./moments/EditMomentDialog";
+import StoppedMomentsList from "./moments/StoppedMomentsList";
 
 export const MomentsSection = () => {
   const { moments, updateMoment, deleteMoment, reorderMoments } = useMoment();
@@ -17,7 +17,9 @@ export const MomentsSection = () => {
   const [draggedMoment, setDraggedMoment] = useState<number | null>(null);
   const { toast } = useToast();
 
-  const sortedMoments = [...moments].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const activeMoments = moments.filter(m => m.isActive !== false);
+  const stoppedMoments = moments.filter(m => m.isActive === false);
+  const sortedActiveMoments = [...activeMoments].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const handleEdit = (id: number) => {
     const moment = moments.find(m => m.id === id);
@@ -124,7 +126,7 @@ export const MomentsSection = () => {
 
   return (
     <div className="space-y-6">
-      {sortedMoments.map((moment) => (
+      {sortedActiveMoments.map((moment) => (
         <MomentItem
           key={moment.id}
           id={moment.id}
@@ -141,6 +143,8 @@ export const MomentsSection = () => {
           onDrop={handleDrop}
         />
       ))}
+
+      <StoppedMomentsList moments={stoppedMoments} />
 
       <EditMomentDialog
         isOpen={editingMoment !== null}

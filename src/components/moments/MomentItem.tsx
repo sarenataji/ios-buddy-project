@@ -1,6 +1,7 @@
 
 import React from "react";
 import { MoveVertical } from "lucide-react";
+import { useMoment } from "@/contexts/MomentContext";
 import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
 
 interface MomentItemProps {
@@ -32,6 +33,15 @@ const MomentItem = ({
   onDragOver,
   onDrop
 }: MomentItemProps) => {
+  const { stopMoment } = useMoment();
+
+  const handleStop = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isPredefined) {
+      stopMoment(id);
+    }
+  };
+
   return (
     <div 
       draggable={!isPredefined}
@@ -54,6 +64,7 @@ const MomentItem = ({
         description={description}
         note={note}
         onEdit={onEdit}
+        onStop={!isPredefined ? handleStop : undefined}
       />
     </div>
   );
