@@ -131,10 +131,8 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
       </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent 
-          className="bg-[#0c0a08] border-none p-0 max-w-[800px] max-h-[90vh] overflow-hidden rounded-3xl
-            shadow-[0_0_50px_0_#e8c28215]"
-        >
+        <DialogContent className="bg-[#0c0a08] border-none p-0 max-w-[800px] max-h-[90vh] overflow-hidden rounded-3xl
+          shadow-[0_0_50px_0_#e8c28215]">
           <DialogTitle className="sr-only">Year Visualizer</DialogTitle>
           <div className="w-full h-full flex flex-col">
             <div className="relative h-[500px] bg-gradient-to-b from-[#0c0a08] to-[#12100e]">
@@ -143,11 +141,10 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                   days={daysInYear} 
                   today={today} 
                   hoveredDay={hoveredDate}
-                  setHoveredDay={setHoveredDay}
+                  setHoveredDay={setHoveredDate}
                 />
               </Canvas>
               
-              {/* Enhanced progress indicator */}
               <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
                 <div className="w-64 bg-[#1a1f2c]/60 rounded-full p-1.5 backdrop-blur-sm border border-[#e8c28222]">
                   <div 
