@@ -132,8 +132,10 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
       </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="bg-[#0c0a08] border-none p-0 max-w-[800px] max-h-[90vh] overflow-hidden rounded-3xl
-          shadow-[0_0_50px_0_#e8c28215]">
+        <DialogContent 
+          className="bg-[#0c0a08] border-none p-0 max-w-[800px] max-h-[90vh] overflow-hidden rounded-3xl
+            shadow-[0_0_50px_0_#e8c28215]"
+        >
           <DialogTitle className="sr-only">Year Visualizer</DialogTitle>
           <div className="w-full h-full flex flex-col">
             <div className="relative h-[500px] bg-gradient-to-b from-[#0c0a08] to-[#12100e]">
@@ -146,19 +148,12 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                 />
               </Canvas>
               
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-3">
-                <div className="w-72 bg-[#1a1f2c]/40 rounded-full p-1 backdrop-blur-sm border border-[#e8c28222]">
-                  <div 
-                    className="h-1.5 rounded-full bg-gradient-to-r from-[#e8c282] to-[#d4af6b] transition-all duration-500 ease-out"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-                <span 
-                  className="text-[#e8c282]/80 text-sm font-['Inter'] tracking-wide"
-                  style={{ fontWeight: 300 }}
-                >
-                  {Math.round(progress)}%
-                </span>
+              {/* Progress indicator */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-48 bg-[#1a1f2c]/60 rounded-full p-1.5">
+                <div 
+                  className="h-1 rounded-full bg-[#e8c282]" 
+                  style={{ width: `${progress}%` }}
+                />
               </div>
             </div>
             
@@ -172,6 +167,9 @@ const YearVisualizer = ({ year = new Date().getFullYear() }: YearVisualizerProps
                 ) : (
                   <span className="text-2xl font-serif">{year}</span>
                 )}
+              </div>
+              <div className="text-sm opacity-80 tracking-wider font-light font-['Inter']">
+                {daysLeft} days remaining in {year}
               </div>
             </div>
           </div>
