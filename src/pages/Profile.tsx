@@ -1,8 +1,10 @@
+
 import React, { useEffect, useState } from "react";
 import { format, differenceInYears, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, endOfDay, intervalToDuration } from "date-fns";
 import { MapPin } from "lucide-react";
 import ProfileStat from "@/components/ProfileStat";
 import ProfileSettings from "@/components/ProfileSettings";
+import YearVisualizer from "@/components/YearVisualizer";
 
 const initialState = {
   birthdate: new Date(1996, 8, 23, 0, 0, 0),
@@ -281,6 +283,9 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        
+        {/* Add the Year Visualizer component */}
+        <YearVisualizer year={2025} />
       </div>
     </div>
   );
