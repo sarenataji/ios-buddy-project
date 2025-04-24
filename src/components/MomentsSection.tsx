@@ -83,6 +83,12 @@ export const MomentsSection = () => {
   };
 
   const handleDragStart = (e: React.DragEvent, id: number) => {
+    // Only allow dragging for non-predefined moments
+    if (moments.find(m => m.id === id)?.isPredefined) {
+      e.preventDefault();
+      return;
+    }
+    
     setDraggedMoment(id);
     e.currentTarget.classList.add('opacity-50');
   };
@@ -93,26 +99,36 @@ export const MomentsSection = () => {
   };
 
   const handleDragOver = (e: React.DragEvent) => {
+    // Prevent default to allow dropping
     e.preventDefault();
   };
 
   const handleDrop = (e: React.DragEvent, targetId: number) => {
     e.preventDefault();
+    
+    // Prevent dropping on predefined moments
+    if (moments.find(m => m.id === targetId)?.isPredefined) {
+      return;
+    }
+
     if (draggedMoment === null) return;
     
     const reorderedMoments = [...moments];
-    const draggedIndex = moments.findIndex(m => m.id === draggedMoment);
-    const targetIndex = moments.findIndex(m => m.id === targetId);
+    const draggedIndex = reorderedMoments.findIndex(m => m.id === draggedMoment);
+    const targetIndex = reorderedMoments.findIndex(m => m.id === targetId);
     
     if (draggedIndex === -1 || targetIndex === -1) return;
     
+    // Remove the dragged item and insert it at the target position
     const [draggedItem] = reorderedMoments.splice(draggedIndex, 1);
     reorderedMoments.splice(targetIndex, 0, draggedItem);
     
-    reorderMoments(reorderedMoments);
+    // Reorder moments and update their order
+    reorderMoments(reorderedMoments.map((moment, index) => ({
+      ...moment,
+      order: index
+    })));
   };
-
-  const sortedMoments = [...moments].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   return (
     <div className="space-y-6">
