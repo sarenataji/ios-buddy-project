@@ -1,7 +1,7 @@
 
 import React from "react";
-import { format } from "date-fns";
-import { Clock, Calendar, MapPin } from "lucide-react";
+import { format, formatDistanceStrict } from "date-fns";
+import { Clock, Calendar, MapPin, StickyNote } from "lucide-react";
 
 interface StoppedMoment {
   id: number;
@@ -26,41 +26,57 @@ const StoppedMomentsList: React.FC<StoppedMomentsListProps> = ({ moments }) => {
         Completed Moments
       </h2>
       <div className="space-y-4">
-        {moments.map((moment) => (
-          <div
-            key={moment.id}
-            className="p-4 bg-[#161213]/90 border border-[#e8c28244] rounded-lg"
-          >
-            <div className="flex flex-col gap-2">
-              <h3 className="text-[#edd6ae] text-lg font-serif">{moment.title}</h3>
-              
-              <div className="flex items-center gap-2 text-sm text-[#e8c28288]">
-                <Calendar className="w-4 h-4" />
-                <span>Started: {format(moment.startDate, "PPP")}</span>
+        {moments.map((moment) => {
+          const duration = moment.stoppedAt 
+            ? formatDistanceStrict(moment.stoppedAt, moment.startDate)
+            : "Unknown duration";
+
+          return (
+            <div
+              key={moment.id}
+              className="p-6 bg-[#161213]/90 border border-[#e8c28244] rounded-lg
+                hover:bg-[#161213] transition-all duration-300
+                shadow-[0_0_20px_0_#e8c28215] hover:shadow-[0_0_30px_0_#e8c28225]"
+            >
+              <div className="flex flex-col gap-3">
+                <h3 className="text-[#edd6ae] text-xl font-serif">{moment.title}</h3>
+                
+                <div className="grid gap-2 text-sm text-[#e8c28288]">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>Started: {format(moment.startDate, "PPP 'at' p")}</span>
+                  </div>
+                  
+                  {moment.stoppedAt && (
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <span>
+                        Completed: {format(moment.stoppedAt, "PPP 'at' p")}
+                        <span className="ml-2 text-[#e8c28255]">({duration})</span>
+                      </span>
+                    </div>
+                  )}
+                  
+                  {moment.location && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      <span>{moment.location}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {moment.note && (
+                  <div className="mt-2 pt-3 border-t border-[#e8c28222]">
+                    <div className="flex items-start gap-2 text-sm text-[#e8c28288]">
+                      <StickyNote className="w-4 h-4 mt-0.5" />
+                      <p className="whitespace-pre-wrap">{moment.note}</p>
+                    </div>
+                  </div>
+                )}
               </div>
-              
-              {moment.stoppedAt && (
-                <div className="flex items-center gap-2 text-sm text-[#e8c28288]">
-                  <Clock className="w-4 h-4" />
-                  <span>Completed: {format(moment.stoppedAt, "PPP 'at' p")}</span>
-                </div>
-              )}
-              
-              {moment.location && (
-                <div className="flex items-center gap-2 text-sm text-[#e8c28288]">
-                  <MapPin className="w-4 h-4" />
-                  <span>{moment.location}</span>
-                </div>
-              )}
-              
-              {moment.note && (
-                <p className="text-sm text-[#e8c28288] mt-2 whitespace-pre-wrap">
-                  {moment.note}
-                </p>
-              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
