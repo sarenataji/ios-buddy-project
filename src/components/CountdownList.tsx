@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useCountdown } from "@/hooks/useCountdown";
 import CountdownTimer from "./CountdownTimer";
@@ -100,9 +99,6 @@ const CountdownList = () => {
             targetDate={countdown.endDate} 
             onComplete={() => completeCountdown(countdown.id)}
           />
-          {countdown.note && (
-            <p className="text-[#e8c282aa] text-sm mt-4">{countdown.note}</p>
-          )}
         </div>
       ))}
 
