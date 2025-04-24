@@ -125,26 +125,33 @@ export const MomentsSection = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {sortedActiveMoments.map((moment) => (
-        <MomentItem
-          key={moment.id}
-          id={moment.id}
-          title={moment.title}
-          startDate={moment.startDate}
-          location={moment.location}
-          description={moment.description}
-          note={moment.note}
-          isPredefined={moment.isPredefined}
-          onEdit={handleEdit}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        />
-      ))}
+    <div className="space-y-12">
+      <div className="space-y-6">
+        <h2 className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold mb-6">
+          Active Moments
+        </h2>
+        {sortedActiveMoments.map((moment) => (
+          <MomentItem
+            key={moment.id}
+            id={moment.id}
+            title={moment.title}
+            startDate={moment.startDate}
+            location={moment.location}
+            description={moment.description}
+            note={moment.note}
+            isPredefined={moment.isPredefined}
+            onEdit={handleEdit}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          />
+        ))}
+      </div>
 
-      <StoppedMomentsList moments={stoppedMoments} />
+      {stoppedMoments.length > 0 && (
+        <StoppedMomentsList moments={stoppedMoments} />
+      )}
 
       <EditMomentDialog
         isOpen={editingMoment !== null}
