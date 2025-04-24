@@ -41,7 +41,13 @@ export const CountdownProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
 
   useEffect(() => {
-    localStorage.setItem("countdowns", JSON.stringify(countdowns));
+    const serializedCountdowns = JSON.stringify(countdowns, (key, value) => {
+      if (value instanceof Date) {
+        return value.toISOString();
+      }
+      return value;
+    });
+    localStorage.setItem("countdowns", serializedCountdowns);
   }, [countdowns]);
 
   const addCountdown = (countdown: Omit<Countdown, "id" | "isCompleted">) => {

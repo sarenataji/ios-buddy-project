@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import { format } from "date-fns";
@@ -6,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import MomentItem from "./moments/MomentItem";
 import EditMomentDialog from "./moments/EditMomentDialog";
 import StoppedMomentsList from "./moments/StoppedMomentsList";
+import CountdownList from "./CountdownList";
 
 export const MomentsSection = () => {
   const { moments, updateMoment, deleteMoment, reorderMoments, stopMoment } = useMoment();
@@ -160,6 +160,8 @@ export const MomentsSection = () => {
           />
         ))}
       </div>
+
+      <CountdownList />
 
       {stoppedMoments.length > 0 && (
         <StoppedMomentsList moments={stoppedMoments} />
