@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -40,9 +39,9 @@ const Reflection = () => {
             <TabsTrigger value="mood" className="flex-1 data-[state=active]:bg-[#7e5a39]/40 text-[#edd6ae]">
               Mood Tracker
             </TabsTrigger>
-            <TabsTrigger value="year" className="flex-1 data-[state=active]:bg-[#7e5a39]/40 text-[#edd6ae]">
+            <TabsTrigger value="month" className="flex-1 data-[state=active]:bg-[#7e5a39]/40 text-[#edd6ae]">
               <CalendarIcon className="w-4 h-4 mr-1" />
-              Year View
+              Month View
             </TabsTrigger>
           </TabsList>
           
@@ -76,12 +75,12 @@ const Reflection = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="year" className="space-y-8">
+          <TabsContent value="month" className="space-y-8">
             <div className="w-full h-full flex flex-col items-center gap-6">
               <div className="text-center max-w-md">
-                <h2 className="text-center text-xl text-[#e8c282] font-serif">Year Overview</h2>
+                <h2 className="text-center text-xl text-[#e8c282] font-serif">Month Overview</h2>
                 <p className="text-center text-sm text-[#edd6ae] opacity-80 mt-2">
-                  See your reflection journey through the year in a visual format.
+                  See your reflection journey through the month in a visual format.
                 </p>
               </div>
               
