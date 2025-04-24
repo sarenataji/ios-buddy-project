@@ -16,7 +16,7 @@ interface FaceSliderProps {
   onSave?: (faceIndex: number, mood: string) => void;
 }
 
-function Face({ blendedVector }: { blendedVector: THREE.Vector3 }) {
+function Face({ blendedVector, mood }: { blendedVector: THREE.Vector3, mood: string }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
@@ -31,6 +31,17 @@ function Face({ blendedVector }: { blendedVector: THREE.Vector3 }) {
     const scale = 1 + Math.sin(state.clock.getElapsedTime()) * 0.02;
     meshRef.current.scale.set(scale, scale, scale);
   });
+
+  // Different expressions for different moods
+  const getMouthRotation = () => {
+    switch(mood) {
+      case "Happy": return Math.PI * 0.1;
+      case "Calm": return 0;
+      case "Reflective": return Math.PI * -0.05;
+      case "Focused": return Math.PI * -0.1;
+      default: return 0;
+    }
+  };
 
   return (
     <mesh ref={meshRef}>
@@ -55,7 +66,7 @@ function Face({ blendedVector }: { blendedVector: THREE.Vector3 }) {
           <meshBasicMaterial color="#2a180f" />
         </mesh>
         {/* Mouth */}
-        <mesh position={[0, -0.3, 0]} rotation={[0, 0, Math.PI * 0.1]}>
+        <mesh position={[0, -0.3, 0]} rotation={[0, 0, getMouthRotation()]}>
           <torusGeometry args={[0.2, 0.05, 16, 16, Math.PI]} />
           <meshBasicMaterial color="#2a180f" />
         </mesh>
@@ -77,6 +88,7 @@ function FaceRenderer({
   
   const faceA = FACE_DATA[currentIndex].vector;
   const faceB = FACE_DATA[targetIndex].vector;
+  const currentMood = FACE_DATA[currentIndex].mood;
   
   // Interpolate between face vectors
   const t = Math.abs(slideProgress);
@@ -86,7 +98,7 @@ function FaceRenderer({
     <group>
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 5, 5]} intensity={0.6} />
-      <Face blendedVector={blendedVector} />
+      <Face blendedVector={blendedVector} mood={currentMood} />
     </group>
   );
 }
@@ -118,7 +130,7 @@ const FaceSlider: React.FC<FaceSliderProps> = ({ onSave }) => {
     
     const containerWidth = containerRef.current?.clientWidth || window.innerWidth;
     const deltaX = clientX - startX;
-    const progress = Math.max(-1, Math.min(1, deltaX / (containerWidth * 0.5)));
+    const progress = Math.max(-1, Math.min(1, deltaX / (containerWidth * 0.4))); // Make swipe more sensitive
     
     setSlideProgress(progress);
   };
@@ -127,10 +139,10 @@ const FaceSlider: React.FC<FaceSliderProps> = ({ onSave }) => {
   const handleEnd = () => {
     if (!isSliding) return;
     
-    const threshold = 0.3;
+    const threshold = 0.2; // Lower threshold to make selection easier
     if (Math.abs(slideProgress) > threshold) {
       const direction = Math.sign(slideProgress);
-      const newIndex = Math.max(0, Math.min(currentIndex + direction, FACE_DATA.length - 1));
+      const newIndex = Math.max(0, Math.min(currentIndex - direction, FACE_DATA.length - 1)); // Reversed direction for natural feel
       
       if (newIndex !== currentIndex) {
         setCurrentIndex(newIndex);
@@ -174,6 +186,17 @@ const FaceSlider: React.FC<FaceSliderProps> = ({ onSave }) => {
     
     animate();
   };
+
+  // Select a specific face by index
+  const selectFace = (index: number) => {
+    setCurrentIndex(index);
+    onSave?.(index, FACE_DATA[index].mood);
+    toast({
+      title: "Face Selected",
+      description: `You selected: ${FACE_DATA[index].mood}`,
+      duration: 3000,
+    });
+  };
   
   // Clean up animation on unmount
   useEffect(() => {
@@ -211,41 +234,60 @@ const FaceSlider: React.FC<FaceSliderProps> = ({ onSave }) => {
   };
 
   return (
-    <div 
-      ref={containerRef}
-      className="w-full h-[400px] bg-[#140D07] rounded-lg overflow-hidden relative"
-      onMouseDown={handleMouseDown}
-      onMouseMove={isSliding ? handleMouseMove : undefined}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={isSliding ? handleMouseUp : undefined}
-      onTouchStart={handleTouchStart}
-      onTouchMove={isSliding ? handleTouchMove : undefined}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Canvas for the 3D face */}
-      <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
-        <FaceRenderer currentIndex={currentIndex} slideProgress={slideProgress} />
-      </Canvas>
-      
-      {/* Overlay with instructions */}
-      <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center pointer-events-none">
-        <div className="bg-[#0c0a08]/80 text-[#edd6ae] px-6 py-3 rounded-full backdrop-blur-sm border border-[#e8c28233] shadow-[0_0_15px_0_#e8c28222]">
-          <span className="font-serif">{FACE_DATA[currentIndex].mood}</span>
-          <span className="text-xs block opacity-70 mt-1">Swipe to explore different moods</span>
+    <div className="w-full flex flex-col gap-4">
+      <div 
+        ref={containerRef}
+        className="w-full h-[400px] bg-[#140D07] rounded-lg overflow-hidden relative"
+        onMouseDown={handleMouseDown}
+        onMouseMove={isSliding ? handleMouseMove : undefined}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={isSliding ? handleMouseUp : undefined}
+        onTouchStart={handleTouchStart}
+        onTouchMove={isSliding ? handleTouchMove : undefined}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Canvas for the 3D face */}
+        <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
+          <FaceRenderer currentIndex={currentIndex} slideProgress={slideProgress} />
+        </Canvas>
+        
+        {/* Swipe indicator overlays */}
+        <div className={`absolute inset-0 pointer-events-none flex items-center transition-opacity duration-300 ${isSliding ? 'opacity-50' : 'opacity-0'}`}>
+          <div className="w-1/2 h-full flex items-center justify-start pl-6">
+            <div className={`text-[#e8c282] text-3xl transform transition-transform ${slideProgress > 0.1 ? 'scale-100' : 'scale-0'}`}>
+              ←
+            </div>
+          </div>
+          <div className="w-1/2 h-full flex items-center justify-end pr-6">
+            <div className={`text-[#e8c282] text-3xl transform transition-transform ${slideProgress < -0.1 ? 'scale-100' : 'scale-0'}`}>
+              →
+            </div>
+          </div>
+        </div>
+        
+        {/* Overlay with instructions */}
+        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center pointer-events-none">
+          <div className="bg-[#0c0a08]/80 text-[#edd6ae] px-6 py-3 rounded-full backdrop-blur-sm border border-[#e8c28233] shadow-[0_0_15px_0_#e8c28222]">
+            <span className="font-serif">{FACE_DATA[currentIndex].mood}</span>
+            <span className="text-xs block opacity-70 mt-1">Swipe left or right to explore moods</span>
+          </div>
         </div>
       </div>
       
-      {/* Progress indicator dots */}
-      <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-2">
+      {/* Mood selection buttons */}
+      <div className="grid grid-cols-4 gap-3">
         {FACE_DATA.map((face, index) => (
-          <div 
+          <button
             key={face.id}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            onClick={() => selectFace(index)}
+            className={`py-3 px-4 rounded-lg transition-all duration-200 ${
               index === currentIndex 
-                ? 'bg-[#e8c282] scale-125' 
-                : 'bg-[#7e5a39]/50'
+                ? 'bg-[#e8c282] text-[#1a0c05] font-medium shadow-[0_0_15px_0_#e8c28244]' 
+                : 'bg-[#1a0c05]/80 text-[#edd6ae] border border-[#e8c28233]'
             }`}
-          />
+          >
+            {face.mood}
+          </button>
         ))}
       </div>
     </div>
