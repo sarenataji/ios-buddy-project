@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Clock, Pencil } from "lucide-react";
 import { differenceInYears } from "date-fns";
 import MomentDetailsDialog from "./moments/MomentDetailsDialog";
+import TimeUnit from "./moments/TimeUnit";
 
 interface ElapsedTimeDisplayProps {
   title: string;
@@ -94,7 +95,7 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
         location={location}
         note={note}
         elapsed={elapsed}
-        onEdit={id !== undefined && onEdit ? handleEdit : undefined}
+        onEdit={id !== undefined && onEdit ? (e) => handleEdit(e) : undefined}
       />
     </>
   );
