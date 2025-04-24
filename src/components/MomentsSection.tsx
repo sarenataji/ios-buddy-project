@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import ElapsedTimeDisplay from "@/components/ElapsedTimeDisplay";
@@ -20,6 +19,8 @@ export const MomentsSection = () => {
   const [editNote, setEditNote] = useState("");
   const [draggedMoment, setDraggedMoment] = useState<number | null>(null);
   const { toast } = useToast();
+
+  const sortedMoments = [...moments].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const handleEdit = (id: number) => {
     const moment = moments.find(m => m.id === id);
@@ -83,7 +84,6 @@ export const MomentsSection = () => {
   };
 
   const handleDragStart = (e: React.DragEvent, id: number) => {
-    // Only allow dragging for non-predefined moments
     if (moments.find(m => m.id === id)?.isPredefined) {
       e.preventDefault();
       return;
@@ -99,14 +99,12 @@ export const MomentsSection = () => {
   };
 
   const handleDragOver = (e: React.DragEvent) => {
-    // Prevent default to allow dropping
     e.preventDefault();
   };
 
   const handleDrop = (e: React.DragEvent, targetId: number) => {
     e.preventDefault();
     
-    // Prevent dropping on predefined moments
     if (moments.find(m => m.id === targetId)?.isPredefined) {
       return;
     }
@@ -119,11 +117,9 @@ export const MomentsSection = () => {
     
     if (draggedIndex === -1 || targetIndex === -1) return;
     
-    // Remove the dragged item and insert it at the target position
     const [draggedItem] = reorderedMoments.splice(draggedIndex, 1);
     reorderedMoments.splice(targetIndex, 0, draggedItem);
     
-    // Reorder moments and update their order
     reorderMoments(reorderedMoments.map((moment, index) => ({
       ...moment,
       order: index
