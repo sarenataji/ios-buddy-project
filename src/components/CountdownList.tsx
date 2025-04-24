@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useCountdown } from "@/hooks/useCountdown";
 import CountdownTimer from "./CountdownTimer";
@@ -10,12 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import CountdownDetailsDialog from "./moments/CountdownDetailsDialog";
 
 const CountdownList = () => {
   const { countdowns, completeCountdown, updateCountdown, deleteCountdown } = useCountdown();
   const [editingCountdown, setEditingCountdown] = useState<number | null>(null);
+  const [selectedCountdown, setSelectedCountdown] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDate, setEditDate] = useState<Date | undefined>();
   const [editLocation, setEditLocation] = useState("");
@@ -30,6 +32,11 @@ const CountdownList = () => {
     setEditDate(new Date(countdown.endDate));
     setEditLocation(countdown.location || "");
     setEditNote(countdown.note || "");
+    setSelectedCountdown(null);
+  };
+
+  const handleShowDetails = (countdown: any) => {
+    setSelectedCountdown(countdown.id);
   };
 
   const handleSave = () => {
@@ -76,6 +83,8 @@ const CountdownList = () => {
     return null;
   }
 
+  const selectedCountdownData = countdowns.find(c => c.id === selectedCountdown);
+
   return (
     <div className="space-y-6">
       <h2 className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold mb-6">
@@ -84,8 +93,8 @@ const CountdownList = () => {
       {activeCountdowns.map((countdown) => (
         <div
           key={countdown.id}
-          onClick={() => handleEdit(countdown)}
-          className="bg-[#1a0c05] rounded-xl p-6 space-y-4 border border-[#e8c28233] cursor-pointer hover:border-[#e8c28266] transition-colors"
+          onClick={() => handleShowDetails(countdown)}
+          className="bg-[#140D07] rounded-xl p-6 space-y-4 border border-[#e8c28233] cursor-pointer hover:border-[#e8c28266] transition-colors"
         >
           <div className="flex justify-between items-start">
             <div>
@@ -103,7 +112,7 @@ const CountdownList = () => {
       ))}
 
       <Dialog open={editingCountdown !== null} onOpenChange={() => setEditingCountdown(null)}>
-        <DialogContent className="bg-[#1a0c05] border-[#e8c28233] text-[#edd6ae]">
+        <DialogContent className="bg-[#140D07] border-[#e8c28233] text-[#edd6ae]">
           <DialogHeader>
             <DialogTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">
               Edit Countdown
@@ -166,7 +175,7 @@ const CountdownList = () => {
                 </Button>
                 <Button
                   onClick={handleSave}
-                  className="bg-[#e8c282] text-[#1a0c05] hover:bg-[#edd6ae]"
+                  className="bg-[#e8c282] text-[#140D07] hover:bg-[#edd6ae]"
                 >
                   Save
                 </Button>
@@ -175,6 +184,13 @@ const CountdownList = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <CountdownDetailsDialog
+        countdown={selectedCountdownData || null}
+        isOpen={selectedCountdown !== null}
+        onClose={() => setSelectedCountdown(null)}
+        onEdit={() => selectedCountdownData && handleEdit(selectedCountdownData)}
+      />
     </div>
   );
 };

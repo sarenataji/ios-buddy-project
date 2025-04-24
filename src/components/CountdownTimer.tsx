@@ -49,14 +49,14 @@ const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="text-[#e8c282] text-sm mb-2 font-medium">Time remaining:</div>
+      <div className="text-[#e8c282] text-sm mb-2 font-serif">Time remaining:</div>
       <div className="flex justify-between w-full gap-8">
         <TimeUnit value={timeLeft.days} unit="days" />
         <TimeUnit value={timeLeft.hours} unit="hours" />
         <TimeUnit value={timeLeft.minutes} unit="minutes" />
         <TimeUnit value={timeLeft.seconds} unit="seconds" />
       </div>
-      <div className="h-1.5 bg-[#e8c28222] rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[#1a0c05] rounded-full overflow-hidden">
         <div 
           className="h-full bg-[#e8c282] transition-all duration-1000"
           style={{ width: `${timeLeft.progress}%` }}
