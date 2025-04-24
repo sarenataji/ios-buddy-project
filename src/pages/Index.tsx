@@ -1,3 +1,4 @@
+
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import ThreeCube from "../three/ThreeCube";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MomentsSection } from "@/components/MomentsSection";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { NewMomentForm } from "@/components/NewMomentForm";
+import NewMomentForm from "@/components/NewMomentForm";
 import { useState } from "react";
 import { useMoment } from "@/hooks/useMoment";
 import { useToast } from "@/hooks/useToast";
