@@ -14,7 +14,9 @@ import { useToast } from "@/hooks/useToast";
 
 const Index = () => {
   const [isAddingMoment, setIsAddingMoment] = useState(false);
+  const [isAddingCountdown, setIsAddingCountdown] = useState(false);
   const { addMoment } = useMoment();
+  const { addCountdown } = useCountdown();
   const { toast } = useToast();
 
   const handleAddMoment = (data: {
@@ -29,6 +31,22 @@ const Index = () => {
     toast({
       title: "Moment added",
       description: "Your new moment has been created",
+    });
+  };
+
+  const handleAddCountdown = (data: {
+    title: string;
+    startDate: Date;
+    endDate: Date;
+    location?: string;
+    note?: string;
+  }) => {
+    addCountdown(data);
+    setIsAddingCountdown(false);
+    
+    toast({
+      title: "Countdown added",
+      description: "Your new countdown has been created",
     });
   };
 
@@ -86,12 +104,20 @@ const Index = () => {
           <CardContent className="py-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-primary-foreground">Time Tracking</h2>
-              <Button
-                onClick={() => setIsAddingMoment(true)}
-                className="bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
-              >
-                Add Moment
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setIsAddingMoment(true)}
+                  className="bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
+                >
+                  Add Moment
+                </Button>
+                <Button
+                  onClick={() => setIsAddingCountdown(true)}
+                  className="bg-[#7e5a39] text-[#edd6ae] hover:bg-[#7e5a39]/80"
+                >
+                  Add Countdown
+                </Button>
+              </div>
             </div>
             <MomentsSection />
           </CardContent>
@@ -112,6 +138,15 @@ const Index = () => {
               <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">new moment</SheetTitle>
             </SheetHeader>
             <NewMomentForm onSubmit={handleAddMoment} />
+          </SheetContent>
+        </Sheet>
+
+        <Sheet open={isAddingCountdown} onOpenChange={setIsAddingCountdown}>
+          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae]">
+            <SheetHeader>
+              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">new countdown</SheetTitle>
+            </SheetHeader>
+            <NewCountdownForm onSubmit={handleAddCountdown} />
           </SheetContent>
         </Sheet>
       </div>
