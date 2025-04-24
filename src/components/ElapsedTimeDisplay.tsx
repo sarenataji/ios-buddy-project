@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Clock, Pencil, Calendar, MapPin, Info, StickyNote } from "lucide-react";
 import {
@@ -101,8 +102,9 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-xl p-6
-          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-y-auto max-h-[90vh] w-[95vw] max-w-lg">
+        <DialogContent className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] w-[90%] max-w-lg
+          bg-[#161213] border border-[#e8c28244] text-[#edd6ae] rounded-xl
+          shadow-[0_8px_32px_rgba(232,194,130,0.2)] overflow-auto">
           <DialogHeader className="relative z-10">
             <DialogTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-serif">
               <Info className="w-5 h-5 inline-block mr-2 opacity-80" />
@@ -110,16 +112,6 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
             </DialogTitle>
           </DialogHeader>
           
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-6">
-            {elapsed.years > 0 && (
-              <TimeUnit value={elapsed.years} unit="years" />
-            )}
-            <TimeUnit value={elapsed.days} unit="days" />
-            <TimeUnit value={elapsed.hours} unit="hours" />
-            <TimeUnit value={elapsed.minutes} unit="minutes" />
-            <TimeUnit value={elapsed.seconds} unit="seconds" />
-          </div>
-
           <div className="relative z-10 mt-6 space-y-6">
             <div className="space-y-2 bg-[#e8c28208] p-4 rounded-lg backdrop-blur-sm border border-[#e8c28222]">
               <div className="text-sm font-medium text-[#e8c28288] tracking-wider lowercase">Title</div>
@@ -155,6 +147,51 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
                 </div>
               </div>
             )}
+
+            <div className="grid grid-cols-5 gap-2">
+              {elapsed.years > 0 && (
+                <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                  <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                    {elapsed.years.toString().padStart(2, '0')}
+                  </div>
+                  <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                    Years
+                  </div>
+                </div>
+              )}
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.days.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Days
+                </div>
+              </div>
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.hours.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Hours
+                </div>
+              </div>
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.minutes.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Minutes
+                </div>
+              </div>
+              <div className="space-y-1 bg-[#e8c28208] p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
+                <div className="text-2xl font-serif font-bold text-[#edd6ae]">
+                  {elapsed.seconds.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[#e8c28288]">
+                  Seconds
+                </div>
+              </div>
+            </div>
             
             <div className="mt-4 text-center">
               {onEdit && id !== undefined && (
@@ -179,13 +216,13 @@ const ElapsedTimeDisplay: React.FC<ElapsedTimeDisplayProps> = ({
 };
 
 const TimeUnit = ({ value, unit }: { value: number; unit: string }) => (
-  <div className="space-y-1 bg-[#e8c28208] p-2 sm:p-3 rounded-lg text-center backdrop-blur-sm border border-[#e8c28222]">
-    <div className="text-xl sm:text-2xl font-serif font-bold text-[#edd6ae]">
+  <div className="flex flex-col items-center">
+    <span className="text-3xl font-serif font-bold tracking-tight">
       {value.toString().padStart(2, '0')}
-    </div>
-    <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#e8c28288]">
+    </span>
+    <span className="text-xs uppercase tracking-wider text-[#e8c28288] mt-1">
       {unit}
-    </div>
+    </span>
   </div>
 );
 
