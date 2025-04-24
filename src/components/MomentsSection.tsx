@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import { format } from "date-fns";
@@ -7,7 +8,7 @@ import EditMomentDialog from "./moments/EditMomentDialog";
 import StoppedMomentsList from "./moments/StoppedMomentsList";
 
 export const MomentsSection = () => {
-  const { moments, updateMoment, deleteMoment, reorderMoments } = useMoment();
+  const { moments, updateMoment, deleteMoment, reorderMoments, stopMoment } = useMoment();
   const [editingMoment, setEditingMoment] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDate, setEditDate] = useState("");
@@ -78,6 +79,17 @@ export const MomentsSection = () => {
       toast({
         title: "Moment deleted",
         description: "Your moment has been removed",
+      });
+    }
+  };
+  
+  const handleCompleteMoment = () => {
+    if (editingMoment !== null) {
+      stopMoment(editingMoment);
+      setEditingMoment(null);
+      toast({
+        title: "Moment completed",
+        description: "Your moment has been completed and moved to the completed list",
       });
     }
   };
@@ -168,6 +180,7 @@ export const MomentsSection = () => {
         setEditNote={setEditNote}
         onSave={handleSave}
         onDelete={handleDeleteMoment}
+        onComplete={handleCompleteMoment}
         showDelete={editingMoment !== null && moments.find(m => m.id === editingMoment)?.isPredefined !== true}
       />
     </div>

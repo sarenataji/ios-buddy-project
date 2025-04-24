@@ -1,7 +1,7 @@
 
 import React from "react";
 import { format } from "date-fns";
-import { MapPin } from "lucide-react";
+import { MapPin, Clock, CheckCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ interface EditMomentDialogProps {
   setEditNote: (value: string) => void;
   onSave: () => void;
   onDelete?: () => void;
+  onComplete?: () => void;
   showDelete: boolean;
 }
 
@@ -39,6 +40,7 @@ const EditMomentDialog = ({
   setEditNote,
   onSave,
   onDelete,
+  onComplete,
   showDelete
 }: EditMomentDialogProps) => {
   return (
@@ -108,29 +110,44 @@ const EditMomentDialog = ({
           </div>
           
           <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
-            {showDelete && onDelete && (
-              <Button
-                onClick={onDelete}
-                variant="destructive"
-                className="w-full sm:w-auto"
-              >
-                Delete
-              </Button>
-            )}
-            <div className="flex-1 flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={onClose}
-                variant="outline"
-                className="w-full bg-transparent border-[#e8c28233] text-[#edd6ae] hover:bg-[#e8c28215]"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={onSave}
-                className="w-full bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
-              >
-                Save Changes
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              {showDelete && (
+                <div className="flex gap-3 w-full">
+                  {onDelete && (
+                    <Button
+                      onClick={onDelete}
+                      variant="destructive"
+                      className="w-full sm:w-auto"
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  {onComplete && (
+                    <Button
+                      onClick={onComplete}
+                      className="w-full sm:w-auto bg-[#2a7b53] hover:bg-[#35946a] text-[#eddcbe] flex gap-2"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Complete Moment
+                    </Button>
+                  )}
+                </div>
+              )}
+              <div className="flex-1 flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={onClose}
+                  variant="outline"
+                  className="w-full bg-transparent border-[#e8c28233] text-[#edd6ae] hover:bg-[#e8c28215]"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={onSave}
+                  className="w-full bg-[#e8c282] text-[#1a1f2c] hover:bg-[#edd6ae]"
+                >
+                  Save Changes
+                </Button>
+              </div>
             </div>
           </DialogFooter>
         </div>

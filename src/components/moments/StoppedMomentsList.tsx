@@ -1,7 +1,7 @@
 
 import React from "react";
 import { format, formatDistanceStrict } from "date-fns";
-import { Clock, Calendar, MapPin, StickyNote } from "lucide-react";
+import { Clock, Calendar, MapPin, StickyNote, CheckCircle } from "lucide-react";
 
 interface StoppedMoment {
   id: number;
@@ -22,7 +22,8 @@ const StoppedMomentsList: React.FC<StoppedMomentsListProps> = ({ moments }) => {
 
   return (
     <div className="mt-12 border-t border-[#e8c28233] pt-8">
-      <h2 className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold mb-6">
+      <h2 className="text-[#e8c282] tracking-[0.25em] font-serif uppercase text-sm font-semibold mb-6 flex items-center gap-2">
+        <CheckCircle className="w-5 h-5" />
         Completed Moments
       </h2>
       <div className="space-y-4">
