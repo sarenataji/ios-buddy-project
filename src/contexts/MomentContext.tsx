@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface Moment {
@@ -65,32 +66,53 @@ export const useMoment = () => {
 
 export const MomentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [moments, setMoments] = useState<Moment[]>(() => {
-    const saved = localStorage.getItem("moments");
-    if (saved) {
-      const parsedMoments = JSON.parse(saved, (key, value) => {
-        if (key === "startDate" || key === "stoppedAt") return new Date(value);
-        return value;
-      });
-      const predefinedIds = predefinedMoments.map(m => m.title);
-      const filteredSaved = parsedMoments.filter((m: Moment) => !predefinedIds.includes(m.title));
-      const orderedMoments = [...predefinedMoments.map((m, i) => ({ 
-        ...m, 
-        id: -1 - i, 
-        order: i,
-        isActive: true 
-      })), 
-        ...filteredSaved.map((m: Moment, i: number) => ({ 
+    try {
+      const saved = localStorage.getItem("moments");
+      if (saved) {
+        // Properly parse dates when retrieving from localStorage
+        const parsedMoments = JSON.parse(saved, (key, value) => {
+          if (key === "startDate" || key === "stoppedAt") {
+            return value ? new Date(value) : null;
+          }
+          return value;
+        });
+        
+        // Make sure isActive is properly preserved
+        parsedMoments.forEach((moment: Moment) => {
+          moment.startDate = new Date(moment.startDate);
+          if (moment.stoppedAt) {
+            moment.stoppedAt = new Date(moment.stoppedAt);
+            moment.isActive = false;
+          }
+        });
+        
+        const predefinedIds = predefinedMoments.map(m => m.title);
+        const filteredSaved = parsedMoments.filter((m: Moment) => !predefinedIds.includes(m.title));
+        const orderedMoments = [...predefinedMoments.map((m, i) => ({ 
           ...m, 
-          order: predefinedMoments.length + i,
-          isActive: m.isActive !== undefined ? m.isActive : true
-        }))];
-      return orderedMoments;
+          id: -1 - i, 
+          order: i,
+          isActive: true 
+        })), 
+          ...filteredSaved.map((m: Moment, i: number) => ({ 
+            ...m, 
+            order: predefinedMoments.length + i,
+            isActive: m.stoppedAt ? false : (m.isActive !== undefined ? m.isActive : true)
+          }))];
+        return orderedMoments;
+      }
+    } catch (error) {
+      console.error("Error loading moments from localStorage:", error);
     }
     return predefinedMoments.map((m, i) => ({ ...m, id: -1 - i, order: i, isActive: true }));
   });
 
   useEffect(() => {
-    localStorage.setItem("moments", JSON.stringify(moments));
+    try {
+      localStorage.setItem("moments", JSON.stringify(moments));
+    } catch (error) {
+      console.error("Error saving moments to localStorage:", error);
+    }
   }, [moments]);
 
   const addMoment = (moment: Omit<Moment, "id">) => {
