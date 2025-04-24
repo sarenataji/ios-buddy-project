@@ -11,6 +11,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface NewCountdownFormProps {
   onSubmit: (data: {
@@ -31,6 +38,10 @@ const NewCountdownForm = ({ onSubmit }: NewCountdownFormProps) => {
     note: "",
   });
 
+  // For year and month picker
+  const [startMonth, setStartMonth] = useState<Date>(new Date());
+  const [endMonth, setEndMonth] = useState<Date>(new Date());
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -41,6 +52,52 @@ const NewCountdownForm = ({ onSubmit }: NewCountdownFormProps) => {
       location: "",
       note: "",
     });
+  };
+
+  // Generate array of years for the dropdown (current year and next 10 years)
+  const years = Array.from({ length: 11 }, (_, i) => {
+    const year = new Date().getFullYear() + i;
+    return { value: year.toString(), label: year.toString() };
+  });
+
+  // Generate array of months for the dropdown
+  const months = [
+    { value: "0", label: "January" },
+    { value: "1", label: "February" },
+    { value: "2", label: "March" },
+    { value: "3", label: "April" },
+    { value: "4", label: "May" },
+    { value: "5", label: "June" },
+    { value: "6", label: "July" },
+    { value: "7", label: "August" },
+    { value: "8", label: "September" },
+    { value: "9", label: "October" },
+    { value: "10", label: "November" },
+    { value: "11", label: "December" },
+  ];
+
+  const handleStartMonthChange = (month: string) => {
+    const newDate = new Date(startMonth);
+    newDate.setMonth(parseInt(month));
+    setStartMonth(newDate);
+  };
+
+  const handleStartYearChange = (year: string) => {
+    const newDate = new Date(startMonth);
+    newDate.setFullYear(parseInt(year));
+    setStartMonth(newDate);
+  };
+
+  const handleEndMonthChange = (month: string) => {
+    const newDate = new Date(endMonth);
+    newDate.setMonth(parseInt(month));
+    setEndMonth(newDate);
+  };
+
+  const handleEndYearChange = (year: string) => {
+    const newDate = new Date(endMonth);
+    newDate.setFullYear(parseInt(year));
+    setEndMonth(newDate);
   };
 
   return (
@@ -69,10 +126,39 @@ const NewCountdownForm = ({ onSubmit }: NewCountdownFormProps) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0 bg-[#1a0c05] border-[#e8c28233]">
+            <div className="p-2 flex items-center justify-between">
+              <Select onValueChange={handleStartMonthChange}>
+                <SelectTrigger className="w-[110px] bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]">
+                  <SelectValue placeholder={months[startMonth.getMonth()].label} />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a0c05] border-[#e8c28233]">
+                  {months.map((month) => (
+                    <SelectItem key={month.value} value={month.value} className="text-[#edd6ae]">
+                      {month.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select onValueChange={handleStartYearChange}>
+                <SelectTrigger className="w-[90px] bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]">
+                  <SelectValue placeholder={startMonth.getFullYear()} />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a0c05] border-[#e8c28233]">
+                  {years.map((year) => (
+                    <SelectItem key={year.value} value={year.value} className="text-[#edd6ae]">
+                      {year.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Calendar
               mode="single"
               selected={formData.startDate}
               onSelect={(date) => date && setFormData({ ...formData, startDate: date })}
+              month={startMonth}
+              onMonthChange={setStartMonth}
               initialFocus
               className="bg-[#1a0c05]"
             />
@@ -93,10 +179,39 @@ const NewCountdownForm = ({ onSubmit }: NewCountdownFormProps) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0 bg-[#1a0c05] border-[#e8c28233]">
+            <div className="p-2 flex items-center justify-between">
+              <Select onValueChange={handleEndMonthChange}>
+                <SelectTrigger className="w-[110px] bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]">
+                  <SelectValue placeholder={months[endMonth.getMonth()].label} />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a0c05] border-[#e8c28233]">
+                  {months.map((month) => (
+                    <SelectItem key={month.value} value={month.value} className="text-[#edd6ae]">
+                      {month.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select onValueChange={handleEndYearChange}>
+                <SelectTrigger className="w-[90px] bg-[#1a1f2c]/80 border-[#e8c28233] text-[#edd6ae]">
+                  <SelectValue placeholder={endMonth.getFullYear()} />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a0c05] border-[#e8c28233]">
+                  {years.map((year) => (
+                    <SelectItem key={year.value} value={year.value} className="text-[#edd6ae]">
+                      {year.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Calendar
               mode="single"
               selected={formData.endDate}
               onSelect={(date) => date && setFormData({ ...formData, endDate: date })}
+              month={endMonth}
+              onMonthChange={setEndMonth}
               initialFocus
               className="bg-[#1a0c05]"
             />

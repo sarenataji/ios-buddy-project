@@ -51,7 +51,17 @@ export const CountdownProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [countdowns]);
 
   const addCountdown = (countdown: Omit<Countdown, "id" | "isCompleted">) => {
-    setCountdowns(prev => [...prev, { ...countdown, id: Date.now(), isCompleted: false }]);
+    console.log("Adding countdown:", countdown);
+    // Ensure dates are Date objects
+    const newCountdown = {
+      ...countdown,
+      id: Date.now(),
+      isCompleted: false,
+      startDate: countdown.startDate instanceof Date ? countdown.startDate : new Date(countdown.startDate),
+      endDate: countdown.endDate instanceof Date ? countdown.endDate : new Date(countdown.endDate)
+    };
+    
+    setCountdowns(prev => [...prev, newCountdown]);
   };
 
   const deleteCountdown = (id: number) => {
@@ -59,10 +69,18 @@ export const CountdownProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateCountdown = (countdown: Countdown) => {
-    setCountdowns(prev => prev.map(c => c.id === countdown.id ? countdown : c));
+    // Ensure dates are Date objects
+    const updatedCountdown = {
+      ...countdown,
+      startDate: countdown.startDate instanceof Date ? countdown.startDate : new Date(countdown.startDate),
+      endDate: countdown.endDate instanceof Date ? countdown.endDate : new Date(countdown.endDate)
+    };
+    
+    setCountdowns(prev => prev.map(c => c.id === countdown.id ? updatedCountdown : c));
   };
 
   const completeCountdown = (id: number) => {
+    console.log("Completing countdown:", id);
     setCountdowns(prev => prev.map(c => 
       c.id === id ? { ...c, isCompleted: true } : c
     ));
