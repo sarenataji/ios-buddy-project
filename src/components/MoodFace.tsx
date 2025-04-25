@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -27,27 +26,27 @@ function Face({ moodValue }: { moodValue: number }) {
     switch (moodValue) {
       case 0: // GOOD
         return {
-          mouthCurveTop: Math.PI * 0.2,    // More pronounced upward curve for smile
-          mouthCurveBottom: Math.PI * 0.2,  // Matching bottom curve
-          mouthScale: 0.5,                  // Even wider for a big smile
-          eyeScale: 1.2,                    // Larger, more excited eyes
-          eyePosition: 0.05                 // Slight lift to show happiness
+          mouthCurveTop: Math.PI * 0.15,    // Adjusted curve for more visible smile
+          mouthCurveBottom: Math.PI * 0.15,  // Matching bottom curve
+          mouthScale: 0.4,                   // Adjusted width for better proportion
+          eyeScale: 1.2,                     // Keep larger, excited eyes
+          eyePosition: 0.05                  // Keep slight lift for happiness
         };
       case 1: // OKAY
         return {
-          mouthCurveTop: 0,                 // Straight line
-          mouthCurveBottom: 0,              // Straight line
-          mouthScale: 0.35,                 // Normal width
-          eyeScale: 1,                      // Normal eyes
-          eyePosition: 0                    // Neutral position
+          mouthCurveTop: 0,                  // Straight line
+          mouthCurveBottom: 0,               // Straight line
+          mouthScale: 0.35,                  // Normal width
+          eyeScale: 1,                       // Normal eyes
+          eyePosition: 0                     // Neutral position
         };
       case 2: // BAD
         return {
-          mouthCurveTop: -Math.PI * 0.2,    // More pronounced downward curve for frown
-          mouthCurveBottom: -Math.PI * 0.2,  // Matching bottom curve
-          mouthScale: 0.25,                  // Smaller, tighter mouth
-          eyeScale: 0.7,                     // Smaller, more closed eyes
-          eyePosition: -0.05                 // Slight drop to show sadness
+          mouthCurveTop: -Math.PI * 0.15,    // Adjusted downward curve
+          mouthCurveBottom: -Math.PI * 0.15,  // Matching bottom curve
+          mouthScale: 0.3,                    // Slightly smaller for sad
+          eyeScale: 0.8,                      // Smaller eyes for sad
+          eyePosition: -0.05                  // Keep slight drop for sadness
         };
       default:
         return {
@@ -74,29 +73,28 @@ function Face({ moodValue }: { moodValue: number }) {
         />
       </mesh>
 
-      {/* Left Eye */}
+      {/* Eyes with adjusted positioning */}
       <mesh position={[-0.3, 0.2 + config.eyePosition, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshBasicMaterial color="#2a180f" />
       </mesh>
 
-      {/* Right Eye */}
       <mesh position={[0.3, 0.2 + config.eyePosition, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshBasicMaterial color="#2a180f" />
       </mesh>
 
-      {/* Mouth (combination of curves for more expressiveness) */}
-      <group position={[0, -0.1, 0.85]}>
-        {/* Top curve of mouth */}
+      {/* Mouth with adjusted positioning and thickness */}
+      <group position={[0, -0.2, 0.85]}>
+        {/* Top curve of mouth - made thicker */}
         <mesh rotation={[0, 0, config.mouthCurveTop]} position={[0, 0.02, 0]}>
-          <torusGeometry args={[config.mouthScale, 0.05, 16, 16, Math.PI]} />
+          <torusGeometry args={[config.mouthScale, 0.06, 16, 16, Math.PI]} />
           <meshBasicMaterial color="#2a180f" />
         </mesh>
         
-        {/* Bottom curve of mouth */}
+        {/* Bottom curve of mouth - made thicker */}
         <mesh rotation={[0, 0, config.mouthCurveBottom]} position={[0, -0.02, 0]}>
-          <torusGeometry args={[config.mouthScale, 0.05, 16, 16, Math.PI]} />
+          <torusGeometry args={[config.mouthScale, 0.06, 16, 16, Math.PI]} />
           <meshBasicMaterial color="#2a180f" />
         </mesh>
       </group>
