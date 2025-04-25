@@ -7,7 +7,7 @@ import { useFace } from '@/hooks/useFace';
 
 const DayReflection = () => {
   const [selectedMood, setSelectedMood] = useState<string>("OKAY");
-  const [moodValue, setMoodValue] = useState([1]); // 0: GOOD, 1: OKAY, 2: BAD (reversed order)
+  const [moodValue, setMoodValue] = useState([1]); // 0: GOOD, 1: OKAY, 2: BAD
   const [showSubmit, setShowSubmit] = useState(false);
   const { toast } = useToast();
   const { saveFace } = useFace();
@@ -33,42 +33,47 @@ const DayReflection = () => {
 
   return (
     <div className="w-full max-w-xl mx-auto">
-      <div className="bg-card/90 border border-[#e8c28233] shadow-xl rounded-2xl overflow-hidden">
+      <div className="bg-card/90 border border-[#e8c28233] shadow-xl rounded-2xl overflow-visible">
         <div className="p-4 bg-[#1a0c05] text-[#edd6ae] text-center">
           <h3 className="font-serif text-xl tracking-wide text-[#e8c282]">Daily Reflection</h3>
         </div>
         
-        <div className="p-6 flex flex-col items-center bg-gradient-to-b from-[#140D07] to-[#1a0c05]">
-          <div className="w-full h-[400px] mb-4 relative overflow-hidden">
-            {/* Enhanced Background Mood Text */}
-            <div className="absolute inset-0 flex items-center justify-center z-0">
-              <h2 className="text-8xl font-bold tracking-[0.3em] font-sans text-[#e8c28215] transition-all duration-500 transform">
+        <div className="p-6 flex flex-col items-center bg-gradient-to-b from-[#140D07] to-[#1a0c05] relative z-0">
+          {/* Enhanced Face Container with Perspective Effect */}
+          <div className="w-full h-[400px] mb-4 relative overflow-visible perspective-[1000px]">
+            {/* Background Mood Text with Enhanced 3D Effect */}
+            <div className="absolute inset-0 flex items-center justify-center z-0 transform-gpu translate-z-[-50px]">
+              <h2 className="text-8xl font-bold tracking-[0.3em] font-sans text-[#e8c28215] transition-all duration-500">
                 {selectedMood}
               </h2>
             </div>
             
-            {/* Enhanced 3D Face Container with Box Effect */}
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="w-full h-full max-w-[300px] relative">
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#e8c28222] to-transparent"></div>
-                <div className="absolute inset-0 animate-pulse-subtle"></div>
-                <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
+            {/* Enhanced 3D Face Container with Pop-out Effect */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 transform-gpu scale-125">
+              <div className="w-full h-full max-w-[300px] relative transform-gpu translate-z-[100px]">
+                {/* Ambient Glow Effect */}
+                <div className="absolute inset-[-20%] rounded-full bg-[#e8c28215] blur-2xl animate-pulse-subtle"></div>
+                {/* Shadow Effect */}
+                <div className="absolute inset-0 rounded-full shadow-2xl"></div>
+                {/* Face Component with Increased Size */}
+                <div className="transform-gpu scale-110 hover:scale-115 transition-transform duration-300">
+                  <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
+                </div>
               </div>
             </div>
           </div>
           
-          {/* Enhanced Mood Selection Bar */}
-          <div className="w-full px-4 py-6 bg-[#1a0c0580] rounded-xl backdrop-blur-sm">
+          {/* Enhanced Mood Selection Bar with Better Spacing */}
+          <div className="w-full px-6 py-8 bg-[#1a0c0580] rounded-xl backdrop-blur-sm mt-4 relative z-20">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-[#4caf50] text-sm font-semibold tracking-[0.15em] cursor-pointer hover:opacity-80 transition-opacity"
+              <span className="text-[#4caf50] text-sm font-semibold tracking-[0.2em] cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleMoodSelect([0], "GOOD")}>GOOD</span>
-              <span className="text-[#e8c282] text-sm font-semibold tracking-[0.15em] cursor-pointer hover:opacity-80 transition-opacity"
+              <span className="text-[#e8c282] text-sm font-semibold tracking-[0.2em] cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleMoodSelect([1], "OKAY")}>OKAY</span>
-              <span className="text-[#ff5252] text-sm font-semibold tracking-[0.15em] cursor-pointer hover:opacity-80 transition-opacity"
+              <span className="text-[#ff5252] text-sm font-semibold tracking-[0.2em] cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleMoodSelect([2], "BAD")}>BAD</span>
             </div>
             
-            {/* Enhanced Submit Button */}
             {showSubmit && (
               <Button
                 onClick={handleSubmit}

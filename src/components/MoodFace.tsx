@@ -22,25 +22,22 @@ function Face({ mood, moodValue }: MoodFaceProps) {
     
     let color, mouthCurve, eyeScale, eyeRotation, elevation, zPosition;
     
-    // Reversed order: 0 is GOOD, 1 is OKAY, 2 is BAD
     if (value <= 1) {
-      // Interpolate between GOOD and OKAY
       const t = value;
       color = colors.good.clone().lerp(colors.okay, t);
       mouthCurve = THREE.MathUtils.lerp(0.8, 0, t);
       eyeScale = THREE.MathUtils.lerp(0.8, 1, t);
       eyeRotation = THREE.MathUtils.lerp(0.2, 0, t);
       elevation = THREE.MathUtils.lerp(1.2, 0.8, t);
-      zPosition = THREE.MathUtils.lerp(1.5, 1, t);
+      zPosition = THREE.MathUtils.lerp(2, 1.5, t);
     } else {
-      // Interpolate between OKAY and BAD
       const t = value - 1;
       color = colors.okay.clone().lerp(colors.bad, t);
       mouthCurve = THREE.MathUtils.lerp(0, -0.8, t);
       eyeScale = THREE.MathUtils.lerp(1, 1.2, t);
       eyeRotation = THREE.MathUtils.lerp(0, -0.3, t);
       elevation = THREE.MathUtils.lerp(0.8, 0.5, t);
-      zPosition = THREE.MathUtils.lerp(1, 0.5, t);
+      zPosition = THREE.MathUtils.lerp(1.5, 1, t);
     }
     
     return { color, mouthCurve, eyeScale, eyeRotation, elevation, zPosition };
@@ -53,12 +50,12 @@ function Face({ mood, moodValue }: MoodFaceProps) {
     const config = getMoodConfig(moodValue);
     
     // Enhanced floating animation with more pronounced "out of box" effect
-    meshRef.current.position.z = Math.sin(time * 0.5) * 0.15 + config.zPosition;
-    meshRef.current.position.y = Math.sin(time * 0.5) * 0.1 + config.elevation;
+    meshRef.current.position.z = Math.sin(time * 0.5) * 0.3 + config.zPosition;
+    meshRef.current.position.y = Math.sin(time * 0.5) * 0.2 + config.elevation;
     
     // Enhanced rotation for more lifelike movement
-    meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.2;
-    meshRef.current.rotation.z = Math.sin(time * 0.2) * 0.08;
+    meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.3;
+    meshRef.current.rotation.z = Math.sin(time * 0.2) * 0.1;
     
     // Update face material with enhanced lighting
     if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
@@ -87,43 +84,45 @@ function Face({ mood, moodValue }: MoodFaceProps) {
   });
 
   return (
-    <group position={[0, 0, 0]}>
+    <group position={[0, 0, 0]} scale={1.4}>
       <mesh ref={meshRef} castShadow>
         <sphereGeometry args={[1.5, 128, 128]} />
         <meshStandardMaterial
           roughness={0.2}
           metalness={0.8}
-          envMapIntensity={1.2}
+          envMapIntensity={1.5}
           transparent={true}
           opacity={0.95}
         />
         
+        {/* Enhanced Eyes with Better Depth */}
         <group ref={eyesRef} position={[0, 0.25, 1.3]}>
           <mesh position={[-0.45, 0, 0]}>
-            <sphereGeometry args={[0.22, 32, 32]} />
+            <sphereGeometry args={[0.25, 32, 32]} />
             <meshStandardMaterial
               color="#2a180f"
               roughness={0.3}
-              metalness={0.6}
+              metalness={0.8}
             />
           </mesh>
           
           <mesh position={[0.45, 0, 0]}>
-            <sphereGeometry args={[0.22, 32, 32]} />
+            <sphereGeometry args={[0.25, 32, 32]} />
             <meshStandardMaterial
               color="#2a180f"
               roughness={0.3}
-              metalness={0.6}
+              metalness={0.8}
             />
           </mesh>
         </group>
         
+        {/* Enhanced Mouth with Better Depth */}
         <mesh ref={mouthRef} position={[0, -0.15, 1.3]}>
-          <torusGeometry args={[0.4, 0.12, 32, 32, Math.PI]} />
+          <torusGeometry args={[0.4, 0.15, 32, 32, Math.PI]} />
           <meshStandardMaterial
             color="#2a180f"
             roughness={0.3}
-            metalness={0.6}
+            metalness={0.8}
             side={THREE.DoubleSide}
           />
         </mesh>
@@ -134,14 +133,14 @@ function Face({ mood, moodValue }: MoodFaceProps) {
 
 const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
   return (
-    <div className="w-full h-full rounded-lg overflow-hidden bg-[#140D07]">
+    <div className="w-full h-full rounded-lg overflow-visible bg-[#140D07]">
       <Canvas 
-        camera={{ position: [0, 0, 4], fov: 40 }}
+        camera={{ position: [0, 0, 4], fov: 45 }}
         gl={{ antialias: true }}
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[-5, 5, 5]} intensity={1.2} color="#e8c282" />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color="#ffffff" />
+        <ambientLight intensity={0.6} />
+        <pointLight position={[-5, 5, 5]} intensity={1.4} color="#e8c282" />
+        <pointLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
         <Face mood={mood} moodValue={moodValue} />
       </Canvas>
     </div>
