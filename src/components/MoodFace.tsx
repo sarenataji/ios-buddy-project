@@ -20,59 +20,62 @@ function Face({ mood, moodValue }: MoodFaceProps) {
       good: new THREE.Color('#e8c282').multiplyScalar(1.2)
     };
     
-    let color, mouthCurve, eyeScale, eyeRotation, elevation;
+    let color, mouthCurve, eyeScale, eyeRotation, elevation, zPosition;
     
+    // Reversed order: 0 is GOOD, 1 is OKAY, 2 is BAD
     if (value <= 1) {
-      // Interpolate between BAD and OKAY
+      // Interpolate between GOOD and OKAY
       const t = value;
-      color = colors.bad.clone().lerp(colors.okay, t);
-      mouthCurve = THREE.MathUtils.lerp(-0.8, 0, t);
-      eyeScale = THREE.MathUtils.lerp(1.2, 1, t);
-      eyeRotation = THREE.MathUtils.lerp(-0.3, 0, t);
-      elevation = THREE.MathUtils.lerp(0.5, 0.8, t);
+      color = colors.good.clone().lerp(colors.okay, t);
+      mouthCurve = THREE.MathUtils.lerp(0.8, 0, t);
+      eyeScale = THREE.MathUtils.lerp(0.8, 1, t);
+      eyeRotation = THREE.MathUtils.lerp(0.2, 0, t);
+      elevation = THREE.MathUtils.lerp(1.2, 0.8, t);
+      zPosition = THREE.MathUtils.lerp(1.5, 1, t);
     } else {
-      // Interpolate between OKAY and GOOD
+      // Interpolate between OKAY and BAD
       const t = value - 1;
-      color = colors.okay.clone().lerp(colors.good, t);
-      mouthCurve = THREE.MathUtils.lerp(0, 0.8, t);
-      eyeScale = THREE.MathUtils.lerp(1, 0.8, t);
-      eyeRotation = THREE.MathUtils.lerp(0, 0.2, t);
-      elevation = THREE.MathUtils.lerp(0.8, 1.2, t);
+      color = colors.okay.clone().lerp(colors.bad, t);
+      mouthCurve = THREE.MathUtils.lerp(0, -0.8, t);
+      eyeScale = THREE.MathUtils.lerp(1, 1.2, t);
+      eyeRotation = THREE.MathUtils.lerp(0, -0.3, t);
+      elevation = THREE.MathUtils.lerp(0.8, 0.5, t);
+      zPosition = THREE.MathUtils.lerp(1, 0.5, t);
     }
     
-    return { color, mouthCurve, eyeScale, eyeRotation, elevation };
+    return { color, mouthCurve, eyeScale, eyeRotation, elevation, zPosition };
   };
-  
+
   useFrame((state) => {
     if (!meshRef.current || !mouthRef.current || !eyesRef.current) return;
     
     const time = state.clock.getElapsedTime();
     const config = getMoodConfig(moodValue);
     
-    // Enhanced floating animation
+    // Enhanced floating animation with more pronounced "out of box" effect
+    meshRef.current.position.z = Math.sin(time * 0.5) * 0.15 + config.zPosition;
     meshRef.current.position.y = Math.sin(time * 0.5) * 0.1 + config.elevation;
     
-    // Smooth rotation
-    meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.15;
-    meshRef.current.rotation.z = Math.sin(time * 0.2) * 0.05;
+    // Enhanced rotation for more lifelike movement
+    meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.2;
+    meshRef.current.rotation.z = Math.sin(time * 0.2) * 0.08;
     
-    // Update face material
+    // Update face material with enhanced lighting
     if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
       meshRef.current.material.color.copy(config.color);
-      meshRef.current.material.emissive.copy(config.color).multiplyScalar(0.3);
-      meshRef.current.material.metalness = 0.7;
+      meshRef.current.material.emissive.copy(config.color).multiplyScalar(0.4);
+      meshRef.current.material.metalness = 0.8;
       meshRef.current.material.roughness = 0.2;
     }
     
     // Enhanced eye animations
     if (eyesRef.current) {
-      eyesRef.current.scale.y = config.eyeScale + Math.sin(time * 3) * 0.05;
-      eyesRef.current.rotation.z = config.eyeRotation;
+      const blinkSpeed = time * 2;
+      const normalizedBlink = Math.sin(blinkSpeed);
+      const isBlinking = normalizedBlink > 0.97;
       
-      // More natural blink
-      if (Math.sin(time * 0.5) > 0.98) {
-        eyesRef.current.scale.y = 0.1;
-      }
+      eyesRef.current.scale.y = isBlinking ? 0.1 : config.eyeScale + Math.sin(time * 3) * 0.05;
+      eyesRef.current.rotation.z = config.eyeRotation;
     }
     
     // Enhanced mouth animation
@@ -85,25 +88,23 @@ function Face({ mood, moodValue }: MoodFaceProps) {
 
   return (
     <group position={[0, 0, 0]}>
-      {/* Enhanced face mesh with better materials */}
-      <mesh ref={meshRef}>
+      <mesh ref={meshRef} castShadow>
         <sphereGeometry args={[1.5, 128, 128]} />
         <meshStandardMaterial
           roughness={0.2}
-          metalness={0.7}
-          envMapIntensity={1}
+          metalness={0.8}
+          envMapIntensity={1.2}
           transparent={true}
           opacity={0.95}
         />
         
-        {/* Enhanced eyes with better depth */}
         <group ref={eyesRef} position={[0, 0.25, 1.3]}>
           <mesh position={[-0.45, 0, 0]}>
             <sphereGeometry args={[0.22, 32, 32]} />
             <meshStandardMaterial
               color="#2a180f"
               roughness={0.3}
-              metalness={0.5}
+              metalness={0.6}
             />
           </mesh>
           
@@ -112,18 +113,17 @@ function Face({ mood, moodValue }: MoodFaceProps) {
             <meshStandardMaterial
               color="#2a180f"
               roughness={0.3}
-              metalness={0.5}
+              metalness={0.6}
             />
           </mesh>
         </group>
         
-        {/* Enhanced mouth with better materials */}
         <mesh ref={mouthRef} position={[0, -0.15, 1.3]}>
           <torusGeometry args={[0.4, 0.12, 32, 32, Math.PI]} />
           <meshStandardMaterial
             color="#2a180f"
             roughness={0.3}
-            metalness={0.5}
+            metalness={0.6}
             side={THREE.DoubleSide}
           />
         </mesh>

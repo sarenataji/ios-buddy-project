@@ -7,7 +7,7 @@ import { useFace } from '@/hooks/useFace';
 
 const DayReflection = () => {
   const [selectedMood, setSelectedMood] = useState<string>("OKAY");
-  const [moodValue, setMoodValue] = useState([1]); // 0: BAD, 1: OKAY, 2: GOOD
+  const [moodValue, setMoodValue] = useState([1]); // 0: GOOD, 1: OKAY, 2: BAD (reversed order)
   const [showSubmit, setShowSubmit] = useState(false);
   const { toast } = useToast();
   const { saveFace } = useFace();
@@ -42,15 +42,16 @@ const DayReflection = () => {
           <div className="w-full h-[400px] mb-4 relative overflow-hidden">
             {/* Enhanced Background Mood Text */}
             <div className="absolute inset-0 flex items-center justify-center z-0">
-              <h2 className="text-8xl font-bold tracking-[0.2em] font-sans text-[#e8c28215] transition-all duration-500 transform">
+              <h2 className="text-8xl font-bold tracking-[0.3em] font-sans text-[#e8c28215] transition-all duration-500 transform">
                 {selectedMood}
               </h2>
             </div>
             
-            {/* Enhanced 3D Face Container with Elevation */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 transform hover:scale-105 transition-transform duration-300">
+            {/* Enhanced 3D Face Container with Box Effect */}
+            <div className="absolute inset-0 flex items-center justify-center z-10">
               <div className="w-full h-full max-w-[300px] relative">
-                <div className="absolute inset-0 animate-glow-3d"></div>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#e8c28222] to-transparent"></div>
+                <div className="absolute inset-0 animate-pulse-subtle"></div>
                 <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
               </div>
             </div>
@@ -59,12 +60,12 @@ const DayReflection = () => {
           {/* Enhanced Mood Selection Bar */}
           <div className="w-full px-4 py-6 bg-[#1a0c0580] rounded-xl backdrop-blur-sm">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-[#4caf50] text-sm font-semibold tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => handleMoodSelect([2], "GOOD")}>Good</span>
-              <span className="text-[#e8c282] text-sm font-semibold tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => handleMoodSelect([1], "OKAY")}>Okay</span>
-              <span className="text-[#ff5252] text-sm font-semibold tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => handleMoodSelect([0], "BAD")}>Bad</span>
+              <span className="text-[#4caf50] text-sm font-semibold tracking-[0.15em] cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => handleMoodSelect([0], "GOOD")}>GOOD</span>
+              <span className="text-[#e8c282] text-sm font-semibold tracking-[0.15em] cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => handleMoodSelect([1], "OKAY")}>OKAY</span>
+              <span className="text-[#ff5252] text-sm font-semibold tracking-[0.15em] cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => handleMoodSelect([2], "BAD")}>BAD</span>
             </div>
             
             {/* Enhanced Submit Button */}
