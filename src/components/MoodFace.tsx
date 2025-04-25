@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -57,7 +57,7 @@ function Face({ mood, moodValue }: MoodFaceProps) {
     meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.3;
     meshRef.current.rotation.z = Math.sin(time * 0.2) * 0.1;
     
-    // Update face material with enhanced lighting
+    // Update face material
     if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
       meshRef.current.material.color.copy(config.color);
       meshRef.current.material.emissive.copy(config.color).multiplyScalar(0.4);
@@ -84,9 +84,9 @@ function Face({ mood, moodValue }: MoodFaceProps) {
   });
 
   return (
-    <group position={[0, 0, 0]} scale={1.4}>
+    <group position={[0, 0, 0]} scale={1.6}>
       <mesh ref={meshRef} castShadow>
-        <sphereGeometry args={[1.5, 128, 128]} />
+        <sphereGeometry args={[1.5, 64, 64]} />
         <meshStandardMaterial
           roughness={0.2}
           metalness={0.8}
@@ -95,10 +95,10 @@ function Face({ mood, moodValue }: MoodFaceProps) {
           opacity={0.95}
         />
         
-        {/* Enhanced Eyes with Better Depth */}
+        {/* Eyes */}
         <group ref={eyesRef} position={[0, 0.25, 1.3]}>
           <mesh position={[-0.45, 0, 0]}>
-            <sphereGeometry args={[0.25, 32, 32]} />
+            <sphereGeometry args={[0.25, 24, 24]} />
             <meshStandardMaterial
               color="#2a180f"
               roughness={0.3}
@@ -107,7 +107,7 @@ function Face({ mood, moodValue }: MoodFaceProps) {
           </mesh>
           
           <mesh position={[0.45, 0, 0]}>
-            <sphereGeometry args={[0.25, 32, 32]} />
+            <sphereGeometry args={[0.25, 24, 24]} />
             <meshStandardMaterial
               color="#2a180f"
               roughness={0.3}
@@ -116,9 +116,9 @@ function Face({ mood, moodValue }: MoodFaceProps) {
           </mesh>
         </group>
         
-        {/* Enhanced Mouth with Better Depth */}
+        {/* Mouth */}
         <mesh ref={mouthRef} position={[0, -0.15, 1.3]}>
-          <torusGeometry args={[0.4, 0.15, 32, 32, Math.PI]} />
+          <torusGeometry args={[0.4, 0.15, 24, 24, Math.PI]} />
           <meshStandardMaterial
             color="#2a180f"
             roughness={0.3}
@@ -132,11 +132,36 @@ function Face({ mood, moodValue }: MoodFaceProps) {
 }
 
 const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
+  const [errorState, setErrorState] = useState<boolean>(false);
+  
+  // Reset error state when props change
+  useEffect(() => {
+    setErrorState(false);
+  }, [mood, moodValue]);
+
+  // Fallback UI in case of WebGL errors
+  if (errorState) {
+    return (
+      <div className="w-full h-full rounded-lg flex items-center justify-center bg-[#140D07]">
+        <div className="text-center p-4">
+          <p className="text-[#e8c282] mb-2">Unable to display 3D face</p>
+          <p className="text-[#e8c282]/60 text-sm">Your mood: {mood}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full rounded-lg overflow-visible bg-[#140D07]">
       <Canvas 
         camera={{ position: [0, 0, 4], fov: 45 }}
-        gl={{ antialias: true }}
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: true
+        }}
+        onError={() => setErrorState(true)}
       >
         <ambientLight intensity={0.6} />
         <pointLight position={[-5, 5, 5]} intensity={1.4} color="#e8c282" />

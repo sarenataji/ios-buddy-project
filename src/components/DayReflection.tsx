@@ -33,37 +33,37 @@ const DayReflection = () => {
 
   return (
     <div className="w-full max-w-xl mx-auto">
-      <div className="bg-card/90 border border-[#e8c28233] shadow-xl rounded-2xl overflow-visible">
+      <div className="bg-card/90 border border-[#e8c28233] shadow-xl rounded-2xl overflow-hidden">
         <div className="p-4 bg-[#1a0c05] text-[#edd6ae] text-center">
           <h3 className="font-serif text-xl tracking-wide text-[#e8c282]">Daily Reflection</h3>
         </div>
         
-        <div className="p-6 flex flex-col items-center bg-gradient-to-b from-[#140D07] to-[#1a0c05] relative z-0">
-          {/* Enhanced Face Container with Perspective Effect */}
-          <div className="w-full h-[400px] mb-4 relative overflow-visible perspective-[1000px]">
-            {/* Background Mood Text with Enhanced 3D Effect */}
-            <div className="absolute inset-0 flex items-center justify-center z-0 transform-gpu translate-z-[-50px]">
+        <div className="p-6 flex flex-col items-center bg-gradient-to-b from-[#140D07] to-[#1a0c05] relative">
+          {/* Face Container with 3D Effect */}
+          <div className="w-full h-[400px] mb-4 relative perspective-[1200px]">
+            {/* Background Mood Text */}
+            <div className="absolute inset-0 flex items-center justify-center z-0">
               <h2 className="text-8xl font-bold tracking-[0.3em] font-sans text-[#e8c28215] transition-all duration-500">
                 {selectedMood}
               </h2>
             </div>
             
-            {/* Enhanced 3D Face Container with Pop-out Effect */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 transform-gpu scale-125">
-              <div className="w-full h-full max-w-[300px] relative transform-gpu translate-z-[100px]">
-                {/* Ambient Glow Effect */}
+            {/* Face Container with Pop-out Effect */}
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="w-full h-full max-w-[320px] relative overflow-visible transform scale-125">
+                {/* Ambient Glow */}
                 <div className="absolute inset-[-20%] rounded-full bg-[#e8c28215] blur-2xl animate-pulse-subtle"></div>
-                {/* Shadow Effect */}
+                {/* Shadow */}
                 <div className="absolute inset-0 rounded-full shadow-2xl"></div>
-                {/* Face Component with Increased Size */}
-                <div className="transform-gpu scale-110 hover:scale-115 transition-transform duration-300">
+                {/* Face Component */}
+                <div className="transform scale-125 hover:scale-130 transition-transform duration-300">
                   <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Enhanced Mood Selection Bar with Better Spacing */}
+          {/* Mood Selection Bar */}
           <div className="w-full px-6 py-8 bg-[#1a0c0580] rounded-xl backdrop-blur-sm mt-4 relative z-20">
             <div className="flex justify-between items-center mb-6">
               <span className="text-[#4caf50] text-sm font-semibold tracking-[0.2em] cursor-pointer hover:opacity-80 transition-opacity"
