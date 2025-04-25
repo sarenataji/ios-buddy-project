@@ -27,22 +27,30 @@ function Face({ moodValue }: { moodValue: number }) {
     switch (moodValue) {
       case 0: // GOOD
         return {
-          mouthCurve: 0.5, // Upward curve
-          eyeScale: 1
+          mouthCurveTop: Math.PI * 0.1,    // Upward curve for smile
+          mouthCurveBottom: Math.PI * 0.1,  // Matching bottom curve
+          mouthScale: 0.4,                  // Wider for smile
+          eyeScale: 1.1                     // Slightly larger eyes for happy
         };
       case 1: // OKAY
         return {
-          mouthCurve: 0, // Straight line
-          eyeScale: 1
+          mouthCurveTop: 0,                 // Straight line
+          mouthCurveBottom: 0,              // Straight line
+          mouthScale: 0.35,                 // Normal width
+          eyeScale: 1                       // Normal eyes
         };
       case 2: // BAD
         return {
-          mouthCurve: -0.5, // Downward curve
-          eyeScale: 0.8
+          mouthCurveTop: -Math.PI * 0.1,    // Downward curve for frown
+          mouthCurveBottom: -Math.PI * 0.1,  // Matching bottom curve
+          mouthScale: 0.3,                   // Smaller for frown
+          eyeScale: 0.8                      // Smaller eyes for sad
         };
       default:
         return {
-          mouthCurve: 0,
+          mouthCurveTop: 0,
+          mouthCurveBottom: 0,
+          mouthScale: 0.35,
           eyeScale: 1
         };
     }
@@ -74,17 +82,20 @@ function Face({ moodValue }: { moodValue: number }) {
         <meshBasicMaterial color="#2a180f" />
       </mesh>
 
-      {/* Mouth */}
-      <mesh position={[0, -0.1, 0.85]}>
-        <torusGeometry args={[0.3, 0.05, 16, 16, Math.PI]} />
-        <meshBasicMaterial color="#2a180f" />
-        <group rotation={[0, 0, config.mouthCurve]}>
-          <mesh>
-            <torusGeometry args={[0.3, 0.05, 16, 16, Math.PI]} />
-            <meshBasicMaterial color="#2a180f" />
-          </mesh>
-        </group>
-      </mesh>
+      {/* Mouth (combination of curves for more expressiveness) */}
+      <group position={[0, -0.1, 0.85]}>
+        {/* Top curve of mouth */}
+        <mesh rotation={[0, 0, config.mouthCurveTop]} position={[0, 0.02, 0]}>
+          <torusGeometry args={[config.mouthScale, 0.05, 16, 16, Math.PI]} />
+          <meshBasicMaterial color="#2a180f" />
+        </mesh>
+        
+        {/* Bottom curve of mouth */}
+        <mesh rotation={[0, 0, config.mouthCurveBottom]} position={[0, -0.02, 0]}>
+          <torusGeometry args={[config.mouthScale, 0.05, 16, 16, Math.PI]} />
+          <meshBasicMaterial color="#2a180f" />
+        </mesh>
+      </group>
     </group>
   );
 }
@@ -107,13 +118,13 @@ const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
         </Canvas>
       </div>
 
-      {/* Mood Text Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-4 text-center">
-        <h3 className="text-2xl font-serif text-[#e8c282] mb-1">
+      {/* Mood Text Overlay - Lowered position */}
+      <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center text-center">
+        <h3 className="text-2xl font-serif text-[#e8c282] mb-2">
           {mood}
         </h3>
         <p className="text-sm text-[#e8c282]/70">
-          Swipe left or right to explore moods
+          Adjust the slider to change mood
         </p>
       </div>
     </div>
