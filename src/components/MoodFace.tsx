@@ -141,19 +141,27 @@ const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
   useEffect(() => {
     // Check if WebGL is supported
     const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     
-    if (!gl) {
-      console.log("WebGL not supported - using fallback");
+    // Correct way to check for WebGL support
+    try {
+      // Try to get WebGL context (not 2D context)
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      
+      // If we couldn't get a WebGL context, use fallback
+      if (!gl) {
+        console.log("WebGL not supported - using fallback");
+        setErrorState(true);
+      } else {
+        // Clean up WebGL context if we got one
+        const loseContext = gl.getExtension('WEBGL_lose_context');
+        if (loseContext) {
+          loseContext.loseContext();
+        }
+      }
+    } catch (error) {
+      console.error("Error checking WebGL support:", error);
       setErrorState(true);
     }
-    
-    return () => {
-      if (gl) {
-        const loseContext = gl.getExtension('WEBGL_lose_context');
-        if (loseContext) loseContext.loseContext();
-      }
-    };
   }, []);
 
   // If any error occurs, use the fallback immediately
