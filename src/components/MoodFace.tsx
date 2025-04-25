@@ -1,34 +1,49 @@
 
 import React from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 
 interface MoodFaceProps {
   mood: string;
   moodValue: number;
 }
 
-const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
+function Face({ moodValue }: { moodValue: number }) {
+  const meshRef = React.useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      // Gentle breathing animation
+      const breathe = Math.sin(state.clock.elapsedTime * 0.5) * 0.02;
+      meshRef.current.scale.setScalar(1 + breathe);
+      
+      // Subtle rotation
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
+    }
+  });
+
   // Get mood-specific configurations
   const getMoodConfig = () => {
     switch (moodValue) {
       case 0: // GOOD
         return {
-          mouthPath: "M 30 65 Q 50 85 70 65",
-          eyeSize: 8
+          mouthCurve: 0.5, // Upward curve
+          eyeScale: 1
         };
       case 1: // OKAY
         return {
-          mouthPath: "M 30 70 L 70 70",
-          eyeSize: 8
+          mouthCurve: 0, // Straight line
+          eyeScale: 1
         };
       case 2: // BAD
         return {
-          mouthPath: "M 30 75 Q 50 55 70 75",
-          eyeSize: 8
+          mouthCurve: -0.5, // Downward curve
+          eyeScale: 0.8
         };
       default:
         return {
-          mouthPath: "M 30 70 L 70 70",
-          eyeSize: 8
+          mouthCurve: 0,
+          eyeScale: 1
         };
     }
   };
@@ -36,49 +51,61 @@ const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
   const config = getMoodConfig();
 
   return (
+    <group ref={meshRef}>
+      {/* Main face sphere */}
+      <mesh>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial 
+          color="#e8c282"
+          metalness={0.2}
+          roughness={0.3}
+        />
+      </mesh>
+
+      {/* Left Eye */}
+      <mesh position={[-0.3, 0.2, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshBasicMaterial color="#2a180f" />
+      </mesh>
+
+      {/* Right Eye */}
+      <mesh position={[0.3, 0.2, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshBasicMaterial color="#2a180f" />
+      </mesh>
+
+      {/* Mouth */}
+      <mesh position={[0, -0.1, 0.85]}>
+        <torusGeometry args={[0.3, 0.05, 16, 16, Math.PI]} />
+        <meshBasicMaterial color="#2a180f" />
+        <group rotation={[0, 0, config.mouthCurve]}>
+          <mesh>
+            <torusGeometry args={[0.3, 0.05, 16, 16, Math.PI]} />
+            <meshBasicMaterial color="#2a180f" />
+          </mesh>
+        </group>
+      </mesh>
+    </group>
+  );
+}
+
+const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
+  return (
     <div className="relative w-full h-full flex items-center justify-center">
-      <svg 
-        viewBox="0 0 100 100" 
-        className="w-full h-full"
-        style={{ filter: 'drop-shadow(0 0 10px rgba(232, 194, 130, 0.2))' }}
-      >
-        {/* Face Circle */}
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          fill="#e8c282"
-          className="transition-all duration-300"
-        />
-        
-        {/* Left Eye */}
-        <circle
-          cx="35"
-          cy="40"
-          r={config.eyeSize}
-          fill="#2a180f"
-          className="transition-all duration-300"
-        />
-        
-        {/* Right Eye */}
-        <circle
-          cx="65"
-          cy="40"
-          r={config.eyeSize}
-          fill="#2a180f"
-          className="transition-all duration-300"
-        />
-        
-        {/* Mouth */}
-        <path
-          d={config.mouthPath}
-          stroke="#2a180f"
-          strokeWidth="4"
-          fill="none"
-          strokeLinecap="round"
-          className="transition-all duration-300"
-        />
-      </svg>
+      <div className="w-full h-full">
+        <Canvas camera={{ position: [0, 0, 3], fov: 45 }}>
+          <ambientLight intensity={0.6} />
+          <pointLight position={[10, 10, 10]} intensity={0.8} />
+          <spotLight
+            position={[0, 5, 5]}
+            angle={0.3}
+            penumbra={1}
+            intensity={0.5}
+            color="#e8c282"
+          />
+          <Face moodValue={moodValue} />
+        </Canvas>
+      </div>
 
       {/* Mood Text Overlay */}
       <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-4 text-center">

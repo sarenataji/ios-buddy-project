@@ -66,10 +66,6 @@ const DayReflection = () => {
             />
           </div>
           
-          <div className="flex justify-center">
-            <div className="w-full h-3 rounded-full bg-gradient-to-r from-[#4caf50] via-[#e8c282] to-[#ff5252] opacity-70"></div>
-          </div>
-          
           {showSubmit && (
             <Button
               onClick={handleSubmit}
