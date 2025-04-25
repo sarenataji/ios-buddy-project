@@ -27,31 +27,35 @@ function Face({ moodValue }: { moodValue: number }) {
     switch (moodValue) {
       case 0: // GOOD
         return {
-          mouthCurveTop: Math.PI * 0.1,    // Upward curve for smile
-          mouthCurveBottom: Math.PI * 0.1,  // Matching bottom curve
-          mouthScale: 0.4,                  // Wider for smile
-          eyeScale: 1.1                     // Slightly larger eyes for happy
+          mouthCurveTop: Math.PI * 0.2,    // More pronounced upward curve for smile
+          mouthCurveBottom: Math.PI * 0.2,  // Matching bottom curve
+          mouthScale: 0.5,                  // Even wider for a big smile
+          eyeScale: 1.2,                    // Larger, more excited eyes
+          eyePosition: 0.05                 // Slight lift to show happiness
         };
       case 1: // OKAY
         return {
           mouthCurveTop: 0,                 // Straight line
           mouthCurveBottom: 0,              // Straight line
           mouthScale: 0.35,                 // Normal width
-          eyeScale: 1                       // Normal eyes
+          eyeScale: 1,                      // Normal eyes
+          eyePosition: 0                    // Neutral position
         };
       case 2: // BAD
         return {
-          mouthCurveTop: -Math.PI * 0.1,    // Downward curve for frown
-          mouthCurveBottom: -Math.PI * 0.1,  // Matching bottom curve
-          mouthScale: 0.3,                   // Smaller for frown
-          eyeScale: 0.8                      // Smaller eyes for sad
+          mouthCurveTop: -Math.PI * 0.2,    // More pronounced downward curve for frown
+          mouthCurveBottom: -Math.PI * 0.2,  // Matching bottom curve
+          mouthScale: 0.25,                  // Smaller, tighter mouth
+          eyeScale: 0.7,                     // Smaller, more closed eyes
+          eyePosition: -0.05                 // Slight drop to show sadness
         };
       default:
         return {
           mouthCurveTop: 0,
           mouthCurveBottom: 0,
           mouthScale: 0.35,
-          eyeScale: 1
+          eyeScale: 1,
+          eyePosition: 0
         };
     }
   };
@@ -71,13 +75,13 @@ function Face({ moodValue }: { moodValue: number }) {
       </mesh>
 
       {/* Left Eye */}
-      <mesh position={[-0.3, 0.2, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
+      <mesh position={[-0.3, 0.2 + config.eyePosition, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshBasicMaterial color="#2a180f" />
       </mesh>
 
       {/* Right Eye */}
-      <mesh position={[0.3, 0.2, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
+      <mesh position={[0.3, 0.2 + config.eyePosition, 0.85]} scale={[0.12 * config.eyeScale, 0.12 * config.eyeScale, 0.12]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshBasicMaterial color="#2a180f" />
       </mesh>
