@@ -8,72 +8,92 @@ interface MoodFaceProps {
   moodValue: number;
 }
 
+// Simple 2D Fallback Face when WebGL isn't available
+const FallbackFace: React.FC<MoodFaceProps> = ({ mood }) => {
+  // Map the mood to an emoji
+  const getMoodEmoji = () => {
+    switch (mood) {
+      case 'GOOD': return '😀';
+      case 'OKAY': return '😐';
+      case 'BAD': return '😔';
+      default: return '😐';
+    }
+  };
+
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-[#140D07] to-[#1a0c05] rounded-full overflow-hidden border-4 border-[#e8c282]">
+      <div className="relative w-full h-full flex flex-col items-center justify-center">
+        <span className="text-8xl mb-4">{getMoodEmoji()}</span>
+        <p className="text-lg text-[#e8c282] font-bold">{mood}</p>
+      </div>
+    </div>
+  );
+};
+
+// 3D Face Component
 function Face({ mood, moodValue }: MoodFaceProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const eyesRef = useRef<THREE.Group>(null);
   const mouthRef = useRef<THREE.Mesh>(null);
 
-  const getMoodConfig = (value: number) => {
-    const colors = {
-      bad: new THREE.Color('#e8c282').multiplyScalar(0.6),
-      okay: new THREE.Color('#e8c282'),
-      good: new THREE.Color('#e8c282').multiplyScalar(1.2)
-    };
+  // Simplified mood configuration
+  const getMoodConfig = () => {
+    const baseColor = new THREE.Color('#e8c282');
     
-    let color, mouthCurve, eyeScale, eyeRotation, elevation, zPosition;
-    
-    if (value <= 1) {
-      const t = value;
-      color = colors.good.clone().lerp(colors.okay, t);
-      mouthCurve = THREE.MathUtils.lerp(0.8, 0, t);
-      eyeScale = THREE.MathUtils.lerp(0.8, 1, t);
-      eyeRotation = THREE.MathUtils.lerp(0.2, 0, t);
-      elevation = THREE.MathUtils.lerp(1.2, 0.8, t);
-      zPosition = THREE.MathUtils.lerp(2, 1.5, t);
+    // We're using a simplified version to reduce calculations
+    if (moodValue === 0) {
+      return {
+        color: baseColor.clone().multiplyScalar(1.2),
+        mouthCurve: 0.8,
+        eyeScale: 0.8,
+        eyeRotation: 0.2,
+        elevation: 1.2
+      };
+    } else if (moodValue === 1) {
+      return {
+        color: baseColor.clone(),
+        mouthCurve: 0,
+        eyeScale: 1,
+        eyeRotation: 0,
+        elevation: 0.8
+      };
     } else {
-      const t = value - 1;
-      color = colors.okay.clone().lerp(colors.bad, t);
-      mouthCurve = THREE.MathUtils.lerp(0, -0.8, t);
-      eyeScale = THREE.MathUtils.lerp(1, 1.2, t);
-      eyeRotation = THREE.MathUtils.lerp(0, -0.3, t);
-      elevation = THREE.MathUtils.lerp(0.8, 0.5, t);
-      zPosition = THREE.MathUtils.lerp(1.5, 1, t);
+      return {
+        color: baseColor.clone().multiplyScalar(0.6),
+        mouthCurve: -0.8,
+        eyeScale: 1.2,
+        eyeRotation: -0.3,
+        elevation: 0.5
+      };
     }
-    
-    return { color, mouthCurve, eyeScale, eyeRotation, elevation, zPosition };
   };
 
   useFrame((state) => {
     if (!meshRef.current || !mouthRef.current || !eyesRef.current) return;
     
     const time = state.clock.getElapsedTime();
-    const config = getMoodConfig(moodValue);
+    const config = getMoodConfig();
     
-    // Simple animation to avoid performance issues
-    meshRef.current.position.z = Math.sin(time * 0.5) * 0.2 + config.zPosition;
+    // Very basic animation
+    meshRef.current.position.z = Math.sin(time * 0.5) * 0.2 + 0.5;
     meshRef.current.position.y = Math.sin(time * 0.5) * 0.1 + config.elevation;
     
-    // Simplified rotation
+    // Simple rotation only
     meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.2;
-    meshRef.current.rotation.z = Math.sin(time * 0.2) * 0.05;
     
-    // Update face material - simplified for performance
+    // Update face material - simplified
     if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
       meshRef.current.material.color.copy(config.color);
-      meshRef.current.material.emissive.copy(config.color).multiplyScalar(0.2);
     }
     
-    // Eyes animation - simplified
+    // Eyes animation - only blink occasionally
     if (eyesRef.current) {
-      const blinkSpeed = time * 2;
-      const normalizedBlink = Math.sin(blinkSpeed);
-      const isBlinking = normalizedBlink > 0.97;
-      
+      const blinkSpeed = time * 1;
+      const isBlinking = Math.sin(blinkSpeed) > 0.97;
       eyesRef.current.scale.y = isBlinking ? 0.1 : config.eyeScale;
-      eyesRef.current.rotation.z = config.eyeRotation;
     }
     
-    // Mouth animation - simplified
+    // Mouth animation - fixed position
     if (mouthRef.current) {
       mouthRef.current.rotation.z = config.mouthCurve < 0 ? Math.PI : 0;
       mouthRef.current.scale.y = Math.abs(config.mouthCurve) + 0.5;
@@ -84,103 +104,83 @@ function Face({ mood, moodValue }: MoodFaceProps) {
   return (
     <group position={[0, 0, 0]} scale={1.8}>
       <mesh ref={meshRef} castShadow>
-        <sphereGeometry args={[1.5, 32, 32]} />
+        <sphereGeometry args={[1.5, 16, 16]} />
         <meshStandardMaterial
-          roughness={0.3}
-          metalness={0.5}
-          transparent={true}
-          opacity={0.95}
+          color="#e8c282"
+          roughness={0.5}
+          metalness={0.3}
         />
         
-        {/* Eyes */}
+        {/* Eyes - simplified */}
         <group ref={eyesRef} position={[0, 0.25, 1.3]}>
           <mesh position={[-0.45, 0, 0]}>
-            <sphereGeometry args={[0.25, 16, 16]} />
-            <meshStandardMaterial
-              color="#2a180f"
-              roughness={0.3}
-              metalness={0.5}
-            />
+            <sphereGeometry args={[0.25, 8, 8]} />
+            <meshBasicMaterial color="#2a180f" />
           </mesh>
           
           <mesh position={[0.45, 0, 0]}>
-            <sphereGeometry args={[0.25, 16, 16]} />
-            <meshStandardMaterial
-              color="#2a180f"
-              roughness={0.3}
-              metalness={0.5}
-            />
+            <sphereGeometry args={[0.25, 8, 8]} />
+            <meshBasicMaterial color="#2a180f" />
           </mesh>
         </group>
         
-        {/* Mouth */}
+        {/* Mouth - simplified */}
         <mesh ref={mouthRef} position={[0, -0.15, 1.3]}>
-          <torusGeometry args={[0.4, 0.15, 16, 16, Math.PI]} />
-          <meshStandardMaterial
-            color="#2a180f"
-            roughness={0.3}
-            metalness={0.5}
-            side={THREE.DoubleSide}
-          />
+          <torusGeometry args={[0.4, 0.15, 8, 8, Math.PI]} />
+          <meshBasicMaterial color="#2a180f" side={THREE.DoubleSide} />
         </mesh>
       </mesh>
     </group>
   );
 }
 
-const FallbackFace: React.FC<MoodFaceProps> = ({ mood }) => {
-  return (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-[#140D07] to-[#1a0c05]">
-      <div className="relative w-64 h-64 bg-[#7e5a39] rounded-full overflow-hidden border-4 border-[#e8c282]">
-        {/* Static face representation */}
-        <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 flex space-x-6">
-          <div className="w-5 h-5 bg-[#2a180f] rounded-full"></div>
-          <div className="w-5 h-5 bg-[#2a180f] rounded-full"></div>
-        </div>
-        <div className={`absolute bottom-1/4 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-[#2a180f] rounded-full ${mood === 'GOOD' ? 'scale-y-[-1]' : mood === 'BAD' ? '' : ''}`}></div>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-lg text-[#e8c282] font-bold">{mood}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
   const [errorState, setErrorState] = useState<boolean>(false);
-  const [hasRendered, setHasRendered] = useState<boolean>(false);
   
-  // Reset error state when props change
+  // Force fallback if WebGL errors are detected
   useEffect(() => {
-    setErrorState(false);
-  }, [mood, moodValue]);
-
-  // Set hasRendered flag after initial render
-  useEffect(() => {
-    setHasRendered(true);
+    // Check if WebGL is supported
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    
+    if (!gl) {
+      console.log("WebGL not supported - using fallback");
+      setErrorState(true);
+    }
+    
+    return () => {
+      if (gl) {
+        const loseContext = gl.getExtension('WEBGL_lose_context');
+        if (loseContext) loseContext.loseContext();
+      }
+    };
   }, []);
 
-  // Fallback UI in case of WebGL errors or if not yet rendered
-  if (errorState || !hasRendered) {
+  // If any error occurs, use the fallback immediately
+  if (errorState) {
+    console.log("Using fallback face due to error state");
     return <FallbackFace mood={mood} moodValue={moodValue} />;
   }
 
   return (
     <div className="w-full h-full rounded-lg overflow-hidden bg-[#140D07]">
       <Canvas 
-        camera={{ position: [0, 0, 4], fov: 45 }}
+        camera={{ position: [0, 0, 4], fov: 40 }}
         gl={{ 
-          antialias: true,
+          antialias: false, // Disable for performance
           alpha: true,
-          powerPreference: "default", // Changed from high-performance which can cause issues
-          preserveDrawingBuffer: true,
-          failIfMajorPerformanceCaveat: false // Allow fallback renderer
+          powerPreference: "default",
+          preserveDrawingBuffer: false,
+          failIfMajorPerformanceCaveat: true // Fail immediately if WebGL has issues
         }}
-        onError={() => setErrorState(true)}
+        onError={() => {
+          console.error("Canvas error - switching to fallback");
+          setErrorState(true);
+        }}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
       >
-        <ambientLight intensity={0.6} />
-        <pointLight position={[-5, 5, 5]} intensity={1.0} color="#e8c282" />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color="#ffffff" />
+        <ambientLight intensity={0.8} />
+        <pointLight position={[0, 0, 5]} intensity={1.0} color="#ffffff" />
         <Face mood={mood} moodValue={moodValue} />
       </Canvas>
     </div>

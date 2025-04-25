@@ -39,8 +39,8 @@ const DayReflection = () => {
         </div>
         
         <div className="p-6 flex flex-col items-center bg-gradient-to-b from-[#140D07] to-[#1a0c05] relative">
-          {/* Face Container with 3D Effect - Fixed height to prevent layout shifting */}
-          <div className="w-full h-[400px] mb-4 relative" style={{ perspective: '1200px' }}>
+          {/* Face Container with 3D Effect - With reliable fallback */}
+          <div className="w-full h-[400px] mb-4 relative overflow-visible">
             {/* Background Mood Text */}
             <div className="absolute inset-0 flex items-center justify-center z-0 overflow-hidden">
               <h2 className="text-8xl font-bold tracking-[0.3em] font-sans text-[#e8c28215] transition-all duration-500">
@@ -49,13 +49,13 @@ const DayReflection = () => {
             </div>
             
             {/* Face Container with Pop-out Effect */}
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="relative w-full max-w-[320px] h-[320px]">
+            <div className="absolute inset-0 flex items-center justify-center z-10 overflow-visible">
+              <div className="relative w-full max-w-[320px] h-[320px] overflow-visible">
                 {/* Ambient Glow */}
                 <div className="absolute inset-[-20%] rounded-full bg-[#e8c28215] blur-2xl"></div>
                 
-                {/* 3D Face Component - Handles its own fallback */}
-                <div className="w-full h-full transform scale-125 hover:scale-130 transition-transform duration-300">
+                {/* Face Component with Fallback */}
+                <div className="w-full h-full transform scale-125 overflow-visible">
                   <MoodFace mood={selectedMood} moodValue={moodValue[0]} />
                 </div>
               </div>
