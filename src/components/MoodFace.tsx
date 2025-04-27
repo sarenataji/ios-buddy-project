@@ -14,11 +14,11 @@ function Face({ moodValue }: { moodValue: number }) {
   useFrame((state) => {
     if (meshRef.current) {
       // Subtle breathing animation
-      const breathe = Math.sin(state.clock.elapsedTime * 0.5) * 0.02;
-      meshRef.current.scale.setScalar(1 + breathe);
+      const breathe = Math.sin(state.clock.elapsedTime * 0.5) * 0.01;
+      meshRef.current.scale.setScalar(0.8 + breathe); // Reduced base scale to 0.8
       
       // Very subtle rotation for liveliness
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.03;
     }
   });
 
@@ -26,47 +26,47 @@ function Face({ moodValue }: { moodValue: number }) {
     switch (moodValue) {
       case 0: // GOOD
         return {
-          mouthCurveTop: Math.PI * 0.15,      // Gentle upward curve for natural smile
-          mouthCurveBottom: Math.PI * 0.15,    // Matching bottom curve
-          mouthScale: 0.45,                    // Natural width for smile
-          eyeScale: 1.2,                       // Slightly wider eyes for happy look
-          eyePosition: 0.1,                    // Raised eyes for happy expression
-          mouthThickness: 0.08,                // Natural thickness
-          mouthYPosition: -0.2,                // Lower position for better proportion
-          eyeSpacing: 0.25,                    // Distance between eyes
+          mouthCurveTop: Math.PI * 0.1,       // Reduced curve for more natural smile
+          mouthCurveBottom: Math.PI * 0.1,     // Matching bottom curve
+          mouthScale: 0.3,                     // Smaller mouth width
+          eyeScale: 0.8,                       // Smaller eyes
+          eyePosition: 0.08,                   // Slightly raised eyes
+          mouthThickness: 0.05,                // Thinner mouth
+          mouthYPosition: -0.15,               // Adjusted mouth position
+          eyeSpacing: 0.2,                     // Closer eyes
         };
       case 1: // OKAY
         return {
           mouthCurveTop: 0,                    // Straight line
           mouthCurveBottom: 0,                 // Straight line
-          mouthScale: 0.4,                     // Natural width
-          eyeScale: 1.0,                       // Normal eyes
+          mouthScale: 0.25,                    // Smaller neutral mouth
+          eyeScale: 0.7,                       // Normal sized eyes
           eyePosition: 0,                      // Centered position
-          mouthThickness: 0.08,                // Natural thickness
-          mouthYPosition: -0.2,                // Centered position
-          eyeSpacing: 0.25,                    // Standard eye spacing
+          mouthThickness: 0.05,                // Consistent thickness
+          mouthYPosition: -0.15,               // Centered position
+          eyeSpacing: 0.2,                     // Standard spacing
         };
       case 2: // BAD
         return {
-          mouthCurveTop: -Math.PI * 0.15,     // Gentle downward curve
-          mouthCurveBottom: -Math.PI * 0.15,   // Matching curve
-          mouthScale: 0.45,                    // Natural width
-          eyeScale: 0.9,                       // Slightly narrowed eyes
-          eyePosition: -0.05,                  // Lowered eyes for sad look
-          mouthThickness: 0.08,                // Natural thickness
-          mouthYPosition: -0.25,               // Lower position for sad expression
-          eyeSpacing: 0.25,                    // Standard spacing
+          mouthCurveTop: -Math.PI * 0.1,      // Gentle frown
+          mouthCurveBottom: -Math.PI * 0.1,    // Matching curve
+          mouthScale: 0.3,                     // Consistent width
+          eyeScale: 0.7,                       // Slightly smaller eyes
+          eyePosition: -0.05,                  // Lowered eyes
+          mouthThickness: 0.05,                // Consistent thickness
+          mouthYPosition: -0.18,               // Lower position for sad expression
+          eyeSpacing: 0.2,                     // Standard spacing
         };
       default:
         return {
           mouthCurveTop: 0,
           mouthCurveBottom: 0,
-          mouthScale: 0.4,
-          eyeScale: 1.0,
+          mouthScale: 0.25,
+          eyeScale: 0.7,
           eyePosition: 0,
-          mouthThickness: 0.08,
-          mouthYPosition: -0.2,
-          eyeSpacing: 0.25,
+          mouthThickness: 0.05,
+          mouthYPosition: -0.15,
+          eyeSpacing: 0.2,
         };
     }
   };
@@ -77,7 +77,7 @@ function Face({ moodValue }: { moodValue: number }) {
     <group ref={meshRef}>
       {/* Face base */}
       <mesh>
-        <sphereGeometry args={[1, 32, 32]} />
+        <sphereGeometry args={[0.8, 32, 32]} />
         <meshStandardMaterial 
           color="#e8c282"
           metalness={0.1}
@@ -85,25 +85,25 @@ function Face({ moodValue }: { moodValue: number }) {
         />
       </mesh>
 
-      {/* Eyes with improved positioning */}
+      {/* Eyes */}
       <mesh 
-        position={[-config.eyeSpacing, 0.2 + config.eyePosition, 0.85]} 
-        scale={[0.15 * config.eyeScale, 0.15 * config.eyeScale, 0.1]}
+        position={[-config.eyeSpacing, 0.15 + config.eyePosition, 0.65]} 
+        scale={[0.1 * config.eyeScale, 0.1 * config.eyeScale, 0.05]}
       >
         <sphereGeometry args={[1, 24, 24]} />
         <meshBasicMaterial color="#2a180f" />
       </mesh>
 
       <mesh 
-        position={[config.eyeSpacing, 0.2 + config.eyePosition, 0.85]} 
-        scale={[0.15 * config.eyeScale, 0.15 * config.eyeScale, 0.1]}
+        position={[config.eyeSpacing, 0.15 + config.eyePosition, 0.65]} 
+        scale={[0.1 * config.eyeScale, 0.1 * config.eyeScale, 0.05]}
       >
         <sphereGeometry args={[1, 24, 24]} />
         <meshBasicMaterial color="#2a180f" />
       </mesh>
 
-      {/* Mouth with improved curves and positioning */}
-      <group position={[0, config.mouthYPosition, 0.85]}>
+      {/* Mouth */}
+      <group position={[0, config.mouthYPosition, 0.65]}>
         <mesh rotation={[0, 0, config.mouthCurveTop]}>
           <torusGeometry args={[config.mouthScale, config.mouthThickness, 16, 16, Math.PI]} />
           <meshBasicMaterial color="#2a180f" />
@@ -117,7 +117,7 @@ const MoodFace: React.FC<MoodFaceProps> = ({ mood, moodValue }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="w-full h-full">
-        <Canvas camera={{ position: [0, 0, 2.8], fov: 40 }}>
+        <Canvas camera={{ position: [0, 0, 2.5], fov: 35 }}>
           <ambientLight intensity={0.8} />
           <pointLight position={[10, 10, 10]} intensity={0.8} />
           <spotLight
