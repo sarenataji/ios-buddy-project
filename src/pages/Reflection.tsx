@@ -80,12 +80,12 @@ const Reflection = () => {
               <div className="text-center max-w-md">
                 <h2 className="text-center text-xl text-[#e8c282] font-serif">Month Overview</h2>
                 <p className="text-center text-sm text-[#edd6ae] opacity-80 mt-2">
-                  See your reflection journey through the month in a visual format.
+                  See your daily mood reflections throughout the month.
                 </p>
               </div>
               
-              <div className="w-full flex justify-center mt-4">
-                <YearVisualizer year={new Date().getFullYear()} />
+              <div className="w-full">
+                <MonthView />
               </div>
             </div>
           </TabsContent>
