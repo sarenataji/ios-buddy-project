@@ -8,6 +8,7 @@ import FaceSlider from '@/components/FaceSlider';
 import SavedFacesHistory from '@/components/SavedFacesHistory';
 import { useFace } from '@/hooks/useFace';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import MonthView from '@/components/MonthView';
 
 const Reflection = () => {
   const { saveFace } = useFace();
