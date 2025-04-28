@@ -88,6 +88,13 @@ const EventListSection = ({
               ))}
             </CarouselContent>
             
+            <div className="absolute left-0 bottom-1/2 transform translate-y-1/2 -ml-2 hidden md:block">
+              <CarouselPrevious className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8" />
+            </div>
+            <div className="absolute right-0 bottom-1/2 transform translate-y-1/2 -mr-2 hidden md:block">
+              <CarouselNext className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8" />
+            </div>
+            
             <div className="flex items-center justify-center mt-4 gap-1">
               {eventsToDisplay.map((_, index) => (
                 <div 
@@ -101,13 +108,6 @@ const EventListSection = ({
               ))}
             </div>
           </Carousel>
-          
-          <div className="absolute left-0 bottom-1/2 transform translate-y-1/2 -ml-2 hidden md:block">
-            <CarouselPrevious className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8" />
-          </div>
-          <div className="absolute right-0 bottom-1/2 transform translate-y-1/2 -mr-2 hidden md:block">
-            <CarouselNext className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8" />
-          </div>
         </div>
       )}
       
