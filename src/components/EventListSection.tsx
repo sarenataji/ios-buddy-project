@@ -55,7 +55,7 @@ const EventListSection = ({
               align: "center",
               loop: true,
             }}
-            className="w-full"
+            className="w-full bg-transparent"
             onSelect={(api) => {
               // Use explicit type to ensure the API exists
               const emblaApi = api as unknown as { selectedScrollSnap: () => number };
@@ -68,7 +68,7 @@ const EventListSection = ({
               {eventsToDisplay.map((event, index) => (
                 <CarouselItem 
                   key={`active-event-${event.id}`} 
-                  className="basis-full md:basis-full lg:basis-full pl-1"
+                  className="basis-full md:basis-full lg:basis-full pl-1 bg-transparent"
                 >
                   <ScheduleItem 
                     time={format(new Date(event.time), "h:mm a")}
