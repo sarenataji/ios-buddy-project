@@ -36,7 +36,7 @@ const ScheduleItem = ({
   description,
   person,
   icon,
-  color = "#7e5a39", // Brown
+  color = "#7e5a39",
   progress,
   timeLeft,
   location,
@@ -51,13 +51,10 @@ const ScheduleItem = ({
   // Render icon or emoji
   const renderIcon = () => {
     if (typeof icon === 'string' && icon.length > 0) {
-      // If it's an emoji (string)
       return <span className="text-lg">{icon}</span>;
     } else if (icon) {
-      // If it's a React node
       return icon;
     } else {
-      // Default circle
       return (
         <div 
           className="w-4 h-4 rounded-full" 
@@ -68,32 +65,18 @@ const ScheduleItem = ({
   };
 
   return (
-    <div className={cn(
-      "relative mb-6 w-full transition-all duration-300",
-      completed ? "opacity-70 scale-95" : ""
+    <Card className={cn(
+      "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215] overflow-hidden",
+      completed ? "bg-[#1a1f2c]/60 opacity-70" : "bg-[#1a1f2c]/90",
+      isCurrent ? "relative ring-1 ring-[#e8c282]/30" : ""
     )}>
-      <div className="flex items-center mb-1">
-        <div className="text-[#e8c282aa] text-sm">{time}</div>
-      </div>
-      <Card className={cn(
-        "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]",
-        completed ? "bg-[#1a1f2c]/60" : "bg-[#1a1f2c]/90",
-        isCurrent ? "relative" : ""
-      )}>
-        {/* 3D Glow effect for current event - more subtle, inspired by the provided image */}
-        {isCurrent && (
-          <div className="absolute inset-0 rounded-lg animate-pulse-subtle"></div>
-        )}
-        {isCurrent && (
-          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/30 rounded-lg -m-0.5 blur-[1px]"></div>
-        )}
-        {isCurrent && (
-          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/20 rounded-lg -m-1 blur-[3px]"></div>
-        )}
-        {isCurrent && (
-          <div className="absolute inset-0 bg-transparent border border-[#e8c282]/10 rounded-lg -m-1.5 blur-[5px]"></div>
-        )}
-        <CardContent className="p-4 flex items-center justify-between">
+      {/* Subtle indicator for current event */}
+      {isCurrent && (
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#e8c282]"></div>
+      )}
+      
+      <CardContent className="p-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div 
               className="w-9 h-9 rounded-full flex items-center justify-center"
@@ -101,17 +84,17 @@ const ScheduleItem = ({
             >
               {renderIcon()}
             </div>
-            <div className="flex-grow">
+            <div>
               <h3 className="text-[#edd6ae] font-medium text-base">{title}</h3>
-              <div className="flex flex-col xs:flex-row xs:items-center text-xs text-[#e8c282aa]">
-                <span>{description}</span>
-                <span className="hidden xs:block mx-1.5">•</span>
+              <div className="flex flex-wrap gap-1.5 items-center text-xs text-[#e8c282aa]">
+                <span className="font-medium">{time}</span>
+                <span>•</span>
                 <span>{person}</span>
                 {location && (
                   <>
-                    <span className="hidden xs:block mx-1.5">•</span>
+                    <span>•</span>
                     <span className="flex items-center gap-1">
-                      <MapPin size={12} />
+                      <MapPin size={10} />
                       {location}
                     </span>
                   </>
@@ -167,16 +150,17 @@ const ScheduleItem = ({
               </div>
             </PopoverContent>
           </Popover>
-        </CardContent>
-        <div className="px-4 pb-4">
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="text-xs text-[#e8c282aa]">Time left</div>
+        </div>
+        
+        <div className="mt-2">
+          <div className="flex items-center justify-between mb-1">
+            <div className="text-xs text-[#e8c282aa]">Progress</div>
             <div className="text-xs text-[#edd6ae]">{timeLeft}</div>
           </div>
           <Progress 
             value={progress} 
             className={cn(
-              "h-1.5 bg-[#e8c28222]",
+              "h-1 bg-[#e8c28222]",
               completed ? "bg-[#927c41]" : "",
               progress === 100 ? "bg-[#927c41]" : ""
             )}
@@ -185,8 +169,8 @@ const ScheduleItem = ({
             } as React.CSSProperties}
           />
         </div>
-      </Card>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -25,9 +25,11 @@ const EventListSection = ({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
+      <h2 className="text-[#e8c282] font-serif text-lg mb-2">Upcoming Events</h2>
+      
       {sortedActiveEvents.length === 0 && (
-        <div className="text-center text-[#e8c282aa] py-6">
+        <div className="text-center text-[#e8c282aa] py-4 border border-dashed border-[#e8c28222] rounded-md">
           No active events for this day
         </div>
       )}

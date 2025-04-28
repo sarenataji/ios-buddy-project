@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Clock } from "lucide-react";
-import TimelineProgress from "@/components/TimelineProgress";
+import VerticalTimelineProgress from "@/components/VerticalTimelineProgress";
 import { Event, calculateEventProgress, getEventEndTime } from "@/utils/eventUtils";
 import CountdownTimer from "@/components/CountdownTimer";
 import { isToday } from "date-fns";
@@ -32,7 +32,7 @@ const TimelineSection = ({
 }: TimelineSectionProps) => {
   return (
     <>
-      <div className="mb-8 p-4 bg-[#1a1f2c]/80 rounded-lg border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]">
+      <div className="mb-6 p-4 bg-[#1a1f2c]/80 rounded-lg border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]">
         {currentEvent ? (
           <>
             <div className="text-[#e8c282] text-sm mb-2">
@@ -52,7 +52,7 @@ const TimelineSection = ({
         )}
       </div>
       
-      <TimelineProgress 
+      <VerticalTimelineProgress 
         currentTime={currentTime}
         events={timelineEvents}
         onEventClick={onEventSelect}
