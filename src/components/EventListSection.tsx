@@ -1,10 +1,16 @@
-
 import React, { useState } from "react";
 import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
 import { Event, calculateEventProgress } from "@/utils/eventUtils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Shuffle } from "lucide-react";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from "@/components/ui/carousel";
 
 interface EventListSectionProps {
   activeEvents: Event[];
@@ -55,29 +61,69 @@ const EventListSection = ({
         </div>
       )}
       
-      <ScrollArea className="max-h-[350px] pr-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-2">
-          {eventsToDisplay.map((event) => (
-            <div key={`active-event-${event.id}`}>
-              <ScheduleItem 
-                time={format(new Date(event.time), "h:mm a")}
-                title={event.title}
-                description={event.description}
-                person={event.person}
-                color={event.color}
-                icon={event.icon}
-                progress={calculateEventProgress(event, new Date()).progress}
-                timeLeft={calculateEventProgress(event, new Date()).timeLeft}
-                location={event.location}
-                isCurrent={currentEvent?.id === event.id}
-                onEdit={() => onEventEdit(event)}
-                onDelete={() => onEventDelete(event.id)}
-                onComplete={() => onEventComplete(event.id)}
-              />
+      {eventsToDisplay.length > 0 && (
+        <div className="relative py-3">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent>
+              {eventsToDisplay.map((event) => (
+                <CarouselItem key={`active-event-${event.id}`} className="md:basis-2/3 lg:basis-1/2">
+                  <ScheduleItem 
+                    time={format(new Date(event.time), "h:mm a")}
+                    title={event.title}
+                    description={event.description}
+                    person={event.person}
+                    color={event.color}
+                    icon={event.icon}
+                    progress={calculateEventProgress(event, new Date()).progress}
+                    timeLeft={calculateEventProgress(event, new Date()).timeLeft}
+                    location={event.location}
+                    isCurrent={currentEvent?.id === event.id}
+                    onEdit={() => onEventEdit(event)}
+                    onDelete={() => onEventDelete(event.id)}
+                    onComplete={() => onEventComplete(event.id)}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex items-center justify-end mt-2 gap-2">
+              <CarouselPrevious className="relative -left-0 bg-[#1a1f2c] border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282]" />
+              <CarouselNext className="relative -right-0 bg-[#1a1f2c] border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282]" />
             </div>
-          ))}
+          </Carousel>
         </div>
-      </ScrollArea>
+      )}
+      
+      <div className="hidden">
+        <ScrollArea className="max-h-[350px] pr-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-2">
+            {eventsToDisplay.map((event) => (
+              <div key={`active-event-list-${event.id}`}>
+                <ScheduleItem 
+                  time={format(new Date(event.time), "h:mm a")}
+                  title={event.title}
+                  description={event.description}
+                  person={event.person}
+                  color={event.color}
+                  icon={event.icon}
+                  progress={calculateEventProgress(event, new Date()).progress}
+                  timeLeft={calculateEventProgress(event, new Date()).timeLeft}
+                  location={event.location}
+                  isCurrent={currentEvent?.id === event.id}
+                  onEdit={() => onEventEdit(event)}
+                  onDelete={() => onEventDelete(event.id)}
+                  onComplete={() => onEventComplete(event.id)}
+                />
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
     </div>
   );
 };

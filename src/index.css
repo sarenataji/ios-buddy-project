@@ -5,51 +5,48 @@
 
 @layer base {
   :root {
-    /* Brown minimal palette */
-    --background: 32 40% 5%;        /* #140D07 */
-    --foreground: 24 20% 83%;       /* beige-esque, #ede0c8 */
-    --card: 29 38% 13%;             /* a warm dark brown, #2a180f */
-    --card-foreground: 24 20% 83%;  /* beige, #ede0c8 */
-    --popover: 29 38% 13%;          /* dark brown */
-    --popover-foreground: 24 20% 83%;
-    --primary: 29 46% 30%;          /* medium brown #7e5a39 */
-    --primary-foreground: 24 20% 83%; 
-    --secondary: 34 33% 79%;        /* light beige #ebd8c3 */
-    --secondary-foreground: 32 40% 5%; 
-    --muted: 24 20% 69%;            /* lighter beige #cbbba0 */
-    --muted-foreground: 32 13% 34%; /* muted brown #6a5643 */
-    --accent: 37 20% 94%;           /* very light beige #f7f3ee */
-    --accent-foreground: 32 40% 5%;
-    --destructive: 12 69% 44%;      /* brick */
-    --destructive-foreground: 24 20% 83%;
-    --border: 33 18% 32%;           /* medium border brown */
-    --input: 29 21% 23%;            /* deep brown border/input bg */
-    --ring: 37 20% 94%;
-    --radius: 0.7rem;
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.75rem;
   }
 
   .dark {
-    /* Same palette for now; adapt in the future for full dark mode! */
-    --background: 32 40% 5%;
-    --foreground: 24 20% 83%;
-    --card: 29 38% 13%;
-    --card-foreground: 24 20% 83%;
-    --popover: 29 38% 13%;
-    --popover-foreground: 24 20% 83%;
-    --primary: 29 46% 30%;
-    --primary-foreground: 24 20% 83%; 
-    --secondary: 34 33% 79%;
-    --secondary-foreground: 32 40% 5%;
-    --muted: 24 20% 69%;
-    --muted-foreground: 32 13% 34%;
-    --accent: 37 20% 94%;
-    --accent-foreground: 32 40% 5%;
-    --destructive: 12 69% 44%;
-    --destructive-foreground: 24 20% 83%;
-    --border: 33 18% 32%;
-    --input: 29 21% 23%;
-    --ring: 37 20% 94%;
-    --radius: 0.7rem;
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 263.4 70% 50.4%;
   }
 }
 
@@ -57,39 +54,23 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', 'system-ui', sans-serif;
+    @apply bg-background text-foreground;
   }
 }
 
-@keyframes pulse-subtle {
-  0%, 100% {
-    box-shadow: 0 0 5px 1px rgba(232, 194, 130, 0.2);
+@layer utilities {
+  .animate-glow-3d {
+    animation: glow-pulse 2s infinite alternate;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
   }
-  50% {
-    box-shadow: 0 0 8px 3px rgba(232, 194, 130, 0.35);
-  }
-}
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 3s ease-in-out infinite;
-}
-
-@keyframes glow-3d {
-  0%, 100% {
-    box-shadow: 0 0 8px 2px rgba(232, 194, 130, 0.15), 
-                0 0 12px 4px rgba(232, 194, 130, 0.1), 
-                0 0 16px 6px rgba(232, 194, 130, 0.05);
+  @keyframes glow-pulse {
+    0% {
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+    }
+    100% {
+      box-shadow: 0 0 18px rgba(139, 92, 246, 0.6);
+    }
   }
-  50% {
-    box-shadow: 0 0 10px 3px rgba(232, 194, 130, 0.25), 
-                0 0 16px 6px rgba(232, 194, 130, 0.15), 
-                0 0 24px 8px rgba(232, 194, 130, 0.1);
-  }
-}
-
-.animate-glow-3d {
-  animation: glow-3d 3s ease-in-out infinite;
 }
