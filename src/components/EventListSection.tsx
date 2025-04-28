@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
@@ -56,9 +55,11 @@ const EventListSection = ({
               loop: true,
             }}
             className="w-full"
-            onSelect={(index) => {
-              // Fix: Make sure we're passing a number to setActiveIndex
-              setActiveIndex(index);
+            onSelect={(api) => {
+              // Correctly extract the selected index from the Embla API
+              if (api && typeof api.selectedScrollSnap === 'function') {
+                setActiveIndex(api.selectedScrollSnap());
+              }
             }}
           >
             <CarouselContent className="-ml-1">
