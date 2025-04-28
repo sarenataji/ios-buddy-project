@@ -68,19 +68,25 @@ const ScheduleItem = ({
     <Card className={cn(
       "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215] overflow-hidden",
       completed ? "bg-[#1a1f2c]/60 opacity-70" : "bg-[#1a1f2c]/90",
-      isCurrent ? "relative ring-1 ring-[#e8c282]/30" : ""
+      isCurrent ? "relative ring-1 ring-[#8B5CF6]/30 animate-glow-3d" : ""
     )}>
       {/* Subtle indicator for current event */}
       {isCurrent && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#e8c282]"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#8B5CF6]"></div>
       )}
       
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div 
-              className="w-9 h-9 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: `${color}33` }}
+              className={cn(
+                "w-9 h-9 rounded-full flex items-center justify-center",
+                isCurrent ? "ring-2 ring-[#8B5CF6]/30" : ""
+              )}
+              style={{ 
+                backgroundColor: `${color}33`,
+                boxShadow: isCurrent ? `0 0 8px ${color || "#8B5CF6"}` : "none"
+              }}
             >
               {renderIcon()}
             </div>
@@ -162,10 +168,11 @@ const ScheduleItem = ({
             className={cn(
               "h-1 bg-[#e8c28222]",
               completed ? "bg-[#927c41]" : "",
-              progress === 100 ? "bg-[#927c41]" : ""
+              progress === 100 ? "bg-[#927c41]" : "",
+              isCurrent ? "bg-[#8B5CF6]/30" : ""
             )}
             style={{
-              "--progress-background": color,
+              "--progress-background": isCurrent ? "#8B5CF6" : color,
             } as React.CSSProperties}
           />
         </div>

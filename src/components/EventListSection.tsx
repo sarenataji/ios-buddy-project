@@ -3,6 +3,7 @@ import React from "react";
 import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
 import { Event, calculateEventProgress } from "@/utils/eventUtils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface EventListSectionProps {
   activeEvents: Event[];
@@ -34,25 +35,29 @@ const EventListSection = ({
         </div>
       )}
       
-      {sortedActiveEvents.map((event) => (
-        <div key={`active-event-${event.id}`}>
-          <ScheduleItem 
-            time={format(new Date(event.time), "h:mm a")}
-            title={event.title}
-            description={event.description}
-            person={event.person}
-            color={event.color}
-            icon={event.icon}
-            progress={calculateEventProgress(event, new Date()).progress}
-            timeLeft={calculateEventProgress(event, new Date()).timeLeft}
-            location={event.location}
-            isCurrent={currentEvent?.id === event.id}
-            onEdit={() => onEventEdit(event)}
-            onDelete={() => onEventDelete(event.id)}
-            onComplete={() => onEventComplete(event.id)}
-          />
+      <ScrollArea className="max-h-[350px] pr-2">
+        <div className="space-y-3 pb-2">
+          {sortedActiveEvents.map((event) => (
+            <div key={`active-event-${event.id}`}>
+              <ScheduleItem 
+                time={format(new Date(event.time), "h:mm a")}
+                title={event.title}
+                description={event.description}
+                person={event.person}
+                color={event.color}
+                icon={event.icon}
+                progress={calculateEventProgress(event, new Date()).progress}
+                timeLeft={calculateEventProgress(event, new Date()).timeLeft}
+                location={event.location}
+                isCurrent={currentEvent?.id === event.id}
+                onEdit={() => onEventEdit(event)}
+                onDelete={() => onEventDelete(event.id)}
+                onComplete={() => onEventComplete(event.id)}
+              />
+            </div>
+          ))}
         </div>
-      ))}
+      </ScrollArea>
     </div>
   );
 };
