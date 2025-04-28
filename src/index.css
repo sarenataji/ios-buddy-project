@@ -97,3 +97,17 @@
     display: none;  /* Chrome, Safari and Opera */
   }
 }
+
+/* Custom carousel styling for dark theme */
+.embla {
+  background-color: transparent;
+}
+
+.embla__viewport {
+  background-color: transparent;
+}
+
+.embla__container {
+  background-color: transparent;
+}
+

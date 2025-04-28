@@ -64,7 +64,7 @@ const EventListSection = ({
               }
             }}
           >
-            <CarouselContent className="-ml-1">
+            <CarouselContent className="-ml-1 bg-transparent">
               {eventsToDisplay.map((event, index) => (
                 <CarouselItem 
                   key={`active-event-${event.id}`} 
