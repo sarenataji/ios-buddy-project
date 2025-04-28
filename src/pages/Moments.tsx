@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import { useCountdown } from "@/hooks/useCountdown";
@@ -10,8 +11,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { MomentsSection } from "@/components/MomentsSection";
 import MomentsHeader from "@/components/MomentsHeader";
-import NewMomentForm from "@/components/NewMomentForm";
-import NewCountdownForm from "@/components/NewCountdownForm";
+import StepByStepMomentForm from "@/components/moments/StepByStepMomentForm";
+import StepByStepCountdownForm from "@/components/moments/StepByStepCountdownForm";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Clock, Check } from "lucide-react";
 
 const Moments = () => {
   const { addMoment } = useMoment();
@@ -55,8 +58,9 @@ const Moments = () => {
     <div className="min-h-screen bg-[#140D07] p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <MomentsHeader />
+        
         <div className="flex justify-center gap-4 mb-12">
-          <button
+          <motion.button
             onClick={() => setIsAddingMoment(true)}
             className="
               bg-[#e8c282] text-[#1a1f2c]
@@ -67,12 +71,14 @@ const Moments = () => {
               hover:shadow-[0_0_25px_0_#e8c28266]
               font-medium
             "
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <span className="text-lg">+</span>
+            <Plus className="text-lg" />
             <span>Add Moment</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             onClick={() => setIsAddingCountdown(true)}
             className="
               bg-[#7e5a39] text-[#edd6ae]
@@ -83,29 +89,45 @@ const Moments = () => {
               hover:shadow-[0_0_25px_0_#e8c28266]
               font-medium
             "
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <span className="text-lg">+</span>
+            <Clock className="text-lg" />
             <span>Add Countdown</span>
-          </button>
+          </motion.button>
         </div>
         
         <MomentsSection />
 
         <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
-          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae]">
+          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae] overflow-auto">
             <SheetHeader>
-              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">New Moment</SheetTitle>
+              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">
+                <span className="mr-2">✨</span> Create New Moment <span className="ml-2">✨</span>
+              </SheetTitle>
             </SheetHeader>
-            <NewMomentForm onSubmit={handleAddMoment} />
+            <div className="mt-4">
+              <StepByStepMomentForm 
+                onSubmit={handleAddMoment} 
+                onCancel={() => setIsAddingMoment(false)} 
+              />
+            </div>
           </SheetContent>
         </Sheet>
 
         <Sheet open={isAddingCountdown} onOpenChange={setIsAddingCountdown}>
-          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae]">
+          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae] overflow-auto">
             <SheetHeader>
-              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">New Countdown</SheetTitle>
+              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">
+                <span className="mr-2">⏱️</span> Create New Countdown <span className="ml-2">⏱️</span>
+              </SheetTitle>
             </SheetHeader>
-            <NewCountdownForm onSubmit={handleAddCountdown} />
+            <div className="mt-4">
+              <StepByStepCountdownForm 
+                onSubmit={handleAddCountdown} 
+                onCancel={() => setIsAddingCountdown(false)} 
+              />
+            </div>
           </SheetContent>
         </Sheet>
       </div>

@@ -56,10 +56,8 @@ const EventListSection = ({
               loop: true,
             }}
             className="w-full"
-            onSelect={(api) => {
-              if (api) {
-                setActiveIndex(api.selectedScrollSnap());
-              }
+            onSelect={(index) => {
+              setActiveIndex(index);
             }}
           >
             <CarouselContent className="-ml-1">
