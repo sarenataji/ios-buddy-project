@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
 import { Event, calculateEventProgress } from "@/utils/eventUtils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Shuffle } from "lucide-react";
 
 interface EventListSectionProps {
   activeEvents: Event[];
@@ -27,7 +28,10 @@ const EventListSection = ({
 
   return (
     <div className="space-y-3">
-      <h2 className="text-[#e8c282] font-serif text-lg mb-2">Upcoming Events</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-[#e8c282] font-serif text-lg">Upcoming Events</h2>
+        <Shuffle size={16} className="text-[#e8c282aa]" />
+      </div>
       
       {sortedActiveEvents.length === 0 && (
         <div className="text-center text-[#e8c282aa] py-4 border border-dashed border-[#e8c28222] rounded-md">
@@ -36,7 +40,7 @@ const EventListSection = ({
       )}
       
       <ScrollArea className="max-h-[350px] pr-2">
-        <div className="space-y-3 pb-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-2">
           {sortedActiveEvents.map((event) => (
             <div key={`active-event-${event.id}`}>
               <ScheduleItem 

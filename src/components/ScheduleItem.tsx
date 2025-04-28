@@ -66,8 +66,8 @@ const ScheduleItem = ({
 
   return (
     <Card className={cn(
-      "w-full border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215] overflow-hidden",
-      completed ? "bg-[#1a1f2c]/60 opacity-70" : "bg-[#1a1f2c]/90",
+      "w-full border border-[#e8c28233] shadow-[0_2px_10px_0_#e8c28215] overflow-hidden",
+      completed ? "bg-[#1a1f2c]/60 opacity-70" : "bg-[#1a1f2c]/80",
       isCurrent ? "relative ring-1 ring-[#8B5CF6]/30 animate-glow-3d" : ""
     )}>
       {/* Subtle indicator for current event */}
@@ -77,33 +77,28 @@ const ScheduleItem = ({
       
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div 
               className={cn(
-                "w-9 h-9 rounded-full flex items-center justify-center",
-                isCurrent ? "ring-2 ring-[#8B5CF6]/30" : ""
+                "w-8 h-8 rounded-full flex items-center justify-center",
+                isCurrent ? "ring-1 ring-[#8B5CF6]/30" : ""
               )}
               style={{ 
-                backgroundColor: `${color}33`,
-                boxShadow: isCurrent ? `0 0 8px ${color || "#8B5CF6"}` : "none"
+                backgroundColor: `${color}22`,
+                boxShadow: isCurrent ? `0 0 6px ${color || "#8B5CF6"}` : "none"
               }}
             >
               {renderIcon()}
             </div>
             <div>
-              <h3 className="text-[#edd6ae] font-medium text-base">{title}</h3>
-              <div className="flex flex-wrap gap-1.5 items-center text-xs text-[#e8c282aa]">
+              <h3 className="text-[#edd6ae] font-medium text-sm">{title}</h3>
+              <div className="flex flex-wrap gap-1 items-center text-xs text-[#e8c282aa]">
                 <span className="font-medium">{time}</span>
-                <span>•</span>
-                <span>{person}</span>
                 {location && (
-                  <>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <MapPin size={10} />
-                      {location}
-                    </span>
-                  </>
+                  <span className="flex items-center gap-0.5">
+                    <MapPin size={10} />
+                    {location}
+                  </span>
                 )}
               </div>
             </div>
@@ -112,46 +107,46 @@ const ScheduleItem = ({
           <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <PopoverTrigger asChild>
               <button 
-                className="text-[#e8c282aa] hover:text-[#edd6ae] p-1.5 rounded-full hover:bg-[#e8c28215]"
+                className="text-[#e8c282aa] hover:text-[#edd6ae] p-1 rounded-full hover:bg-[#e8c28215]"
                 onClick={() => setIsMenuOpen(true)}
                 aria-label="Event menu"
               >
-                <MoreVertical size={18} />
+                <MoreVertical size={16} />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-48 p-2 bg-[#1a1f2c] border border-[#e8c28233]">
-              <div className="flex flex-col gap-1">
+            <PopoverContent className="w-40 p-1.5 bg-[#1a1f2c] border border-[#e8c28233]">
+              <div className="flex flex-col gap-0.5">
                 {!completed && onComplete && (
                   <button 
-                    className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm w-full text-left"
+                    className="flex items-center gap-1.5 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1 rounded text-xs w-full text-left"
                     onClick={() => {
                       setIsMenuOpen(false);
                       if (onComplete) onComplete();
                     }}
                   >
-                    <Check size={16} />
-                    Mark Complete
+                    <Check size={14} />
+                    Complete
                   </button>
                 )}
                 <button 
-                  className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm w-full text-left"
+                  className="flex items-center gap-1.5 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1 rounded text-xs w-full text-left"
                   onClick={() => {
                     setIsMenuOpen(false);
                     if (onEdit) onEdit();
                   }}
                 >
-                  <Edit size={16} />
-                  Edit Event
+                  <Edit size={14} />
+                  Edit
                 </button>
                 <button 
-                  className="flex items-center gap-2 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1.5 rounded text-sm w-full text-left"
+                  className="flex items-center gap-1.5 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1 rounded text-xs w-full text-left"
                   onClick={() => {
                     setIsMenuOpen(false);
                     if (onDelete) onDelete();
                   }}
                 >
-                  <Trash2 size={16} />
-                  Delete Event
+                  <Trash2 size={14} />
+                  Delete
                 </button>
               </div>
             </PopoverContent>
