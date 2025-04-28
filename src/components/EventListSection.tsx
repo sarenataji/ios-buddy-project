@@ -57,6 +57,7 @@ const EventListSection = ({
             }}
             className="w-full"
             onSelect={(index) => {
+              // Fix: Make sure we're passing a number to setActiveIndex
               setActiveIndex(index);
             }}
           >
