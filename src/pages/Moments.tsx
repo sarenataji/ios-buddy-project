@@ -3,18 +3,18 @@ import { useState } from "react";
 import { useMoment } from "@/contexts/MomentContext";
 import { useCountdown } from "@/hooks/useCountdown";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
 import { MomentsSection } from "@/components/MomentsSection";
 import MomentsHeader from "@/components/MomentsHeader";
 import StepByStepMomentForm from "@/components/moments/StepByStepMomentForm";
 import StepByStepCountdownForm from "@/components/moments/StepByStepCountdownForm";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Clock, Check } from "lucide-react";
+import { Plus, Clock } from "lucide-react";
 
 const Moments = () => {
   const { addMoment } = useMoment();
@@ -99,37 +99,41 @@ const Moments = () => {
         
         <MomentsSection />
 
-        <Sheet open={isAddingMoment} onOpenChange={setIsAddingMoment}>
-          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae] overflow-auto">
-            <SheetHeader>
-              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">
-                <span className="mr-2">✨</span> Create New Moment <span className="ml-2">✨</span>
-              </SheetTitle>
-            </SheetHeader>
-            <div className="mt-4">
+        {/* Moment Form Drawer */}
+        <Drawer open={isAddingMoment} onOpenChange={setIsAddingMoment}>
+          <DrawerContent className="max-w-[90%] w-[500px] mx-auto rounded-t-xl bg-[#1a0c05] border border-[#e8c28233] text-[#edd6ae] p-4">
+            <div className="mx-auto h-1 w-12 rounded-full bg-[#e8c28233] mb-3" />
+            <DrawerHeader className="p-0">
+              <DrawerTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-light">
+                <span className="mr-2">✨</span> New Moment <span className="ml-2">✨</span>
+              </DrawerTitle>
+            </DrawerHeader>
+            <div className="mt-6 px-2">
               <StepByStepMomentForm 
                 onSubmit={handleAddMoment} 
                 onCancel={() => setIsAddingMoment(false)} 
               />
             </div>
-          </SheetContent>
-        </Sheet>
+          </DrawerContent>
+        </Drawer>
 
-        <Sheet open={isAddingCountdown} onOpenChange={setIsAddingCountdown}>
-          <SheetContent className="bg-[#1a0c05] border-l border-[#e8c28233] text-[#edd6ae] overflow-auto">
-            <SheetHeader>
-              <SheetTitle className="text-[#edd6ae] text-center text-xl tracking-wide lowercase">
-                <span className="mr-2">⏱️</span> Create New Countdown <span className="ml-2">⏱️</span>
-              </SheetTitle>
-            </SheetHeader>
-            <div className="mt-4">
+        {/* Countdown Form Drawer */}
+        <Drawer open={isAddingCountdown} onOpenChange={setIsAddingCountdown}>
+          <DrawerContent className="max-w-[90%] w-[500px] mx-auto rounded-t-xl bg-[#1a0c05] border border-[#e8c28233] text-[#edd6ae] p-4">
+            <div className="mx-auto h-1 w-12 rounded-full bg-[#e8c28233] mb-3" />
+            <DrawerHeader className="p-0">
+              <DrawerTitle className="text-[#edd6ae] text-center text-2xl tracking-wide font-light">
+                <span className="mr-2">⏱️</span> New Countdown <span className="ml-2">⏱️</span>
+              </DrawerTitle>
+            </DrawerHeader>
+            <div className="mt-6 px-2">
               <StepByStepCountdownForm 
                 onSubmit={handleAddCountdown} 
                 onCancel={() => setIsAddingCountdown(false)} 
               />
             </div>
-          </SheetContent>
-        </Sheet>
+          </DrawerContent>
+        </Drawer>
       </div>
     </div>
   );
