@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
@@ -56,9 +57,10 @@ const EventListSection = ({
             }}
             className="w-full"
             onSelect={(api) => {
-              // Correctly extract the selected index from the Embla API
-              if (api && typeof api.selectedScrollSnap === 'function') {
-                setActiveIndex(api.selectedScrollSnap());
+              // Use explicit type to ensure the API exists
+              const emblaApi = api as unknown as { selectedScrollSnap: () => number };
+              if (emblaApi && typeof emblaApi.selectedScrollSnap === 'function') {
+                setActiveIndex(emblaApi.selectedScrollSnap());
               }
             }}
           >
