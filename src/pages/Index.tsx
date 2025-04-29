@@ -1,5 +1,5 @@
 
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import ThreeCube from "../three/ThreeCube";
 import { Calendar } from "lucide-react";
@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { MomentsSection } from "@/components/MomentsSection";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import NewMomentForm from "@/components/NewMomentForm";
-import { useState } from "react";
 import { useMoment } from "@/hooks/useMoment";
 import { useToast } from "@/hooks/useToast";
 import NewCountdownForm from "@/components/NewCountdownForm";
@@ -20,6 +19,13 @@ const Index = () => {
   const { addMoment } = useMoment();
   const { addCountdown } = useCountdown();
   const { toast } = useToast();
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Ensure the component is fully loaded before displaying
+  useEffect(() => {
+    setIsLoaded(true);
+    console.log("Index page mounted");
+  }, []);
 
   const handleAddMoment = (data: {
     title: string;
@@ -51,6 +57,10 @@ const Index = () => {
       description: "Your new countdown has been created",
     });
   };
+
+  if (!isLoaded) {
+    return <div className="flex items-center justify-center h-screen w-full bg-[#121212] text-[#e8c282]">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#121212] py-12">
