@@ -4,12 +4,9 @@ import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
 import { Event, calculateEventProgress } from "@/utils/eventUtils";
 import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
-} from "@/components/ui/carousel";
+  Shuffle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface EventListSectionProps {
   activeEvents: Event[];
@@ -27,6 +24,7 @@ const EventListSection = ({
   currentEvent
 }: EventListSectionProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [shuffleEffect, setShuffleEffect] = useState(false);
   
   // Sort events by time (earliest first)
   const sortedActiveEvents = [...activeEvents].sort((a, b) => 
@@ -35,11 +33,45 @@ const EventListSection = ({
 
   // Only show a maximum of 5 events to prevent overcrowding
   const eventsToDisplay = sortedActiveEvents.slice(0, 5);
+  
+  const handleShuffle = () => {
+    setShuffleEffect(true);
+    setTimeout(() => {
+      setShuffleEffect(false);
+    }, 800);
+  };
+
+  const handlePrevious = () => {
+    setActiveIndex((prevIndex) => {
+      if (prevIndex > 0) {
+        return prevIndex - 1;
+      }
+      return eventsToDisplay.length - 1;
+    });
+  };
+  
+  const handleNext = () => {
+    setActiveIndex((prevIndex) => {
+      if (prevIndex < eventsToDisplay.length - 1) {
+        return prevIndex + 1;
+      }
+      return 0;
+    });
+  };
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-[#e8c282] font-serif text-lg">Upcoming Events</h2>
+        
+        <Button
+          onClick={handleShuffle}
+          variant="ghost"
+          className="text-[#e8c282] hover:bg-[#e8c28222] p-1 h-8 w-8"
+          aria-label="Shuffle events"
+        >
+          <Shuffle className="h-5 w-5" />
+        </Button>
       </div>
       
       {eventsToDisplay.length === 0 && (
@@ -49,126 +81,81 @@ const EventListSection = ({
       )}
       
       {eventsToDisplay.length > 0 && (
-        <div className="relative">
-          <Carousel
-            opts={{
-              align: "center",
-              loop: true,
-            }}
-            className="w-full bg-transparent"
-            onSelect={(api) => {
-              // Use explicit type to ensure the API exists
-              const emblaApi = api as unknown as { selectedScrollSnap: () => number };
-              if (emblaApi && typeof emblaApi.selectedScrollSnap === 'function') {
-                setActiveIndex(emblaApi.selectedScrollSnap());
-              }
-            }}
-          >
-            <CarouselContent className="-ml-1 bg-transparent">
-              {eventsToDisplay.map((event, index) => (
-                <CarouselItem 
-                  key={`active-event-${event.id}`} 
-                  className="basis-full md:basis-full lg:basis-full pl-1 bg-transparent"
-                >
-                  <ScheduleItem 
-                    time={format(new Date(event.time), "h:mm a")}
-                    title={event.title}
-                    description={event.description}
-                    person={event.person}
-                    color={event.color}
-                    icon={event.icon}
-                    progress={calculateEventProgress(event, new Date()).progress}
-                    timeLeft={calculateEventProgress(event, new Date()).timeLeft}
-                    location={event.location}
-                    isCurrent={currentEvent?.id === event.id}
-                    isActive={index === activeIndex}
-                    onEdit={() => onEventEdit(event)}
-                    onDelete={() => onEventDelete(event.id)}
-                    onComplete={() => onEventComplete(event.id)}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+        <div className="relative perspective-1000">
+          <div className={`relative ${shuffleEffect ? 'animate-shuffle' : ''}`}>
+            {eventsToDisplay.map((event, index) => (
+              <div 
+                key={`active-event-${event.id}`} 
+                className={`transition-all duration-300 absolute w-full
+                  ${index === activeIndex 
+                    ? "opacity-100 z-10 translate-y-0 rotate-0" 
+                    : index === (activeIndex + 1) % eventsToDisplay.length
+                      ? "opacity-0 z-0 translate-y-4 rotate-2" 
+                      : index === (activeIndex + 2) % eventsToDisplay.length
+                        ? "opacity-0 z-0 translate-y-8 rotate-4"
+                        : "opacity-0 z-0 -translate-y-4 -rotate-2"
+                  }
+                `}
+                style={{
+                  transform: `
+                    translateY(${index === activeIndex ? '0px' : index === (activeIndex + 1) % eventsToDisplay.length ? '4px' : '8px'}) 
+                    rotate(${index === activeIndex ? '0deg' : index === (activeIndex + 1) % eventsToDisplay.length ? '2deg' : '-2deg'})
+                  `,
+                  display: index >= activeIndex && index < activeIndex + 3 || (activeIndex + index) % eventsToDisplay.length < 3 ? 'block' : 'none'
+                }}
+              >
+                <ScheduleItem 
+                  time={format(new Date(event.time), "h:mm a")}
+                  title={event.title}
+                  description={event.description}
+                  person={event.person}
+                  color={event.color}
+                  icon={event.icon}
+                  progress={calculateEventProgress(event, new Date()).progress}
+                  timeLeft={calculateEventProgress(event, new Date()).timeLeft}
+                  location={event.location}
+                  isCurrent={currentEvent?.id === event.id}
+                  isActive={true}
+                  onEdit={() => onEventEdit(event)}
+                  onDelete={() => onEventDelete(event.id)}
+                  onComplete={() => onEventComplete(event.id)}
+                />
+              </div>
+            ))}
+          </div>
+          
+          <div className="flex justify-center items-center mt-8 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrevious}
+              className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8 p-0 rounded-full"
+            >
+              ←
+            </Button>
             
-            <div className="absolute left-0 bottom-1/2 transform translate-y-1/2 -ml-2 hidden md:block">
-              <CarouselPrevious className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8" />
-            </div>
-            <div className="absolute right-0 bottom-1/2 transform translate-y-1/2 -mr-2 hidden md:block">
-              <CarouselNext className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8" />
-            </div>
-            
-            <div className="flex items-center justify-center mt-4 gap-1">
+            <div className="flex items-center justify-center mt-2 gap-1">
               {eventsToDisplay.map((_, index) => (
                 <div 
                   key={`indicator-${index}`}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     index === activeIndex 
                       ? "bg-[#e8c282] w-4" 
                       : "bg-[#e8c28244]"
                   }`}
+                  onClick={() => setActiveIndex(index)}
                 />
               ))}
             </div>
-          </Carousel>
-        </div>
-      )}
-      
-      {eventsToDisplay.length > 0 && (
-        <div className="mt-4 pt-6 pb-1 overflow-x-auto no-scrollbar">
-          <div className="flex gap-2 justify-center items-center">
-            {eventsToDisplay.map((event, index) => (
-              <div 
-                key={`dock-event-${event.id}`}
-                className={`relative flex-shrink-0 transition-all duration-300 transform
-                  ${index === activeIndex 
-                    ? "scale-100 opacity-100 z-10" 
-                    : index === activeIndex - 1 || index === activeIndex + 1
-                      ? "scale-95 opacity-80 z-0"
-                      : "scale-90 opacity-60 z-0"
-                  }
-                `}
-                onClick={() => {
-                  const carouselApi = document.querySelector('[data-embla-api="true"]');
-                  if (carouselApi) {
-                    // @ts-ignore - This is a hack to access the Embla API
-                    carouselApi.__emblaApi.scrollTo(index);
-                  }
-                }}
-              >
-                <div 
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full 
-                    bg-gradient-to-r from-[#1a1f2c]/90 to-[#11141c]/90
-                    border border-[#e8c28233] backdrop-blur-sm
-                    ${index === activeIndex 
-                      ? "shadow-[0_0_15px_rgba(232,194,130,0.3)]" 
-                      : ""
-                    }
-                  `}
-                >
-                  <div 
-                    className="w-6 h-6 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: `${event.color}22` }}
-                  >
-                    {typeof event.icon === 'string' ? (
-                      <span className="text-sm">{event.icon}</span>
-                    ) : (
-                      <div 
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: event.color }}
-                      />
-                    )}
-                  </div>
-                  
-                  <span className="text-[#e8c282] whitespace-nowrap">
-                    {event.title}
-                  </span>
-                  
-                  <span className="text-[#e8c282aa] text-xs">
-                    {calculateEventProgress(event, new Date()).timeLeft}
-                  </span>
-                </div>
-              </div>
-            ))}
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNext}
+              className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8 p-0 rounded-full"
+            >
+              →
+            </Button>
           </div>
         </div>
       )}
