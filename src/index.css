@@ -55,7 +55,10 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#121212] text-foreground dark;
+  }
+  html {
+    @apply bg-[#121212] dark;
   }
 }
 
@@ -127,3 +130,30 @@
   background-color: transparent !important;
 }
 
+/* Fix for white background in 3D container */
+canvas {
+  background-color: transparent !important;
+}
+
+/* General fixes for white backgrounds */
+:root, #root, #__next {
+  background-color: #121212 !important;
+}
+
+/* Fix for white card backgrounds */
+.bg-card\/90 {
+  background-color: rgba(20, 20, 27, 0.9) !important;
+}
+
+/* Fix for nav links and buttons */
+.bg-\[\#e8c282\]\/20, 
+.bg-\[\#e8c282\] {
+  background-color: #e8c282 !important;
+}
+
+/* Fix for any inline white backgrounds */
+[style*="background-color: white"],
+[style*="background-color: #fff"],
+[style*="background-color: #ffffff"] {
+  background-color: #121212 !important;
+}

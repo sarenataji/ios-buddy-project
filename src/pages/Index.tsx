@@ -53,19 +53,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background py-12">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#121212] py-12">
       <div className="w-full max-w-xl px-4 flex flex-col items-center">
-        <Card className="w-full mb-8 bg-card/90 shadow-xl border-none">
+        <Card className="w-full mb-8 bg-[#1a1f2c]/90 shadow-xl border-none">
           <CardContent className="flex flex-col items-center py-12">
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-primary-foreground">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-[#edd6ae]">
               Moment
             </h1>
-            <p className="text-lg md:text-xl text-card-foreground mb-6 text-center">
+            <p className="text-lg md:text-xl text-[#edd6ae] mb-6 text-center">
               Stay hyper-aware of your time.<br />
-              <span className="text-primary">Organize</span>, <span className="text-primary">see the countdown</span>, and <span className="text-primary">reflect</span> — all in one elegant flow.
+              <span className="text-[#e8c282]">Organize</span>, <span className="text-[#e8c282]">see the countdown</span>, and <span className="text-[#e8c282]">reflect</span> — all in one elegant flow.
             </p>
-            <div className="mt-4 w-full h-60 rounded-2xl overflow-hidden bg-accent/80 flex items-center justify-center border border-accent shadow-glass backdrop-blur-md">
-              <Suspense fallback={<div className="text-muted-foreground">Loading 3D...</div>}>
+            <div className="mt-4 w-full h-60 rounded-2xl overflow-hidden bg-[#1a1f2c]/80 flex items-center justify-center border border-[#e8c28233] shadow-glass backdrop-blur-md">
+              <Suspense fallback={<div className="text-[#e8c282]">Loading 3D...</div>}>
                 <ThreeCube />
               </Suspense>
             </div>
@@ -111,10 +111,10 @@ const Index = () => {
           </CardContent>
         </Card>
         
-        <Card className="w-full mt-8 bg-card/90 shadow-xl border-none">
+        <Card className="w-full mt-8 bg-[#1a1f2c]/90 shadow-xl border-none">
           <CardContent className="py-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-primary-foreground">Time Tracking</h2>
+              <h2 className="text-2xl font-bold text-[#edd6ae]">Time Tracking</h2>
               <div className="flex gap-2">
                 <Button
                   onClick={() => setIsAddingMoment(true)}

@@ -24,19 +24,21 @@ const App = () => (
         <MomentProvider>
           <CountdownProvider>
             <FaceProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/schedule" element={<Schedule />} />
-                  <Route path="/moments" element={<Moments />} />
-                  <Route path="/reflection" element={<Reflection />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
+              <div className="bg-[#121212] min-h-screen text-[#edd6ae]">
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/schedule" element={<Schedule />} />
+                    <Route path="/moments" element={<Moments />} />
+                    <Route path="/reflection" element={<Reflection />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </div>
             </FaceProvider>
           </CountdownProvider>
         </MomentProvider>
