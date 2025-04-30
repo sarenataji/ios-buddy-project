@@ -57,7 +57,7 @@ const TimelineSection = ({
       <VerticalTimelineProgress 
         currentTime={currentTime}
         events={timelineEvents}
-        onEventSelect={onEventSelect}
+        onEventClick={onEventSelect} // Fixed: Changed onEventSelect to onEventClick to match component props
       />
     </>
   );
