@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -14,7 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TimelineEvent {
@@ -32,7 +32,7 @@ interface VerticalTimelineProgressProps {
   currentTime: Date;
   events: TimelineEvent[];
   onEventClick?: (eventId: number) => void;
-  eventTimes?: Date[]; // New prop for custom time markers
+  eventTimes?: Date[]; // Custom time markers
 }
 
 const VerticalTimelineProgress = ({ 
@@ -43,29 +43,102 @@ const VerticalTimelineProgress = ({
 }: VerticalTimelineProgressProps) => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   
-  const sortedEvents = [...events].sort((a, b) => a.time.getTime() - b.time.getTime());
+  // Filter and sort events
+  const activeEvents = useMemo(() => {
+    return [...events]
+      .filter(event => !event.completed)
+      .sort((a, b) => a.time.getTime() - b.time.getTime());
+  }, [events]);
   
-  // Filter out completed events from timeline display
-  const activeEvents = sortedEvents.filter(event => !event.completed);
+  // Calculate event start and end times
+  const eventsWithEndTimes = useMemo(() => {
+    return activeEvents.map(event => {
+      let endTime = null;
+      
+      // Try to extract end time from description
+      if (event.description) {
+        const parts = event.description.split(" - ");
+        if (parts.length === 2) {
+          const endTimePart = parts[1];
+          const [hours, minutesWithAmPm] = endTimePart.split(":");
+          if (hours && minutesWithAmPm) {
+            const minutes = minutesWithAmPm.substring(0, 2);
+            const ampm = minutesWithAmPm.substring(2).trim();
+            
+            let hourNum = parseInt(hours);
+            const minuteNum = parseInt(minutes);
+            
+            if (ampm.toLowerCase() === "pm" && hourNum < 12) hourNum += 12;
+            if (ampm.toLowerCase() === "am" && hourNum === 12) hourNum = 0;
+            
+            endTime = new Date(event.time);
+            endTime.setHours(hourNum, minuteNum, 0, 0);
+          }
+        }
+      }
+      
+      // If no end time found, default to 1 hour duration
+      if (!endTime) {
+        endTime = new Date(event.time);
+        endTime.setHours(endTime.getHours() + 1);
+      }
+      
+      return {
+        ...event,
+        endTime
+      };
+    });
+  }, [activeEvents]);
   
-  // Use custom time boundaries if provided, otherwise default to 6am-midnight
-  const startOfDay = new Date(currentTime);
-  startOfDay.setHours(6, 0, 0, 0);
-  
-  const endOfDay = new Date(currentTime);
-  endOfDay.setHours(23, 59, 59, 999);
-  
-  // Use provided event times or generate default time markers
-  const timelineHours = eventTimes && eventTimes.length > 0 
-    ? eventTimes 
-    : Array.from({ length: 7 }, (_, i) => {
+  // Use provided timepoints or extract them from events
+  const timelineHours = useMemo(() => {
+    // If no events, show default timeline hours
+    if (activeEvents.length === 0) {
+      return Array.from({ length: 7 }, (_, i) => {
         const hour = new Date(currentTime);
         hour.setHours(6 + (i * 3), 0, 0, 0);
         return hour;
       });
+    }
+    
+    // Use provided event times if available
+    if (eventTimes && eventTimes.length > 0) {
+      return [...eventTimes].sort((a, b) => a.getTime() - b.getTime());
+    }
+    
+    // Extract time points from events (start and end times)
+    const timePoints: Date[] = [];
+    
+    eventsWithEndTimes.forEach(event => {
+      // Add start time
+      timePoints.push(new Date(event.time));
+      // Add end time if available
+      if (event.endTime) timePoints.push(new Date(event.endTime));
+    });
+    
+    return [...new Set(timePoints.map(t => t.getTime()))]
+      .map(t => new Date(t))
+      .sort((a, b) => a.getTime() - b.getTime());
+  }, [activeEvents, eventTimes, currentTime, eventsWithEndTimes]);
   
-  // Sort time markers
-  const sortedTimelineHours = [...timelineHours].sort((a, b) => a.getTime() - b.getTime());
+  // Calculate timeline boundaries
+  const startOfDay = useMemo(() => {
+    if (timelineHours.length > 0) {
+      return new Date(Math.min(...timelineHours.map(d => d.getTime())));
+    }
+    const date = new Date(currentTime);
+    date.setHours(6, 0, 0, 0);
+    return date;
+  }, [timelineHours, currentTime]);
+  
+  const endOfDay = useMemo(() => {
+    if (timelineHours.length > 0) {
+      return new Date(Math.max(...timelineHours.map(d => d.getTime())));
+    }
+    const date = new Date(currentTime);
+    date.setHours(23, 59, 59, 999);
+    return date;
+  }, [timelineHours, currentTime]);
   
   const totalDayDuration = endOfDay.getTime() - startOfDay.getTime();
   const currentPosition = Math.max(
@@ -95,40 +168,14 @@ const VerticalTimelineProgress = ({
     return timeDiff > 0 && timeDiff < 30 * 60 * 1000;
   };
   
-  const isCurrentEvent = (eventTime: Date) => {
-    // Parse event description to get end time
-    const getEventEndTime = (event: TimelineEvent) => {
-      if (!event.description) return null;
-      
-      const parts = event.description.split(" - ");
-      if (parts.length < 2) return null;
-      
-      const endTimePart = parts[1];
-      const [hours, minutesWithAmPm] = endTimePart.split(":");
-      if (!hours || !minutesWithAmPm) return null;
-      
-      const minutes = minutesWithAmPm.substring(0, 2);
-      const ampm = minutesWithAmPm.substring(2).trim();
-      
-      let hourNum = parseInt(hours);
-      const minuteNum = parseInt(minutes);
-      
-      if (ampm.toLowerCase() === "pm" && hourNum < 12) hourNum += 12;
-      if (ampm.toLowerCase() === "am" && hourNum === 12) hourNum = 0;
-      
-      const endTime = new Date(currentTime);
-      endTime.setHours(hourNum, minuteNum, 0, 0);
-      
-      return endTime;
-    };
+  const isCurrentEvent = (event: TimelineEvent) => {
+    const foundEvent = eventsWithEndTimes.find(e => 
+      e.id === event.id || e.time.getTime() === event.time.getTime()
+    );
     
-    const event = events.find(e => e.time.getTime() === eventTime.getTime());
-    if (!event) return false;
+    if (!foundEvent || !foundEvent.endTime) return false;
     
-    const endTime = getEventEndTime(event);
-    if (!endTime) return false;
-    
-    return currentTime >= eventTime && currentTime <= endTime;
+    return currentTime >= foundEvent.time && currentTime <= foundEvent.endTime;
   };
   
   return (
@@ -140,7 +187,7 @@ const VerticalTimelineProgress = ({
           <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#e8c28215] via-[#e8c28235] to-[#e8c28215]"></div>
           
           {/* Time markers - aligned with events */}
-          {sortedTimelineHours.map((hour, index) => (
+          {timelineHours.map((hour, index) => (
             <div 
               key={index} 
               className="relative text-[#e8c28288] text-xs flex items-center"
@@ -172,59 +219,85 @@ const VerticalTimelineProgress = ({
             const position = calculateEventPosition(event.time);
             const extractedTime = format(event.time, "h:mm a");
             const approaching = isEventApproaching(event.time);
-            const isCurrent = isCurrentEvent(event.time);
+            const isCurrent = isCurrentEvent(event);
+            
+            // Find corresponding end time
+            const eventWithEndTime = eventsWithEndTimes.find(e => e.id === event.id);
+            const endTimePosition = eventWithEndTime?.endTime ? 
+              calculateEventPosition(eventWithEndTime.endTime) : position;
+            
+            // Calculate event duration bar height
+            const durationHeight = Math.abs(endTimePosition - position);
             
             return (
-              <Tooltip key={index}>
-                <TooltipTrigger asChild>
-                  <div
-                    className={cn(
-                      "absolute left-7.5 z-20 cursor-pointer transition-all duration-500",
-                      approaching ? "scale-110" : "",
-                      isCurrent ? "scale-125" : ""
-                    )}
-                    style={{ top: `${position}%` }}
-                    onClick={() => {
-                      if (event.id && onEventClick) {
-                        onEventClick(event.id);
-                      } else {
-                        setSelectedEvent(event);
-                      }
-                    }}
-                  >
-                    <div 
+              <React.Fragment key={index}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
                       className={cn(
-                        "flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500",
-                        approaching ? "w-5 h-5" : "w-4 h-4",
-                        isCurrent ? "animate-glow-3d" : ""
+                        "absolute left-7.5 z-20 cursor-pointer transition-all duration-500",
+                        approaching ? "scale-110" : "",
+                        isCurrent ? "scale-125" : ""
                       )}
-                      style={{ 
-                        backgroundColor: event.color ? `${event.color}22` : "#e8c28222",
-                        border: `1px solid ${event.color || "#e8c282"}`,
-                        boxShadow: isCurrent ? `0 0 8px 1px ${event.color || "#e8c282"}30` : "none"
+                      style={{ top: `${position}%` }}
+                      onClick={() => {
+                        if (event.id && onEventClick) {
+                          onEventClick(event.id);
+                        } else {
+                          setSelectedEvent(event);
+                        }
                       }}
                     >
-                      {event.icon ? (
-                        <span className={cn("transition-all", approaching ? "text-xs" : "text-[10px]")}>{event.icon}</span>
-                      ) : (
-                        <div 
-                          className={cn("rounded-full transition-all", approaching ? "w-1.5 h-1.5" : "w-1 h-1")} 
-                          style={{ backgroundColor: event.color || "#e8c282" }}
-                        />
+                      <div 
+                        className={cn(
+                          "flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500",
+                          approaching ? "w-5 h-5" : "w-4 h-4",
+                          isCurrent ? "animate-glow-3d" : ""
+                        )}
+                        style={{ 
+                          backgroundColor: event.color ? `${event.color}22` : "#e8c28222",
+                          border: `1px solid ${event.color || "#e8c282"}`,
+                          boxShadow: isCurrent ? `0 0 8px 1px ${event.color || "#e8c282"}30` : "none"
+                        }}
+                      >
+                        {event.icon ? (
+                          <span className={cn("transition-all", approaching ? "text-xs" : "text-[10px]")}>{event.icon}</span>
+                        ) : (
+                          <div 
+                            className={cn("rounded-full transition-all", approaching ? "w-1.5 h-1.5" : "w-1 h-1")} 
+                            style={{ backgroundColor: event.color || "#e8c282" }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-[#1a1f2c]/95 border border-[#e8c28220] p-2 max-w-xs backdrop-blur-lg shadow-lg">
+                    <div className="space-y-1">
+                      <p className="font-medium text-[#edd6ae]">{event.label}</p>
+                      <p className="text-sm text-[#e8c282]">{extractedTime}</p>
+                      {event.location && (
+                        <p className="text-xs text-[#e8c28288]">📍 {event.location}</p>
                       )}
                     </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="bg-[#1a1f2c]/95 border border-[#e8c28220] p-2 max-w-xs backdrop-blur-lg shadow-lg">
-                  <div className="space-y-1">
-                    <p className="font-medium text-[#edd6ae]">{event.label}</p>
-                    <p className="text-sm text-[#e8c282]">{extractedTime}</p>
-                    {event.location && (
-                      <p className="text-xs text-[#e8c28288]">📍 {event.location}</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                {/* Event duration line */}
+                {eventWithEndTime && eventWithEndTime.endTime && (
+                  <div 
+                    className={cn(
+                      "absolute left-7.5 z-10 w-[2px] opacity-30 rounded-full",
+                      isCurrent ? "bg-[#e8c282]" : `bg-[${event.color || "#e8c282"}]`
                     )}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+                    style={{ 
+                      top: `${position}%`,
+                      height: `${durationHeight}%`,
+                      backgroundColor: event.color || "#e8c282",
+                      opacity: isCurrent ? 0.5 : 0.2
+                    }}
+                  />
+                )}
+              </React.Fragment>
             );
           })}
         </div>
@@ -235,10 +308,12 @@ const VerticalTimelineProgress = ({
             <div className="space-y-2">
               {activeEvents.map((event) => {
                 // Check if current event
-                const isCurrent = events.find(e => 
-                  e.id === event.id && 
-                  isCurrentEvent(e.time)
-                );
+                const isCurrent = isCurrentEvent(event);
+                
+                // Find corresponding event with end time for duration calculation
+                const eventWithEndTime = eventsWithEndTimes.find(e => e.id === event.id);
+                const endTimeFormatted = eventWithEndTime?.endTime ? 
+                  format(eventWithEndTime.endTime, "h:mm a") : "";
                 
                 return (
                   <div
@@ -272,7 +347,10 @@ const VerticalTimelineProgress = ({
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
                           <div className="text-[#edd6ae] font-medium truncate">{event.label}</div>
-                          <div className="text-xs font-medium text-[#e8c28299] ml-1 whitespace-nowrap">{format(event.time, "h:mm a")}</div>
+                          <div className="text-xs font-medium text-[#e8c28299] ml-1 whitespace-nowrap">
+                            {format(event.time, "h:mm a")}
+                            {endTimeFormatted && ` - ${endTimeFormatted}`}
+                          </div>
                         </div>
                         <div className="text-xs text-[#e8c28277] truncate mt-0.5">
                           {event.location && <span>{event.location}</span>}

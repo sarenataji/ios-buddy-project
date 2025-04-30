@@ -78,8 +78,8 @@ const TimelineSection = ({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Current/Next Event Card - Enhanced with more prominent design */}
+    <div className="space-y-2 animate-fade-in">
+      {/* Current/Next Event Card */}
       <div className="p-5 bg-gradient-to-br from-[#1a1f2c]/95 to-[#1a1f2c]/80 rounded-xl border border-[#e8c28233] shadow-[0_4px_20px_0_#e8c28215] transition-all duration-300 hover:shadow-[0_4px_25px_0_#e8c28220]">
         {currentEvent ? (
           <div className="space-y-3">
@@ -119,8 +119,43 @@ const TimelineSection = ({
         )}
       </div>
       
+      {/* Timeline Dropdown Component - Now directly under the event card */}
+      <Collapsible 
+        open={isTimelineOpen} 
+        onOpenChange={setIsTimelineOpen} 
+        className="border border-[#e8c28222] rounded-xl overflow-hidden transition-all duration-300 bg-[#1a1f2c]/60"
+      >
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            className="w-full flex items-center justify-between p-4 text-[#e8c282] hover:bg-[#e8c28215] transition-all duration-200"
+          >
+            <span className="font-medium flex items-center gap-2">
+              <Clock size={16} className="opacity-70" />
+              Today's Timeline 
+            </span>
+            {isTimelineOpen ? (
+              <ChevronUp className="h-5 w-5 opacity-70 transition-transform duration-200" />
+            ) : (
+              <ChevronDown className="h-5 w-5 opacity-70 transition-transform duration-200" />
+            )}
+          </Button>
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent className="px-3 pb-3">
+          <div className={`transform transition-all duration-500 ease-in-out ${isTimelineOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+            <VerticalTimelineProgress 
+              currentTime={currentTime}
+              events={timelineEvents}
+              onEventClick={onEventSelect}
+              eventTimes={getEventTimes()}
+            />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+      
       {/* Today's Timeline Bar - Horizontal preview showing current position */}
-      <div className="h-3 bg-[#1a1f2c]/60 rounded-full overflow-hidden relative">
+      <div className="h-3 bg-[#1a1f2c]/60 rounded-full overflow-hidden relative mt-1">
         {activeEvents.length > 0 && (
           <>
             {/* Event markers on the horizontal timeline */}
@@ -158,41 +193,6 @@ const TimelineSection = ({
           </>
         )}
       </div>
-      
-      {/* Timeline Dropdown Component */}
-      <Collapsible 
-        open={isTimelineOpen} 
-        onOpenChange={setIsTimelineOpen} 
-        className="border border-[#e8c28222] rounded-xl overflow-hidden transition-all duration-300 bg-[#1a1f2c]/60"
-      >
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            className="w-full flex items-center justify-between p-4 text-[#e8c282] hover:bg-[#e8c28215] transition-all duration-200"
-          >
-            <span className="font-medium flex items-center gap-2">
-              <Clock size={16} className="opacity-70" />
-              Today's Timeline 
-            </span>
-            {isTimelineOpen ? (
-              <ChevronUp className="h-5 w-5 opacity-70 transition-transform duration-200" />
-            ) : (
-              <ChevronDown className="h-5 w-5 opacity-70 transition-transform duration-200" />
-            )}
-          </Button>
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent className="px-3 pb-3">
-          <div className={`transform transition-all duration-500 ease-in-out ${isTimelineOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-            <VerticalTimelineProgress 
-              currentTime={currentTime}
-              events={timelineEvents}
-              onEventClick={onEventSelect}
-              eventTimes={getEventTimes()}
-            />
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
     </div>
   );
 };
