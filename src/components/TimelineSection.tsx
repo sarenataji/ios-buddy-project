@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import VerticalTimelineProgress from "@/components/VerticalTimelineProgress";
@@ -76,8 +77,24 @@ const TimelineSection = ({
     return eventTimes.sort((a, b) => a.getTime() - b.getTime());
   };
 
+  // Transform timelineEvents to match Event type for utility functions
+  const transformEventForUtils = (event: typeof timelineEvents[0]): Event => {
+    return {
+      id: event.id,
+      time: event.time,
+      title: event.label,
+      description: event.description || "",
+      person: "",
+      color: event.color || "#e8c282",
+      completed: event.completed || false,
+      location: event.location,
+      icon: event.icon,
+      repeat: { enabled: false, days: [] }
+    };
+  };
+
   return (
-    <div className="space-y-2 animate-fade-in">
+    <div className="space-y-4 animate-fade-in">
       {/* Current/Next Event Card */}
       <div className="p-5 bg-gradient-to-br from-[#1a1f2c]/95 to-[#1a1f2c]/80 rounded-xl border border-[#e8c28233] shadow-[0_4px_20px_0_#e8c28215] transition-all duration-300 hover:shadow-[0_4px_25px_0_#e8c28220]">
         {currentEvent ? (
@@ -118,54 +135,19 @@ const TimelineSection = ({
         )}
       </div>
       
-      {/* Timeline Dropdown Component - Now directly under the event card */}
-      <Collapsible 
-        open={isTimelineOpen} 
-        onOpenChange={setIsTimelineOpen} 
-        className="border border-[#e8c28222] rounded-xl overflow-hidden transition-all duration-300 bg-[#1a1f2c]/60"
-      >
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            className="w-full flex items-center justify-between p-4 text-[#e8c282] hover:bg-[#e8c28215] transition-all duration-200"
-          >
-            <span className="font-medium flex items-center gap-2">
-              <Clock size={16} className="opacity-70" />
-              Today's Timeline 
-            </span>
-            {isTimelineOpen ? (
-              <ChevronUp className="h-5 w-5 opacity-70 transition-transform duration-200" />
-            ) : (
-              <ChevronDown className="h-5 w-5 opacity-70 transition-transform duration-200" />
-            )}
-          </Button>
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent className="px-3 pb-3">
-          <div className={`transform transition-all duration-500 ease-in-out ${isTimelineOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-            <VerticalTimelineProgress 
-              currentTime={currentTime}
-              events={timelineEvents}
-              onEventClick={onEventSelect}
-              eventTimes={getEventTimes()}
-            />
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-      
       {/* Today's Timeline Bar - Horizontal preview showing current position */}
-      <div className="h-3 bg-[#1a1f2c]/60 rounded-full overflow-hidden relative mt-1">
+      <div className="h-3 bg-[#1a1f2c]/60 rounded-full overflow-hidden relative">
         {activeEvents.length > 0 && (
           <>
             {/* Event markers on the horizontal timeline */}
             {activeEvents.map((event, idx) => {
               // Calculate event position as percentage
               const startTime = event.time;
-              const endTime = getEventEndTime(event);
+              const endTime = getEventEndTime(transformEventForUtils(event));
               
               // Create a custom time range that focuses just on the event times
               const earliestEvent = new Date(Math.min(...activeEvents.map(e => e.time.getTime())));
-              const latestEndTime = Math.max(...activeEvents.map(e => getEventEndTime(e).getTime()));
+              const latestEndTime = Math.max(...activeEvents.map(e => getEventEndTime(transformEventForUtils(e)).getTime()));
               
               // Calculate position based on event start time relative to the earliest event
               const totalTimeRange = latestEndTime - earliestEvent.getTime();
@@ -195,12 +177,47 @@ const TimelineSection = ({
               className="absolute h-full w-1 bg-white/50 z-10 animate-pulse-subtle"
               style={{ 
                 left: `${((currentTime.getTime() - Math.min(...activeEvents.map(e => e.time.getTime()))) / 
-                        (Math.max(...activeEvents.map(e => getEventEndTime(e).getTime())) - Math.min(...activeEvents.map(e => e.time.getTime())))) * 100}%` 
+                        (Math.max(...activeEvents.map(e => getEventEndTime(transformEventForUtils(e)).getTime())) - Math.min(...activeEvents.map(e => e.time.getTime())))) * 100}%` 
               }}
             />
           </>
         )}
       </div>
+      
+      {/* Timeline Dropdown Component - Now directly under the horizontal timeline bar */}
+      <Collapsible 
+        open={isTimelineOpen} 
+        onOpenChange={setIsTimelineOpen} 
+        className="border border-[#e8c28222] rounded-xl overflow-hidden transition-all duration-300 bg-[#1a1f2c]/60 mt-2"
+      >
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            className="w-full flex items-center justify-between p-4 text-[#e8c282] hover:bg-[#e8c28215] transition-all duration-200"
+          >
+            <span className="font-medium flex items-center gap-2">
+              <Clock size={16} className="opacity-70" />
+              Today's Timeline 
+            </span>
+            {isTimelineOpen ? (
+              <ChevronUp className="h-5 w-5 opacity-70 transition-transform duration-200" />
+            ) : (
+              <ChevronDown className="h-5 w-5 opacity-70 transition-transform duration-200" />
+            )}
+          </Button>
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent className="px-3 pb-3">
+          <div className={`transform transition-all duration-500 ease-in-out ${isTimelineOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+            <VerticalTimelineProgress 
+              currentTime={currentTime}
+              events={timelineEvents}
+              onEventClick={onEventSelect}
+              eventTimes={getEventTimes()}
+            />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 };
