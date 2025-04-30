@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import VerticalTimelineProgress from "@/components/VerticalTimelineProgress";
@@ -37,7 +36,7 @@ const TimelineSection = ({
   // Filter active events for timeline
   const activeEvents = timelineEvents.filter(event => !event.completed);
   
-  // Get event times for the timeline
+  // Get event times for the timeline - only the relevant start and end times
   const getEventTimes = () => {
     if (activeEvents.length === 0) return [];
     
@@ -161,14 +160,20 @@ const TimelineSection = ({
             {/* Event markers on the horizontal timeline */}
             {activeEvents.map((event, idx) => {
               // Calculate event position as percentage
-              const startOfDay = new Date(currentTime);
-              startOfDay.setHours(6, 0, 0, 0);
+              const startTime = event.time;
+              const endTime = getEventEndTime(event);
               
-              const endOfDay = new Date(currentTime);
-              endOfDay.setHours(23, 59, 59, 999);
+              // Create a custom time range that focuses just on the event times
+              const earliestEvent = new Date(Math.min(...activeEvents.map(e => e.time.getTime())));
+              const latestEndTime = Math.max(...activeEvents.map(e => getEventEndTime(e).getTime()));
               
-              const totalDayDuration = endOfDay.getTime() - startOfDay.getTime();
-              const eventPosition = ((event.time.getTime() - startOfDay.getTime()) / totalDayDuration) * 100;
+              // Calculate position based on event start time relative to the earliest event
+              const totalTimeRange = latestEndTime - earliestEvent.getTime();
+              const eventPosition = ((startTime.getTime() - earliestEvent.getTime()) / totalTimeRange) * 100;
+              
+              // Calculate event duration width
+              const eventEndPosition = ((endTime.getTime() - earliestEvent.getTime()) / totalTimeRange) * 100;
+              const eventWidth = eventEndPosition - eventPosition;
               
               // Determine if this event is current
               const isCurrent = currentEvent && currentEvent.id === event.id;
@@ -176,8 +181,11 @@ const TimelineSection = ({
               return (
                 <div
                   key={`timeline-marker-${idx}`}
-                  className={`absolute w-2 h-full ${isCurrent ? 'bg-[#e8c282]' : 'bg-[#e8c28244]'}`}
-                  style={{ left: `${Math.max(0, Math.min(100, eventPosition))}%` }}
+                  className={`absolute h-full ${isCurrent ? 'bg-[#e8c282]' : 'bg-[#e8c28244]'}`}
+                  style={{ 
+                    left: `${Math.max(0, Math.min(100, eventPosition))}%`,
+                    width: `${Math.max(2, Math.min(100, eventWidth))}%`
+                  }}
                 />
               );
             })}
@@ -186,8 +194,8 @@ const TimelineSection = ({
             <div 
               className="absolute h-full w-1 bg-white/50 z-10 animate-pulse-subtle"
               style={{ 
-                left: `${((currentTime.getTime() - new Date(currentTime).setHours(6, 0, 0, 0)) / 
-                        (new Date(currentTime).setHours(23, 59, 59, 999) - new Date(currentTime).setHours(6, 0, 0, 0))) * 100}%` 
+                left: `${((currentTime.getTime() - Math.min(...activeEvents.map(e => e.time.getTime()))) / 
+                        (Math.max(...activeEvents.map(e => getEventEndTime(e).getTime())) - Math.min(...activeEvents.map(e => e.time.getTime())))) * 100}%` 
               }}
             />
           </>

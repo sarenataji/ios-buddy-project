@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -94,9 +93,9 @@ const VerticalTimelineProgress = ({
   const timelineHours = useMemo(() => {
     // If no events, show default timeline hours
     if (activeEvents.length === 0) {
-      return Array.from({ length: 7 }, (_, i) => {
+      return Array.from({ length: 2 }, (_, i) => {
         const hour = new Date(currentTime);
-        hour.setHours(6 + (i * 3), 0, 0, 0);
+        hour.setHours(currentTime.getHours() + i, 0, 0, 0);
         return hour;
       });
     }
@@ -127,7 +126,7 @@ const VerticalTimelineProgress = ({
       return new Date(Math.min(...timelineHours.map(d => d.getTime())));
     }
     const date = new Date(currentTime);
-    date.setHours(6, 0, 0, 0);
+    date.setHours(currentTime.getHours(), 0, 0, 0);
     return date;
   }, [timelineHours, currentTime]);
   
@@ -136,7 +135,7 @@ const VerticalTimelineProgress = ({
       return new Date(Math.max(...timelineHours.map(d => d.getTime())));
     }
     const date = new Date(currentTime);
-    date.setHours(23, 59, 59, 999);
+    date.setHours(currentTime.getHours() + 1, 0, 0, 0);
     return date;
   }, [timelineHours, currentTime]);
   
