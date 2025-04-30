@@ -31,35 +31,42 @@ const TimelineSection = ({
   onEventSelect
 }: TimelineSectionProps) => {
   return (
-    <>
-      <div className="mb-6 p-4 bg-gradient-to-br from-[#1a1f2c]/90 to-[#1a1f2c]/70 rounded-xl border border-[#e8c28222] shadow-[0_4px_20px_0_#e8c28210]">
+    <div className="space-y-6 animate-fade-in">
+      {/* Current/Next Event Card - Refined minimal design */}
+      <div className="p-4 bg-gradient-to-br from-[#1a1f2c]/90 to-[#1a1f2c]/70 rounded-xl border border-[#e8c28222] shadow-[0_4px_20px_0_#e8c28210] transition-all duration-300 hover:shadow-[0_4px_25px_0_#e8c28218]">
         {currentEvent ? (
-          <>
-            <div className="text-[#e8c282] text-sm mb-1.5">
-              <span className="font-medium">Current Event:</span> {currentEvent.title}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[#e8c282] opacity-70">{currentEvent.icon || '▶️'}</span>
+              <h3 className="text-[#e8c282] font-medium">{currentEvent.title}</h3>
             </div>
             <CountdownTimer targetDate={getEventEndTime(currentEvent)} />
-          </>
+          </div>
         ) : nextEvent ? (
-          <>
-            <div className="text-[#e8c282] text-sm mb-1.5">
-              <span className="font-medium">Next Event:</span> {nextEvent.title}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[#e8c282] opacity-70">{nextEvent.icon || '⏱️'}</span>
+              <h3 className="text-[#e8c282] font-medium">Next: {nextEvent.title}</h3>
             </div>
             <CountdownTimer targetDate={new Date(nextEvent.time)} />
-          </>
+          </div>
         ) : (
-          <div className="text-[#e8c282] text-center py-2.5 font-light">
-            No upcoming events {isToday(currentTime) ? "today" : "on this day"}
+          <div className="flex items-center justify-center gap-2 py-3 text-[#e8c282] opacity-80">
+            <Clock size={16} className="opacity-60" />
+            <span className="font-light">No events {isToday(currentTime) ? "today" : "on this day"}</span>
           </div>
         )}
       </div>
       
-      <VerticalTimelineProgress 
-        currentTime={currentTime}
-        events={timelineEvents}
-        onEventClick={onEventSelect} // Fixed: Changed onEventSelect to onEventClick to match component props
-      />
-    </>
+      {/* Timeline Component - Now more prominent */}
+      <div className="transform transition-all duration-500 ease-in-out">
+        <VerticalTimelineProgress 
+          currentTime={currentTime}
+          events={timelineEvents}
+          onEventClick={onEventSelect}
+        />
+      </div>
+    </div>
   );
 };
 

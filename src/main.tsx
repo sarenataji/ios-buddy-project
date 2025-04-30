@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Set dark theme class on document before any rendering
+document.documentElement.classList.add('dark');
+document.body.style.backgroundColor = '#121212';
+
 const renderApp = () => {
   const rootElement = document.getElementById("root");
   
@@ -10,10 +14,18 @@ const renderApp = () => {
     console.error("Root element not found! Creating one...");
     const newRoot = document.createElement("div");
     newRoot.id = "root";
+    newRoot.style.backgroundColor = "#121212";
     document.body.appendChild(newRoot);
   }
   
   try {
+    // Make sure root element has dark background
+    const root = document.getElementById("root");
+    if (root) {
+      root.style.backgroundColor = "#121212";
+    }
+    
+    // Render app
     createRoot(document.getElementById("root")!).render(
       <App />
     );
@@ -48,6 +60,16 @@ const renderApp = () => {
     }
   }
 };
+
+// Insert a style tag to immediately set dark background
+const styleTag = document.createElement('style');
+styleTag.textContent = `
+  html, body, #root {
+    background-color: #121212 !important;
+    min-height: 100vh;
+  }
+`;
+document.head.appendChild(styleTag);
 
 // Ensure the container exists before rendering
 document.addEventListener('DOMContentLoaded', renderApp);
