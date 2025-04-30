@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -76,7 +76,7 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
   };
   
   const timelineHours = [];
-  for (let i = 6; i <= 23; i += 2) {
+  for (let i = 6; i <= 23; i += 3) {
     const hourDate = new Date(currentTime);
     hourDate.setHours(i, 0, 0, 0);
     timelineHours.push(hourDate);
@@ -125,36 +125,40 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
   
   return (
     <TooltipProvider>
-      <div className="flex gap-3 mb-6">
-        {/* Vertical time bar */}
-        <div className="relative min-w-12 w-12 flex flex-col justify-between h-[500px] py-2">
+      <div className="flex gap-4 mb-8">
+        {/* Vertical time bar - simplified and cleaner */}
+        <div className="relative min-w-10 w-10 flex flex-col justify-between h-[400px] py-2">
+          {/* Vertical timeline line */}
+          <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#e8c28222] via-[#e8c28244] to-[#e8c28222]"></div>
+          
+          {/* Time markers with cleaner format */}
           {timelineHours.map((hour, index) => (
-            <div key={index} className="text-[#e8c282aa] text-xs flex items-center">
-              <div className="h-0.5 w-1.5 bg-[#e8c28244] mr-1"></div>
+            <div 
+              key={index} 
+              className="relative text-[#e8c282aa] text-xs flex items-center"
+              style={{ top: `${(index / (timelineHours.length - 1)) * 100}%` }}
+            >
+              <div className="h-[1px] w-2 bg-[#e8c28233] mr-1"></div>
               {formatHour(hour)}
             </div>
           ))}
           
-          {/* Vertical timeline line */}
-          <div className="absolute right-4 top-0 bottom-0 w-0.5 bg-[#e8c28233]"></div>
-          
-          {/* Current time indicator */}
+          {/* Current time indicator - cleaner design */}
           <div 
-            className="absolute right-0 flex items-center z-30"
+            className="absolute left-0 flex items-center z-30"
             style={{ top: `${currentPosition}%` }}
           >
-            <div className="bg-[#e8c282] text-[#1a1f2c] px-2 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md -translate-y-1/2">
+            <div className="bg-[#e8c282] text-[#1a1f2c] px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 shadow-lg -translate-y-1/2">
               <Clock size={10} />
               {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
-            <div className="w-5 h-0.5 bg-[#e8c282] opacity-70"></div>
+            <div className="w-3 h-[2px] bg-[#e8c282]"></div>
           </div>
           
-          {/* Event markers */}
+          {/* Event markers with cleaner positioning */}
           {activeEvents.map((event, index) => {
             const position = calculateEventPosition(event.time);
             const extractedTime = format(event.time, "h:mm a");
-            const description = event.description || "";
             const approaching = isEventApproaching(event.time);
             const isCurrent = isCurrentEvent(event.time);
             
@@ -162,11 +166,11 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <div
-                    className="absolute right-4 z-10 cursor-pointer"
+                    className="absolute left-3.5 z-20 cursor-pointer"
                     style={{ top: `${position}%` }}
                     onClick={() => {
                       if (event.id && onEventClick) {
-                        setSelectedEvent(event);
+                        onEventClick(event.id);
                       } else {
                         setSelectedEvent(event);
                       }
@@ -174,33 +178,33 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
                   >
                     <div 
                       className={cn(
-                        "flex items-center justify-center transform translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300",
-                        approaching ? "w-7 h-7 animate-pulse-subtle" : "w-5 h-5",
+                        "flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300",
+                        approaching ? "w-6 h-6 animate-pulse-subtle" : "w-5 h-5",
                         isCurrent ? "animate-glow-3d" : ""
                       )}
                       style={{ 
                         backgroundColor: event.color ? `${event.color}33` : "#e8c28233",
                         border: `2px solid ${event.color || "#e8c282"}`,
-                        boxShadow: isCurrent ? `0 0 10px 2px ${event.color || "#8B5CF6"}` : "none"
+                        boxShadow: isCurrent ? `0 0 10px 2px ${event.color || "#8B5CF6"}30` : "none"
                       }}
                     >
                       {event.icon ? (
-                        <span className={cn("transition-all", approaching ? "text-xs" : "text-[9px]")}>{event.icon}</span>
+                        <span className={cn("transition-all", approaching ? "text-xs" : "text-[10px]")}>{event.icon}</span>
                       ) : (
                         <div 
-                          className={cn("rounded-full transition-all", approaching ? "w-2.5 h-2.5" : "w-1.5 h-1.5")} 
+                          className={cn("rounded-full transition-all", approaching ? "w-2 h-2" : "w-1.5 h-1.5")} 
                           style={{ backgroundColor: event.color || "#e8c282" }}
                         />
                       )}
                     </div>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className="bg-[#1a1f2c] border border-[#e8c28233] p-3 max-w-xs">
+                <TooltipContent className="bg-[#1a1f2c] border border-[#e8c28233] p-2.5 max-w-xs">
                   <div className="space-y-1">
                     <p className="font-medium text-[#edd6ae]">{event.label}</p>
-                    <p className="text-sm text-[#e8c282]">{extractedTime} {event.description}</p>
+                    <p className="text-sm text-[#e8c282]">{extractedTime}</p>
                     {event.location && (
-                      <p className="text-sm text-[#e8c282aa]">📍 {event.location}</p>
+                      <p className="text-xs text-[#e8c282aa]">📍 {event.location}</p>
                     )}
                   </div>
                 </TooltipContent>
@@ -209,16 +213,16 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
           })}
         </div>
         
-        {/* Events list section */}
+        {/* Events list section - cleaner card design */}
         <div className="flex-1 relative">
-          <ScrollArea className="h-[500px] pr-4">
-            <div className="space-y-2">
+          <ScrollArea className="h-[400px] pr-4">
+            <div className="space-y-2.5">
               {activeEvents.map((event) => (
                 <div
                   key={`timeline-event-${event.id}`}
                   className={cn(
-                    "bg-[#1a1f2c]/60 border border-[#e8c28222] rounded-md p-3 cursor-pointer hover:bg-[#1a1f2c]/80 transition-colors",
-                    isCurrentEvent(event.time) ? "ring-2 ring-[#8B5CF6]/50 shadow-[0_0_10px_rgba(139,92,246,0.3)]" : ""
+                    "bg-[#1a1f2c]/70 border border-[#e8c28215] rounded-xl p-3.5 cursor-pointer hover:bg-[#1a1f2c]/90 transition-colors",
+                    isCurrentEvent(event.time) ? "ring-1 ring-[#e8c282]/30 shadow-[0_0_15px_rgba(232,194,130,0.15)]" : ""
                   )}
                   onClick={() => {
                     if (event.id && onEventClick) {
@@ -229,24 +233,26 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
                   }}
                 >
                   <div className="flex gap-3 items-center">
-                    {event.icon && (
-                      <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: event.color ? `${event.color}33` : "#e8c28233" }}
-                      >
-                        <span>{event.icon}</span>
+                    <div 
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: event.color ? `${event.color}22` : "#e8c28222" }}
+                    >
+                      {event.icon ? (
+                        <span className="text-lg">{event.icon}</span>
+                      ) : (
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: event.color || "#e8c282" }}
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <div className="text-[#edd6ae] font-medium">{event.label}</div>
+                        <div className="text-xs font-medium text-[#e8c282]">{format(event.time, "h:mm a")}</div>
                       </div>
-                    )}
-                    <div>
-                      <div className="text-[#edd6ae] font-medium">{event.label}</div>
-                      <div className="text-xs text-[#e8c282aa] flex flex-wrap gap-1.5 items-center">
-                        <span>{format(event.time, "h:mm a")}</span>
-                        {event.location && (
-                          <>
-                            <span>•</span>
-                            <span>{event.location}</span>
-                          </>
-                        )}
+                      <div className="text-xs text-[#e8c282aa] flex flex-wrap gap-1.5 items-center mt-0.5">
+                        {event.location && <span>{event.location}</span>}
                       </div>
                     </div>
                   </div>
@@ -254,7 +260,7 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
               ))}
               
               {activeEvents.length === 0 && (
-                <div className="text-[#e8c282aa] text-center py-8 border border-dashed border-[#e8c28222] rounded-md">
+                <div className="text-[#e8c282aa] text-center py-8 border border-dashed border-[#e8c28222] rounded-xl">
                   No events scheduled
                 </div>
               )}

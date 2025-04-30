@@ -32,30 +32,32 @@ const TimelineSection = ({
 }: TimelineSectionProps) => {
   return (
     <>
-      <div className="mb-6 p-4 bg-[#1a1f2c]/80 rounded-lg border border-[#e8c28233] shadow-[0_4px_15px_0_#e8c28215]">
+      <div className="mb-6 p-4 bg-gradient-to-br from-[#1a1f2c]/90 to-[#1a1f2c]/70 rounded-xl border border-[#e8c28222] shadow-[0_4px_20px_0_#e8c28210]">
         {currentEvent ? (
           <>
-            <div className="text-[#e8c282] text-sm mb-2">
+            <div className="text-[#e8c282] text-sm mb-1.5">
               <span className="font-medium">Current Event:</span> {currentEvent.title}
             </div>
             <CountdownTimer targetDate={getEventEndTime(currentEvent)} />
           </>
         ) : nextEvent ? (
           <>
-            <div className="text-[#e8c282] text-sm mb-2">
+            <div className="text-[#e8c282] text-sm mb-1.5">
               <span className="font-medium">Next Event:</span> {nextEvent.title}
             </div>
             <CountdownTimer targetDate={new Date(nextEvent.time)} />
           </>
         ) : (
-          <div className="text-[#e8c282] text-center py-2">No upcoming events {isToday(currentTime) ? "today" : "on this day"}</div>
+          <div className="text-[#e8c282] text-center py-2.5 font-light">
+            No upcoming events {isToday(currentTime) ? "today" : "on this day"}
+          </div>
         )}
       </div>
       
       <VerticalTimelineProgress 
         currentTime={currentTime}
         events={timelineEvents}
-        onEventClick={onEventSelect}
+        onEventSelect={onEventSelect}
       />
     </>
   );
