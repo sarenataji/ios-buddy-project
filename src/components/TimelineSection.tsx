@@ -34,6 +34,49 @@ const TimelineSection = ({
 }: TimelineSectionProps) => {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
 
+  // Filter active events for timeline
+  const activeEvents = timelineEvents.filter(event => !event.completed);
+  
+  // Get event times for the timeline
+  const getEventTimes = () => {
+    if (activeEvents.length === 0) return [];
+    
+    // Extract all event times from active events
+    const eventTimes: Date[] = [];
+    activeEvents.forEach(event => {
+      // Add start time
+      eventTimes.push(new Date(event.time));
+      
+      // Try to extract end time
+      if (event.description) {
+        const parts = event.description.split(" - ");
+        if (parts.length === 2) {
+          const endTimePart = parts[1];
+          const [hours, minutesWithAmPm] = endTimePart.split(":");
+          if (hours && minutesWithAmPm) {
+            const minutes = minutesWithAmPm.substring(0, 2);
+            const ampm = minutesWithAmPm.substring(2).trim();
+            
+            let hourNum = parseInt(hours);
+            const minuteNum = parseInt(minutes);
+            
+            if (ampm.toLowerCase() === "pm" && hourNum < 12) hourNum += 12;
+            if (ampm.toLowerCase() === "am" && hourNum === 12) hourNum = 0;
+            
+            const endTime = new Date(event.time);
+            endTime.setHours(hourNum, minuteNum, 0, 0);
+            
+            // Add end time
+            eventTimes.push(endTime);
+          }
+        }
+      }
+    });
+    
+    // Sort times chronologically
+    return eventTimes.sort((a, b) => a.getTime() - b.getTime());
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Current/Next Event Card - Enhanced with more prominent design */}
@@ -76,6 +119,46 @@ const TimelineSection = ({
         )}
       </div>
       
+      {/* Today's Timeline Bar - Horizontal preview showing current position */}
+      <div className="h-3 bg-[#1a1f2c]/60 rounded-full overflow-hidden relative">
+        {activeEvents.length > 0 && (
+          <>
+            {/* Event markers on the horizontal timeline */}
+            {activeEvents.map((event, idx) => {
+              // Calculate event position as percentage
+              const startOfDay = new Date(currentTime);
+              startOfDay.setHours(6, 0, 0, 0);
+              
+              const endOfDay = new Date(currentTime);
+              endOfDay.setHours(23, 59, 59, 999);
+              
+              const totalDayDuration = endOfDay.getTime() - startOfDay.getTime();
+              const eventPosition = ((event.time.getTime() - startOfDay.getTime()) / totalDayDuration) * 100;
+              
+              // Determine if this event is current
+              const isCurrent = currentEvent && currentEvent.id === event.id;
+              
+              return (
+                <div
+                  key={`timeline-marker-${idx}`}
+                  className={`absolute w-2 h-full ${isCurrent ? 'bg-[#e8c282]' : 'bg-[#e8c28244]'}`}
+                  style={{ left: `${Math.max(0, Math.min(100, eventPosition))}%` }}
+                />
+              );
+            })}
+            
+            {/* Current time indicator */}
+            <div 
+              className="absolute h-full w-1 bg-white/50 z-10 animate-pulse-subtle"
+              style={{ 
+                left: `${((currentTime.getTime() - new Date(currentTime).setHours(6, 0, 0, 0)) / 
+                        (new Date(currentTime).setHours(23, 59, 59, 999) - new Date(currentTime).setHours(6, 0, 0, 0))) * 100}%` 
+              }}
+            />
+          </>
+        )}
+      </div>
+      
       {/* Timeline Dropdown Component */}
       <Collapsible 
         open={isTimelineOpen} 
@@ -105,6 +188,7 @@ const TimelineSection = ({
               currentTime={currentTime}
               events={timelineEvents}
               onEventClick={onEventSelect}
+              eventTimes={getEventTimes()}
             />
           </div>
         </CollapsibleContent>

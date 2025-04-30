@@ -32,9 +32,15 @@ interface VerticalTimelineProgressProps {
   currentTime: Date;
   events: TimelineEvent[];
   onEventClick?: (eventId: number) => void;
+  eventTimes?: Date[]; // New prop for custom time markers
 }
 
-const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: VerticalTimelineProgressProps) => {
+const VerticalTimelineProgress = ({ 
+  currentTime, 
+  events, 
+  onEventClick,
+  eventTimes 
+}: VerticalTimelineProgressProps) => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   
   const sortedEvents = [...events].sort((a, b) => a.time.getTime() - b.time.getTime());
@@ -42,11 +48,24 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
   // Filter out completed events from timeline display
   const activeEvents = sortedEvents.filter(event => !event.completed);
   
+  // Use custom time boundaries if provided, otherwise default to 6am-midnight
   const startOfDay = new Date(currentTime);
   startOfDay.setHours(6, 0, 0, 0);
   
   const endOfDay = new Date(currentTime);
   endOfDay.setHours(23, 59, 59, 999);
+  
+  // Use provided event times or generate default time markers
+  const timelineHours = eventTimes && eventTimes.length > 0 
+    ? eventTimes 
+    : Array.from({ length: 7 }, (_, i) => {
+        const hour = new Date(currentTime);
+        hour.setHours(6 + (i * 3), 0, 0, 0);
+        return hour;
+      });
+  
+  // Sort time markers
+  const sortedTimelineHours = [...timelineHours].sort((a, b) => a.getTime() - b.getTime());
   
   const totalDayDuration = endOfDay.getTime() - startOfDay.getTime();
   const currentPosition = Math.max(
@@ -68,19 +87,8 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
   };
   
   const formatHour = (date: Date) => {
-    let hours = date.getHours();
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    return `${hours}${ampm}`;
+    return format(date, "h:mma");
   };
-  
-  const timelineHours = [];
-  for (let i = 6; i <= 23; i += 3) {
-    const hourDate = new Date(currentTime);
-    hourDate.setHours(i, 0, 0, 0);
-    timelineHours.push(hourDate);
-  }
 
   const isEventApproaching = (eventTime: Date) => {
     const timeDiff = eventTime.getTime() - currentTime.getTime();
@@ -114,7 +122,7 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
       return endTime;
     };
     
-    const event = events.find(e => e.time === eventTime);
+    const event = events.find(e => e.time.getTime() === eventTime.getTime());
     if (!event) return false;
     
     const endTime = getEventEndTime(event);
@@ -127,16 +135,20 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
     <TooltipProvider>
       <div className="flex gap-4 mb-8">
         {/* Vertical time bar - elegant and minimal */}
-        <div className="relative min-w-10 w-10 flex flex-col justify-between h-[400px] py-2">
+        <div className="relative min-w-16 w-16 flex flex-col justify-between h-[400px] py-2">
           {/* Vertical timeline line - more subtle gradient */}
-          <div className="absolute left-4 top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#e8c28215] via-[#e8c28235] to-[#e8c28215]"></div>
+          <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#e8c28215] via-[#e8c28235] to-[#e8c28215]"></div>
           
-          {/* Time markers - minimal and elegant */}
-          {timelineHours.map((hour, index) => (
+          {/* Time markers - aligned with events */}
+          {sortedTimelineHours.map((hour, index) => (
             <div 
               key={index} 
               className="relative text-[#e8c28288] text-xs flex items-center"
-              style={{ top: `${(index / (timelineHours.length - 1)) * 100}%` }}
+              style={{ 
+                position: 'absolute',
+                top: `${calculateEventPosition(hour)}%`,
+                transform: 'translateY(-50%)'
+              }}
             >
               <div className="h-[1px] w-2 bg-[#e8c28222] mr-1"></div>
               {formatHour(hour)}
@@ -167,7 +179,7 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
                 <TooltipTrigger asChild>
                   <div
                     className={cn(
-                      "absolute left-3.5 z-20 cursor-pointer transition-all duration-500",
+                      "absolute left-7.5 z-20 cursor-pointer transition-all duration-500",
                       approaching ? "scale-110" : "",
                       isCurrent ? "scale-125" : ""
                     )}
@@ -221,47 +233,55 @@ const VerticalTimelineProgress = ({ currentTime, events, onEventClick }: Vertica
         <div className="flex-1 relative">
           <ScrollArea className="h-[400px] pr-4 scrollbar-none">
             <div className="space-y-2">
-              {activeEvents.map((event) => (
-                <div
-                  key={`timeline-event-${event.id}`}
-                  className={cn(
-                    "bg-[#1a1f2c]/60 backdrop-blur-sm border border-[#e8c28215] rounded-lg p-3 cursor-pointer hover:bg-[#1a1f2c]/80 transition-all duration-300 hover:shadow-[0_2px_10px_rgba(232,194,130,0.08)]",
-                    isCurrentEvent(event.time) ? "ring-1 ring-[#e8c282]/20 shadow-[0_0_12px_rgba(232,194,130,0.12)]" : ""
-                  )}
-                  onClick={() => {
-                    if (event.id && onEventClick) {
-                      onEventClick(event.id);
-                    } else {
-                      setSelectedEvent(event);
-                    }
-                  }}
-                >
-                  <div className="flex gap-3 items-center">
-                    <div 
-                      className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300"
-                      style={{ backgroundColor: event.color ? `${event.color}18` : "#e8c28218" }}
-                    >
-                      {event.icon ? (
-                        <span className="text-base">{event.icon}</span>
-                      ) : (
-                        <div 
-                          className="w-2.5 h-2.5 rounded-full" 
-                          style={{ backgroundColor: event.color || "#e8c282" }}
-                        />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center">
-                        <div className="text-[#edd6ae] font-medium truncate">{event.label}</div>
-                        <div className="text-xs font-medium text-[#e8c28299] ml-1 whitespace-nowrap">{format(event.time, "h:mm a")}</div>
+              {activeEvents.map((event) => {
+                // Check if current event
+                const isCurrent = events.find(e => 
+                  e.id === event.id && 
+                  isCurrentEvent(e.time)
+                );
+                
+                return (
+                  <div
+                    key={`timeline-event-${event.id}`}
+                    className={cn(
+                      "bg-[#1a1f2c]/60 backdrop-blur-sm border border-[#e8c28215] rounded-lg p-3 cursor-pointer hover:bg-[#1a1f2c]/80 transition-all duration-300 hover:shadow-[0_2px_10px_rgba(232,194,130,0.08)]",
+                      isCurrent ? "ring-1 ring-[#e8c282]/20 shadow-[0_0_12px_rgba(232,194,130,0.12)]" : ""
+                    )}
+                    onClick={() => {
+                      if (event.id && onEventClick) {
+                        onEventClick(event.id);
+                      } else {
+                        setSelectedEvent(event);
+                      }
+                    }}
+                  >
+                    <div className="flex gap-3 items-center">
+                      <div 
+                        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300"
+                        style={{ backgroundColor: event.color ? `${event.color}18` : "#e8c28218" }}
+                      >
+                        {event.icon ? (
+                          <span className="text-base">{event.icon}</span>
+                        ) : (
+                          <div 
+                            className="w-2.5 h-2.5 rounded-full" 
+                            style={{ backgroundColor: event.color || "#e8c282" }}
+                          />
+                        )}
                       </div>
-                      <div className="text-xs text-[#e8c28277] truncate mt-0.5">
-                        {event.location && <span>{event.location}</span>}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center">
+                          <div className="text-[#edd6ae] font-medium truncate">{event.label}</div>
+                          <div className="text-xs font-medium text-[#e8c28299] ml-1 whitespace-nowrap">{format(event.time, "h:mm a")}</div>
+                        </div>
+                        <div className="text-xs text-[#e8c28277] truncate mt-0.5">
+                          {event.location && <span>{event.location}</span>}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               
               {activeEvents.length === 0 && (
                 <div className="text-[#e8c28277] text-center py-8 border border-dashed border-[#e8c28218] rounded-lg transition-all duration-300">
