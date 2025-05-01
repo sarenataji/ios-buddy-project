@@ -125,7 +125,7 @@ const EventListSection = ({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 mt-2">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-[#e8c282] font-serif text-lg">Upcoming Events</h2>
         

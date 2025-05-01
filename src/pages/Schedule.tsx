@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
@@ -422,8 +423,8 @@ const Schedule = () => {
           currentEvent={currentEvent}
         />
         
-        {/* Today's Timeline Dropdown Component - Now placed after EventListSection */}
-        <div className="mt-6 mb-4">
+        {/* Today's Timeline Dropdown Component - Now placed after EventListSection with proper spacing */}
+        <div className="mt-8 mb-4">
           <Collapsible 
             open={isTimelineOpen} 
             onOpenChange={setIsTimelineOpen} 
