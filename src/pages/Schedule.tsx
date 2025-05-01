@@ -81,6 +81,13 @@ const Schedule = () => {
   const { toast } = useToast();
   const timelineRef = useRef<HTMLDivElement>(null);
   
+  // Get events for the current date
+  const dateEvents = getEventsForDate(currentDate);
+  // Check if there are any events for the current date
+  const hasEvents = dateEvents.length > 0;
+  // Check if all events for the current date are completed
+  const hasCompletedAllEvents = allEventsCompletedForDate(currentDate);
+  
   useEffect(() => {
     if (!sampleEventsAdded && events.length < 15) {
       SAMPLE_EVENTS.forEach(sampleEvent => {
@@ -254,10 +261,6 @@ const Schedule = () => {
     return eventTimes.sort((a, b) => a.getTime() - b.getTime());
   };
 
-  const hasCompletedAllEvents = allEventsCompletedForDate(currentDate);
-  const dateEvents = getEventsForDate(currentDate);
-  const hasEvents = dateEvents.length > 0;
-  
   const completedEvents = dateEvents.filter(event => event.completed);
   const activeEvents = dateEvents.filter(event => !event.completed);
   
