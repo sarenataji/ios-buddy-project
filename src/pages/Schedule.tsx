@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { format, isToday, addDays } from "date-fns";
-import { Clock } from "lucide-react";
+import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { useSchedule } from "@/contexts/ScheduleContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -21,6 +20,8 @@ import {
   type Event 
 } from "@/utils/eventUtils";
 import { SAMPLE_EVENTS } from "@/utils/scheduleConstants";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import VerticalTimelineProgress from "@/components/VerticalTimelineProgress";
 
 // Define a type for the event form data
 interface EventFormData {
@@ -61,6 +62,7 @@ const Schedule = () => {
   const [isAddEventSheetOpen, setIsAddEventSheetOpen] = useState(false);
   const [showCongratsAnimation, setShowCongratsAnimation] = useState(false);
   const [sampleEventsAdded, setSampleEventsAdded] = useState(false);
+  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   
   const [newEvent, setNewEvent] = useState<EventFormData>({
     title: "",
@@ -78,10 +80,6 @@ const Schedule = () => {
   
   const { toast } = useToast();
   const timelineRef = useRef<HTMLDivElement>(null);
-  
-  const hasCompletedAllEvents = allEventsCompletedForDate(currentDate);
-  const dateEvents = getEventsForDate(currentDate);
-  const hasEvents = dateEvents.length > 0;
   
   useEffect(() => {
     if (!sampleEventsAdded && events.length < 15) {
@@ -214,6 +212,51 @@ const Schedule = () => {
       });
     }
   };
+  
+  // Get event times for the timeline - migrated from TimelineSection component
+  const getEventTimes = () => {
+    const activeEvents = timelineEvents.filter(event => !event.completed);
+    if (activeEvents.length === 0) return [];
+    
+    // Extract all event times from active events
+    const eventTimes: Date[] = [];
+    activeEvents.forEach(event => {
+      // Add start time
+      eventTimes.push(new Date(event.time));
+      
+      // Try to extract end time
+      if (event.description) {
+        const parts = event.description.split(" - ");
+        if (parts.length === 2) {
+          const endTimePart = parts[1];
+          const [hours, minutesWithAmPm] = endTimePart.split(":");
+          if (hours && minutesWithAmPm) {
+            const minutes = minutesWithAmPm.substring(0, 2);
+            const ampm = minutesWithAmPm.substring(2).trim();
+            
+            let hourNum = parseInt(hours);
+            const minuteNum = parseInt(minutes);
+            
+            if (ampm.toLowerCase() === "pm" && hourNum < 12) hourNum += 12;
+            if (ampm.toLowerCase() === "am" && hourNum === 12) hourNum = 0;
+            
+            const endTime = new Date(event.time);
+            endTime.setHours(hourNum, minuteNum, 0, 0);
+            
+            // Add end time
+            eventTimes.push(endTime);
+          }
+        }
+      }
+    });
+    
+    // Sort times chronologically
+    return eventTimes.sort((a, b) => a.getTime() - b.getTime());
+  };
+
+  const hasCompletedAllEvents = allEventsCompletedForDate(currentDate);
+  const dateEvents = getEventsForDate(currentDate);
+  const hasEvents = dateEvents.length > 0;
   
   const completedEvents = dateEvents.filter(event => event.completed);
   const activeEvents = dateEvents.filter(event => !event.completed);
@@ -375,6 +418,43 @@ const Schedule = () => {
           onEventComplete={toggleEventCompletion}
           currentEvent={currentEvent}
         />
+        
+        {/* Today's Timeline Dropdown Component - Now placed after EventListSection */}
+        <div className="mt-6 mb-4">
+          <Collapsible 
+            open={isTimelineOpen} 
+            onOpenChange={setIsTimelineOpen} 
+            className="border border-[#e8c28222] rounded-xl overflow-hidden transition-all duration-300 bg-[#1a1f2c]/60"
+          >
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full flex items-center justify-between p-4 text-[#e8c282] hover:bg-[#e8c28215] transition-all duration-200"
+              >
+                <span className="font-medium flex items-center gap-2">
+                  <Clock size={16} className="opacity-70" />
+                  Today's Timeline 
+                </span>
+                {isTimelineOpen ? (
+                  <ChevronUp className="h-5 w-5 opacity-70 transition-transform duration-200" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 opacity-70 transition-transform duration-200" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="px-3 pb-3">
+              <div className={`transform transition-all duration-500 ease-in-out ${isTimelineOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+                <VerticalTimelineProgress 
+                  currentTime={currentTime}
+                  events={timelineEvents}
+                  onEventClick={handleEventSelect}
+                  eventTimes={getEventTimes()}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
         
         <CompletedEventsList 
           completedEvents={completedEvents}
