@@ -13,11 +13,16 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface EventListSectionProps {
-  activeEvents: Event[];
-  onEventEdit: (event: Event) => void;
-  onEventDelete: (id: number) => void;
-  onEventComplete: (id: number) => void;
-  currentEvent: Event | null;
+  activeEvents?: Event[];
+  onEventEdit?: (event: Event) => void;
+  onEventDelete?: (id: number) => void;
+  onEventComplete?: (id: number) => void;
+  currentEvent?: Event | null;
+  // New props to match Schedule.tsx usage
+  events?: Event[];
+  onToggleComplete?: (eventId: number) => void;
+  onEditEvent?: (event: any) => void;
+  onDeleteEvent?: (event: any) => void;
 }
 
 const EventListSection = ({
@@ -25,14 +30,22 @@ const EventListSection = ({
   onEventEdit,
   onEventDelete,
   onEventComplete,
-  currentEvent
+  currentEvent,
+  // New props to match Schedule.tsx usage
+  events = [],
+  onToggleComplete,
+  onEditEvent,
+  onDeleteEvent
 }: EventListSectionProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [shuffleEffect, setShuffleEffect] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'none' | 'up' | 'down'>('none');
   
+  // Use either activeEvents or events based on which is provided
+  const effectiveEvents = activeEvents?.length ? activeEvents : events;
+  
   // Sort events by time (earliest first)
-  const sortedActiveEvents = [...activeEvents].sort((a, b) => 
+  const sortedActiveEvents = [...effectiveEvents].sort((a, b) => 
     new Date(a.time).getTime() - new Date(b.time).getTime()
   );
 
@@ -106,6 +119,31 @@ const EventListSection = ({
         setActiveIndex(0);
         setSlideDirection('none');
       }, 300);
+    }
+  };
+
+  // Handle event actions based on which props are provided
+  const handleEditEvent = (event: Event) => {
+    if (onEditEvent) {
+      onEditEvent(event);
+    } else if (onEventEdit) {
+      onEventEdit(event);
+    }
+  };
+
+  const handleDeleteEvent = (id: number) => {
+    if (onDeleteEvent) {
+      onDeleteEvent({id}); // Pass as object for backward compatibility
+    } else if (onEventDelete) {
+      onEventDelete(id);
+    }
+  };
+
+  const handleCompleteEvent = (id: number) => {
+    if (onToggleComplete) {
+      onToggleComplete(id);
+    } else if (onEventComplete) {
+      onEventComplete(id);
     }
   };
 
@@ -201,9 +239,9 @@ const EventListSection = ({
                     location={event.location}
                     isCurrent={currentEvent?.id === event.id}
                     isActive={true}
-                    onEdit={() => onEventEdit(event)}
-                    onDelete={() => onEventDelete(event.id)}
-                    onComplete={() => onEventComplete(event.id)}
+                    onEdit={() => handleEditEvent(event)}
+                    onDelete={() => handleDeleteEvent(event.id)}
+                    onComplete={() => handleCompleteEvent(event.id)}
                   />
                 </div>
               ))}

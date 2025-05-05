@@ -9,10 +9,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Button } from "@/components/ui/button";
 
 interface TimelineSectionProps {
-  currentTime: Date;
-  currentEvent: Event | null;
-  nextEvent: Event | null;
-  timelineEvents: Array<{
+  currentTime?: Date;
+  currentEvent?: Event | null;
+  nextEvent?: Event | null;
+  timelineEvents?: Array<{
     id: number;
     time: Date;
     label: string;
@@ -22,23 +22,40 @@ interface TimelineSectionProps {
     location?: string;
     description?: string;
   }>;
-  onEventSelect: (id: number) => void;
+  onEventSelect?: (id: number) => void;
+  // Add new props to match Schedule.tsx usage
+  events?: Event[];
+  onToggleComplete?: (eventId: number) => void;
 }
 
 const TimelineSection = ({
-  currentTime,
+  currentTime = new Date(),
   currentEvent,
   nextEvent,
-  timelineEvents,
-  onEventSelect
+  timelineEvents = [],
+  onEventSelect,
+  events = [], // Added to support Schedule.tsx usage
+  onToggleComplete, // Added to support Schedule.tsx usage
 }: TimelineSectionProps) => {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
 
+  // Use either timelineEvents or transform events prop to match timelineEvents format
+  const effectiveTimelineEvents = timelineEvents.length > 0 ? timelineEvents : events.map(event => ({
+    id: event.id,
+    time: event.time,
+    label: event.title,
+    completed: event.completed,
+    color: event.color,
+    icon: event.icon,
+    location: event.location,
+    description: event.description
+  }));
+
   // Filter active events for timeline
-  const activeEvents = timelineEvents.filter(event => !event.completed);
+  const activeEvents = effectiveTimelineEvents.filter(event => !event.completed);
   
   // Transform timelineEvents to match Event type for utility functions
-  const transformEventForUtils = (event: typeof timelineEvents[0]): Event => {
+  const transformEventForUtils = (event: typeof effectiveTimelineEvents[0]): Event => {
     return {
       id: event.id,
       time: event.time,
