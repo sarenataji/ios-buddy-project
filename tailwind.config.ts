@@ -105,6 +105,20 @@ export default {
 				'scale-in': {
 					'0%': { transform: 'scale(0.95)', opacity: '0' },
 					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				'slide-up': {
+					'0%': { transform: 'translateY(0)' },
+					'100%': { transform: 'translateY(-100%)' }
+				},
+				'slide-down': {
+					'0%': { transform: 'translateY(-100%)' },
+					'100%': { transform: 'translateY(0)' }
+				},
+				'shuffle': {
+					'0%': { transform: 'translateY(0) rotate(0deg)' },
+					'25%': { transform: 'translateY(-5px) rotate(-2deg)' },
+					'75%': { transform: 'translateY(5px) rotate(2deg)' },
+					'100%': { transform: 'translateY(0) rotate(0deg)' }
 				}
 			},
 			animation: {
@@ -114,7 +128,10 @@ export default {
 				'slide-out-right': 'slide-out-right 0.3s ease-out',
 				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'scale-in': 'scale-in 0.2s ease-out'
+				'scale-in': 'scale-in 0.2s ease-out',
+				'slide-up': 'slide-up 0.3s ease-out',
+				'slide-down': 'slide-down 0.3s ease-out',
+				'shuffle': 'shuffle 0.8s ease-in-out'
 			},
 			gridTemplateColumns: {
 				'15': 'repeat(15, minmax(0, 1fr))',
