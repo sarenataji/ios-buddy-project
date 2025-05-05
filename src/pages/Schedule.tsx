@@ -162,13 +162,6 @@ const Schedule = () => {
         />
       </div>
       
-      {/* Schedule actions */}
-      <div className="my-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-serif">Upcoming Events</h2>
-        </div>
-      </div>
-      
       {/* Event List */}
       <div className="pb-20">
         <EventListSection 
