@@ -165,12 +165,12 @@ const EventListSection = ({
   return (
     <div className="space-y-3 mt-2">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-[#e8c282] font-serif text-lg">Upcoming Events</h2>
+        <h2 className="text-[#c69c6d] font-serif text-lg">Upcoming Events</h2>
         
         <Button
           onClick={handleShuffle}
           variant="ghost"
-          className="text-[#e8c282] hover:bg-[#e8c28222] p-1 h-8 w-8"
+          className="text-[#c69c6d] hover:bg-[#c69c6d22] p-1 h-8 w-8"
           aria-label="Shuffle events"
         >
           <Shuffle className="h-5 w-5" />
@@ -178,7 +178,7 @@ const EventListSection = ({
       </div>
       
       {eventsToDisplay.length === 0 && (
-        <div className="text-center text-[#e8c282aa] py-4 border border-dashed border-[#e8c28222] rounded-md">
+        <div className="text-center text-[#c69c6daa] py-4 border border-dashed border-[#c69c6d22] rounded-md">
           No active events for this day
         </div>
       )}
@@ -188,28 +188,28 @@ const EventListSection = ({
           {/* Time bar on left side */}
           <div className="relative min-w-[60px] w-[60px] flex flex-col justify-between h-[300px]">
             {/* Vertical timeline line */}
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-[#e8c28233]"></div>
+            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-[#c69c6d33]"></div>
             
             {/* Current time indicator */}
             <div 
               className="absolute left-0 flex items-center z-30"
               style={{ top: `${getTimePercentage()}%` }}
             >
-              <div className="bg-[#e8c282] text-[#1a1f2c] px-2 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md -translate-y-1/2">
+              <div className="bg-[#c69c6d] text-[#2a1f15] px-2 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 shadow-md -translate-y-1/2">
                 <Clock size={10} />
                 {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
-              <div className="w-5 h-0.5 bg-[#e8c282] opacity-70"></div>
+              <div className="w-5 h-0.5 bg-[#c69c6d] opacity-70"></div>
             </div>
             
             {/* Time markers */}
             {timelineHours.map((hour, index) => (
               <div 
                 key={index} 
-                className="absolute left-0 text-[#e8c282aa] text-xs flex items-center"
+                className="absolute left-0 text-[#c69c6daa] text-xs flex items-center"
                 style={{ top: `${(index / (timelineHours.length - 1)) * 100}%` }}
               >
-                <div className="h-0.5 w-1.5 bg-[#e8c28244] mr-1"></div>
+                <div className="h-0.5 w-1.5 bg-[#c69c6d44] mr-1"></div>
                 {formatHour(hour)}
               </div>
             ))}
@@ -252,7 +252,7 @@ const EventListSection = ({
                 variant="outline"
                 size="sm"
                 onClick={handlePrevious}
-                className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8 p-0 rounded-full"
+                className="bg-[#2a1f15]/80 border-[#c69c6d33] hover:bg-[#3a2f25] text-[#c69c6d] h-8 w-8 p-0 rounded-full"
               >
                 <ChevronUp className="h-4 w-4" />
               </Button>
@@ -263,8 +263,8 @@ const EventListSection = ({
                     key={`indicator-${index}`}
                     className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
                       index === activeIndex 
-                        ? "bg-[#e8c282] w-4" 
-                        : "bg-[#e8c28244]"
+                        ? "bg-[#c69c6d] w-4" 
+                        : "bg-[#c69c6d44]"
                     }`}
                     onClick={() => setActiveIndex(index)}
                   />
@@ -275,7 +275,7 @@ const EventListSection = ({
                 variant="outline"
                 size="sm"
                 onClick={handleNext}
-                className="bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-[#e8c282] h-8 w-8 p-0 rounded-full"
+                className="bg-[#2a1f15]/80 border-[#c69c6d33] hover:bg-[#3a2f25] text-[#c69c6d] h-8 w-8 p-0 rounded-full"
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>

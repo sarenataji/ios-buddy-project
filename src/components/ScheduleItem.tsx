@@ -75,11 +75,11 @@ const ScheduleItem = ({
   return (
     <Card className={cn(
       "w-full overflow-hidden transition-all duration-300",
-      completed ? "bg-[#1a1f2c]/60 opacity-70" : "bg-gradient-to-br from-[#1a1f2c]/95 to-[#11141c]",
-      isCurrent && isActive ? "relative ring-1 ring-[#e8c282]/30 animate-pulse-subtle" : "",
+      completed ? "bg-[#2a1f15]/60 opacity-70" : "bg-gradient-to-br from-[#2a1f15]/95 to-[#1a150e]",
+      isCurrent && isActive ? "relative ring-1 ring-[#c69c6d]/30 animate-pulse-subtle" : "",
       isActive 
-        ? "ring-1 ring-[#e8c282]/30 shadow-[0_4px_25px_rgba(232,194,130,0.15)] rounded-3xl" 
-        : "rounded-2xl border-[#e8c28218]"
+        ? "ring-1 ring-[#c69c6d]/30 shadow-[0_4px_25px_rgba(198,156,109,0.15)] rounded-3xl" 
+        : "rounded-2xl border-[#c69c6d18]"
     )}>
       <CardContent className={cn(
         "p-5 transition-all duration-300",
@@ -89,7 +89,7 @@ const ScheduleItem = ({
           <div 
             className={cn(
               "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-              isCurrent && isActive ? "ring-1 ring-[#e8c282]/30" : ""
+              isCurrent && isActive ? "ring-1 ring-[#c69c6d]/30" : ""
             )}
             style={{ 
               backgroundColor: `${color}22`,
@@ -101,24 +101,24 @@ const ScheduleItem = ({
           
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <h3 className="text-[#edd6ae] font-medium text-base">{title}</h3>
+              <h3 className="text-[#a67c50] font-medium text-base">{title}</h3>
               
               {isActive && (
                 <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                   <PopoverTrigger asChild>
                     <button 
-                      className="text-[#e8c282aa] hover:text-[#edd6ae] p-1 rounded-full hover:bg-[#e8c28215] shrink-0"
+                      className="text-[#c69c6daa] hover:text-[#a67c50] p-1 rounded-full hover:bg-[#c69c6d15] shrink-0"
                       onClick={() => setIsMenuOpen(true)}
                       aria-label="Event menu"
                     >
                       <MoreVertical size={16} />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-40 p-1.5 bg-[#1a1f2c] border border-[#e8c28233]">
+                  <PopoverContent className="w-40 p-1.5 bg-[#2a1f15] border border-[#c69c6d33]">
                     <div className="flex flex-col gap-0.5">
                       {!completed && onComplete && (
                         <button 
-                          className="flex items-center gap-1.5 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1 rounded text-xs w-full text-left"
+                          className="flex items-center gap-1.5 text-[#c69c6d] hover:bg-[#c69c6d22] px-2 py-1 rounded text-xs w-full text-left"
                           onClick={() => {
                             setIsMenuOpen(false);
                             if (onComplete) onComplete();
@@ -129,7 +129,7 @@ const ScheduleItem = ({
                         </button>
                       )}
                       <button 
-                        className="flex items-center gap-1.5 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1 rounded text-xs w-full text-left"
+                        className="flex items-center gap-1.5 text-[#c69c6d] hover:bg-[#c69c6d22] px-2 py-1 rounded text-xs w-full text-left"
                         onClick={() => {
                           setIsMenuOpen(false);
                           if (onEdit) onEdit();
@@ -139,7 +139,7 @@ const ScheduleItem = ({
                         Edit
                       </button>
                       <button 
-                        className="flex items-center gap-1.5 text-[#e8c282] hover:bg-[#e8c28222] px-2 py-1 rounded text-xs w-full text-left"
+                        className="flex items-center gap-1.5 text-[#c69c6d] hover:bg-[#c69c6d22] px-2 py-1 rounded text-xs w-full text-left"
                         onClick={() => {
                           setIsMenuOpen(false);
                           if (onDelete) onDelete();
@@ -154,7 +154,7 @@ const ScheduleItem = ({
               )}
             </div>
             
-            <div className="flex flex-wrap gap-2 text-xs text-[#e8c282aa] mt-1">
+            <div className="flex flex-wrap gap-2 text-xs text-[#c69c6daa] mt-1">
               <span className="font-medium">{time}</span>
               {location && isActive && (
                 <span className="flex items-center gap-0.5">
@@ -168,19 +168,19 @@ const ScheduleItem = ({
         
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <div className="text-xs text-[#e8c282] font-medium">Progress</div>
-            <div className="text-xs text-[#edd6ae]">{timeLeft}</div>
+            <div className="text-xs text-[#c69c6d] font-medium">Progress</div>
+            <div className="text-xs text-[#a67c50]">{timeLeft}</div>
           </div>
           <Progress 
             value={progress} 
             className={cn(
-              "h-1.5 bg-[#e8c28222]",
-              completed ? "bg-[#927c41]" : "",
-              progress === 100 ? "bg-[#927c41]" : "",
-              isCurrent && isActive ? "bg-[#e8c282]/30" : ""
+              "h-1.5 bg-[#c69c6d22]",
+              completed ? "bg-[#7c6041]" : "",
+              progress === 100 ? "bg-[#7c6041]" : "",
+              isCurrent && isActive ? "bg-[#c69c6d]/30" : ""
             )}
             style={{
-              "--progress-background": isCurrent ? "#e8c282" : color,
+              "--progress-background": isCurrent ? "#c69c6d" : color,
             } as React.CSSProperties}
           />
         </div>
@@ -189,25 +189,25 @@ const ScheduleItem = ({
           <>
             <div className="flex justify-between items-center mt-4">
               <div className="flex flex-col">
-                <span className="text-xs text-[#e8c282aa]">Start</span>
-                <span className="text-sm text-[#edd6ae]">{startTime}</span>
+                <span className="text-xs text-[#c69c6daa]">Start</span>
+                <span className="text-sm text-[#a67c50]">{startTime}</span>
               </div>
               
-              <div className="flex-1 mx-2 h-px bg-[#e8c28222]"></div>
+              <div className="flex-1 mx-2 h-px bg-[#c69c6d22]"></div>
               
               <div className="flex flex-col">
-                <span className="text-xs text-[#e8c282aa]">End</span>
-                <span className="text-sm text-[#edd6ae]">{endTime}</span>
+                <span className="text-xs text-[#c69c6daa]">End</span>
+                <span className="text-sm text-[#a67c50]">{endTime}</span>
               </div>
             </div>
             
             {person && (
-              <div className="mt-4 pt-3 border-t border-[#e8c28222] flex justify-between items-center">
-                <span className="text-xs text-[#e8c282aa]">{person}</span>
+              <div className="mt-4 pt-3 border-t border-[#c69c6d22] flex justify-between items-center">
+                <span className="text-xs text-[#c69c6daa]">{person}</span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-[#e8c282] hover:text-[#edd6ae] hover:bg-[#e8c28222] p-1 h-8"
+                  className="text-[#c69c6d] hover:text-[#a67c50] hover:bg-[#c69c6d22] p-1 h-8"
                 >
                   <span className="text-xs mr-1">Next Step</span>
                   <ChevronRight size={16} />

@@ -49,18 +49,18 @@ const ScheduleHeader = ({
           variant="ghost"
           size="icon"
           onClick={handlePrevClick}
-          className="text-[#e8c282] hover:text-[#edd6ae] hover:bg-[#e8c28222]"
+          className="text-[#c69c6d] hover:text-[#a67c50] hover:bg-[#c69c6d22]"
         >
           <ArrowLeft size={20} />
         </Button>
         
         <div className="text-center">
-          <h1 className="text-xl text-[#edd6ae] font-serif">
+          <h1 className="text-xl text-[#a67c50] font-serif">
             {format(currentDate, "EEEE, d MMMM")}
           </h1>
           
           {totalEventsCount > 0 && (
-            <div className="text-xs text-[#e8c28288] mt-1">
+            <div className="text-xs text-[#c69c6d88] mt-1">
               {completedEventsCount} of {totalEventsCount} events completed
             </div>
           )}
@@ -70,7 +70,7 @@ const ScheduleHeader = ({
           variant="ghost"
           size="icon"
           onClick={handleNextClick}
-          className="text-[#e8c282] hover:text-[#edd6ae] hover:bg-[#e8c28222]"
+          className="text-[#c69c6d] hover:text-[#a67c50] hover:bg-[#c69c6d22]"
         >
           <ArrowRight size={20} />
         </Button>
@@ -82,14 +82,14 @@ const ScheduleHeader = ({
             variant="outline" 
             size="sm" 
             onClick={onTodayClick}
-            className="text-[#e8c282] bg-[#1a1f2c]/80 border-[#e8c28233] hover:bg-[#2a2f3c] text-xs px-3 py-1 h-7"
+            className="text-[#c69c6d] bg-[#2a1f15]/80 border-[#c69c6d33] hover:bg-[#3a2f25] text-xs px-3 py-1 h-7"
           >
             Today
           </Button>
         </div>
       )}
       
-      <div className="text-center mb-4 text-[#e8c282aa] text-sm">
+      <div className="text-center mb-4 text-[#c69c6daa] text-sm">
         antalya, turkey
       </div>
     </>

@@ -62,7 +62,7 @@ const TimelineSection = ({
       title: event.label,
       description: event.description || "",
       person: "",
-      color: event.color || "#e8c282",
+      color: event.color || "#c69c6d",
       completed: event.completed || false,
       location: event.location,
       icon: event.icon,
@@ -73,39 +73,39 @@ const TimelineSection = ({
   return (
     <div className="space-y-4 animate-fade-in mb-6">
       {/* Current/Next Event Card */}
-      <div className="p-5 bg-gradient-to-br from-[#1a1f2c]/95 to-[#1a1f2c]/80 rounded-xl border border-[#e8c28233] shadow-[0_4px_20px_0_#e8c28215] transition-all duration-300 hover:shadow-[0_4px_25px_0_#e8c28220]">
+      <div className="p-5 bg-gradient-to-br from-[#2a1f15]/95 to-[#201811]/80 rounded-xl border border-[#c69c6d33] shadow-[0_4px_20px_0_#c69c6d15] transition-all duration-300 hover:shadow-[0_4px_25px_0_#c69c6d20]">
         {currentEvent ? (
           <div className="space-y-3">
-            <h3 className="text-[#e8c282] font-medium text-lg flex items-center gap-2">
+            <h3 className="text-[#c69c6d] font-medium text-lg flex items-center gap-2">
               <span className="opacity-80">{currentEvent.icon || '▶️'}</span>
               Current: {currentEvent.title}
             </h3>
-            <div className="flex items-center gap-2 text-[#e8c28299]">
+            <div className="flex items-center gap-2 text-[#c69c6d99]">
               <Clock size={16} />
               <span>Ends in:</span>
             </div>
             <CountdownTimer targetDate={getEventEndTime(currentEvent)} />
             {currentEvent.location && (
-              <div className="text-[#e8c28280] text-sm mt-1">📍 {currentEvent.location}</div>
+              <div className="text-[#c69c6d80] text-sm mt-1">📍 {currentEvent.location}</div>
             )}
           </div>
         ) : nextEvent ? (
           <div className="space-y-3">
-            <h3 className="text-[#e8c282] font-medium text-lg flex items-center gap-2">
+            <h3 className="text-[#c69c6d] font-medium text-lg flex items-center gap-2">
               <span className="opacity-80">{nextEvent.icon || '⏱️'}</span>
               Next: {nextEvent.title}
             </h3>
-            <div className="flex items-center gap-2 text-[#e8c28299]">
+            <div className="flex items-center gap-2 text-[#c69c6d99]">
               <Clock size={16} />
               <span>Starts in:</span>
             </div>
             <CountdownTimer targetDate={new Date(nextEvent.time)} />
             {nextEvent.location && (
-              <div className="text-[#e8c28280] text-sm mt-1">📍 {nextEvent.location}</div>
+              <div className="text-[#c69c6d80] text-sm mt-1">📍 {nextEvent.location}</div>
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-center gap-3 py-6 text-[#e8c28288]">
+          <div className="flex items-center justify-center gap-3 py-6 text-[#c69c6d88]">
             <Clock size={20} className="opacity-70" />
             <span className="font-light text-lg">No events {isToday(currentTime) ? "today" : "on this day"}</span>
           </div>
@@ -114,7 +114,7 @@ const TimelineSection = ({
       
       {/* Today's Timeline Bar - Horizontal preview showing current position */}
       {activeEvents.length > 0 && (
-        <div className="h-3 bg-[#1a1f2c]/60 rounded-full overflow-hidden relative">
+        <div className="h-3 bg-[#2a1f15]/60 rounded-full overflow-hidden relative">
           {/* Event markers on the horizontal timeline */}
           {activeEvents.map((event, idx) => {
             // Calculate event position as percentage
@@ -139,7 +139,7 @@ const TimelineSection = ({
             return (
               <div
                 key={`timeline-marker-${idx}`}
-                className={`absolute h-full ${isCurrent ? 'bg-[#e8c282]' : 'bg-[#e8c28244]'}`}
+                className={`absolute h-full ${isCurrent ? 'bg-[#c69c6d]' : 'bg-[#c69c6d44]'}`}
                 style={{ 
                   left: `${Math.max(0, Math.min(100, eventPosition))}%`,
                   width: `${Math.max(2, Math.min(100, eventWidth))}%`

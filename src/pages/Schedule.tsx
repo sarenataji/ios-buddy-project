@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { format, isSameDay, parseISO, addDays, subDays } from "date-fns";
+
+import React, { useState } from "react";
+import { format, addDays, subDays } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import ScheduleHeader from "@/components/ScheduleHeader";
@@ -139,7 +140,7 @@ const Schedule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1f2c] text-[#e8c282] p-4">
+    <div className="min-h-screen bg-[#2a1f15] text-[#c69c6d] p-4">
       {/* Event creation event handler */}
       <EventCreationHandler />
       
@@ -190,10 +191,10 @@ const Schedule = () => {
       {/* Edit Event Dialog */}
       {editEventDialogOpen && selectedEvent && (
         <Dialog open={editEventDialogOpen} onOpenChange={setEditEventDialogOpen}>
-          <DialogContent className="bg-[#1a1f2c] border-[#e8c28233] text-[#e8c282] max-w-md">
+          <DialogContent className="bg-[#2a1f15] border-[#c69c6d33] text-[#c69c6d] max-w-md">
             <DialogHeader>
               <DialogTitle>Edit Event</DialogTitle>
-              <DialogDescription className="text-[#e8c28288]">
+              <DialogDescription className="text-[#c69c6d88]">
                 Make changes to your event.
               </DialogDescription>
             </DialogHeader>
@@ -220,15 +221,15 @@ const Schedule = () => {
       {/* Delete Confirmation Dialog */}
       {deleteEventDialogOpen && selectedEvent && (
         <AlertDialog open={deleteEventDialogOpen} onOpenChange={setDeleteEventDialogOpen}>
-          <AlertDialogContent className="bg-[#1a1f2c] border-[#e8c28233] text-[#e8c282]">
+          <AlertDialogContent className="bg-[#2a1f15] border-[#c69c6d33] text-[#c69c6d]">
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription className="text-[#e8c28288]">
+              <AlertDialogDescription className="text-[#c69c6d88]">
                 This will permanently delete the event "{selectedEvent.title}".
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-[#1a1f2c] border-[#e8c28233] text-[#e8c282] hover:bg-[#e8c28222] hover:text-[#e8c282]">
+              <AlertDialogCancel className="bg-[#2a1f15] border-[#c69c6d33] text-[#c69c6d] hover:bg-[#c69c6d22] hover:text-[#c69c6d]">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction 
