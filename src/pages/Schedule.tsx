@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { format, addDays, subDays } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -11,6 +10,7 @@ import { useSchedule } from "@/contexts/ScheduleContext";
 import EventForm from "@/components/EventForm";
 import { useToast } from "@/components/ui/use-toast";
 import EventCreationHandler from "@/components/moments/EventCreationHandler";
+import CompletedEventsList from "@/components/CompletedEventsList";
 
 const Schedule = () => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -172,12 +172,21 @@ const Schedule = () => {
       {/* Event List */}
       <div className="pb-20">
         <EventListSection 
-          events={eventsForDate}
+          events={eventsForDate.filter(event => !event.completed)}
           onToggleComplete={toggleEventComplete}
           onEditEvent={openEditEventDialog}
           onDeleteEvent={openDeleteEventDialog}
         />
       </div>
+      
+      {/* Completed Events List */}
+      {completedEvents.length > 0 && (
+        <CompletedEventsList 
+          completedEvents={completedEvents}
+          onEventEdit={openEditEventDialog}
+          onEventDelete={openDeleteEventDialog}
+        />
+      )}
       
       {/* Add New Event Button */}
       <ActionButtons 
