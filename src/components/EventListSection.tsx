@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import ScheduleItem from "@/components/ScheduleItem";
@@ -8,9 +7,6 @@ import {
   ChevronUp,
   ChevronDown,
   Clock,
-  Calendar,
-  CalendarCheck,
-  CalendarPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -166,59 +162,16 @@ const EventListSection = ({
     timelineHours.push(hourDate);
   }
 
-  // Generate appropriate event indicator icons based on count
-  const renderEventCountIcons = () => {
-    const count = eventsToDisplay.length;
-    
-    if (count === 0) {
-      return (
-        <div className="flex items-center gap-1">
-          <Calendar className="h-4 w-4 text-[#c69c6d88]" />
-          <span className="text-xs text-[#c69c6d88]">No events</span>
-        </div>
-      );
-    }
-    
-    // Render icons based on number of events
-    const icons = [];
-    const IconComponent = count > 3 ? CalendarPlus : Calendar;
-    
-    // Add calendar icons based on event count (max 3 icons)
-    for (let i = 0; i < Math.min(count, 3); i++) {
-      icons.push(
-        <IconComponent 
-          key={`event-icon-${i}`} 
-          className={`h-4 w-4 text-[#c69c6d] ${i > 0 ? '-ml-1' : ''}`} 
-        />
-      );
-    }
-    
-    // Add badge with count if more than 3 events
-    if (count > 3) {
-      icons.push(
-        <Badge 
-          key="event-count-badge"
-          variant="outline" 
-          className="ml-1 bg-[#2a1f15] text-[#c69c6d] border-[#c69c6d33] text-xs px-1 py-0 h-4"
-        >
-          +{count - 3}
-        </Badge>
-      );
-    }
-    
-    return (
-      <div className="flex items-center">
-        <div className="flex">{icons}</div>
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-3 mt-2">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-[#c69c6d] font-serif text-lg">Upcoming Events</h2>
-          {renderEventCountIcons()}
+          {eventsToDisplay.length === 0 ? (
+            <span className="text-xs text-[#c69c6d88]">No events</span>
+          ) : (
+            <span className="text-xs text-[#c69c6d]">{eventsToDisplay.length} event{eventsToDisplay.length !== 1 && 's'}</span>
+          )}
         </div>
         
         <Button
