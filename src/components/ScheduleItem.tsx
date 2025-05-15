@@ -50,6 +50,7 @@ const ScheduleItem = ({
   onComplete,
 }: ScheduleItemProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showStepIndicator, setShowStepIndicator] = useState(false);
   
   // Extract start and end time from description
   const timeRange = description.split(' - ');
@@ -72,6 +73,9 @@ const ScheduleItem = ({
     }
   };
 
+  // Steps for the event (simulated)
+  const eventSteps = ["Preparation", "Implementation", "Review", "Follow-up"];
+  
   return (
     <Card className={cn(
       "w-full overflow-hidden transition-all duration-300",
@@ -208,10 +212,37 @@ const ScheduleItem = ({
                   variant="ghost" 
                   size="sm" 
                   className="text-[#c69c6d] hover:text-[#a67c50] hover:bg-[#c69c6d22] p-1 h-8"
+                  onClick={() => setShowStepIndicator(!showStepIndicator)}
                 >
                   <span className="text-xs mr-1">Next Step</span>
                   <ChevronRight size={16} />
                 </Button>
+              </div>
+            )}
+
+            {/* Step Indicator */}
+            {showStepIndicator && (
+              <div className="mt-4 pt-3 border-t border-[#c69c6d22] animate-fade-in">
+                <div className="text-xs text-[#c69c6d] mb-2">Event Steps</div>
+                <div className="flex justify-between items-center w-full px-2">
+                  {eventSteps.map((step, index) => (
+                    <div key={`step-${index}`} className="flex flex-col items-center">
+                      <div 
+                        className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 
+                          ${index === 1 ? 'bg-[#c69c6d] text-[#2a1f15] font-medium' : 'bg-[#c69c6d33] text-[#c69c6d]'}`}
+                      >
+                        {index + 1}
+                      </div>
+                      <div className={`text-xs ${index === 1 ? 'text-[#c69c6d] font-medium' : 'text-[#c69c6d88]'}`}>
+                        {index === 1 && <span className="absolute -mt-5 text-[10px] text-[#c69c6d]">Here</span>}
+                        {step}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="w-full h-1 bg-[#c69c6d33] relative mt-2">
+                  <div className="absolute h-1 bg-[#c69c6d]" style={{ width: '35%' }}></div>
+                </div>
               </div>
             )}
           </>
